@@ -12,4 +12,6 @@ gulp.task 'downloadatomshell', (cb) ->
 gulp.task 'demo', shell.task(['binaries/Atom.app/Contents/MacOS/Atom .'])
 
 gulp.task 'coffee', ->
-  gulp.src('./src/*.coffee').pipe(coffee({bare: true}).on('error', (a,b) -> )).pipe(gulp.dest('./build/'))
+  gulp.src('./src/*.coffee').pipe(coffee({bare: true}).on('error', (a,b) -> console.log a,b)).pipe(gulp.dest('./build/'))
+
+gulp.task 'default', ['coffee', 'demo']
