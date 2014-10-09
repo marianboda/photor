@@ -1,0 +1,19 @@
+{
+  "name": "ashell",
+  "version": "0.0.1",
+  "authors": [
+    "Marian Boda <marian@boda.sk>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1"
+  }
+}
