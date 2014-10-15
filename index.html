@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Hello World!</title>
+    <title>Atom Tryout</title>
+    <script src="app/libs/jquery.js"></script>
+    <script src="app/libs/angular.js"></script>
+    <script src="app/app.js"></script>
   </head>
-  <body>
+  <body ng-app="app">
     <h1>Hello World!</h1>
     We are using node.js <script>document.write(process.version)</script>
     and atom-shell <script>document.write(process.versions['atom-shell'])</script>.
-    and  atom-shell <script>fs.info</script>.
     <hr>
-    <div id="con"></div>
-    <script src="build/a.js"></script>
+    <div id="con" ng-controller="AppController">
+      <hr>
+      <div ng-repeat="file in model.files">
+        {{file}}
+      </div>
+    </div>
   </body>
 </html>
