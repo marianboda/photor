@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "atom shell test",
   "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marianboda/atom-shell-tryout.git"
+  },
   "scripts": {
     "test": "console.log(':)')"
   },
@@ -22,6 +26,5 @@
     "main-bower-files": "^2.1.0"
   },
   "devDependencies": {
-    "gulp-atom": "0.0.5"
   }
 }
