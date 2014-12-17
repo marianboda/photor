@@ -1,13 +1,16 @@
+React = require 'react'
+TreeNode = require './app/tree'
+treeData = require './app/treeData'
 fs = require 'fs'
+Flux = require 'flux'
+Dispatcher = new Flux.Dispatcher()
+I = require 'immutable'
 
-app = angular.module('app',[])
-app.controller 'AppController',
-  class AppController
-    constructor: ($scope) ->
-      $scope.model = {}
-      $scope.model.text = '--not loaded yet--'
 
-      path = '/Volumes/HardDrive/Music/'
+window.onload = ->
+  fs.readdir '/users/marianboda/temp/', (err, files) ->
+    console.log 'read some shit', err, files
 
-      fs.readdir path, (err, list) ->
-        $scope.$apply( -> $scope.model.files = list )
+  console.log 'some shit happened'
+  tree = React.render React.createElement(TreeNode, treeData),
+    document.getElementById('content')
