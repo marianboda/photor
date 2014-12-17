@@ -24,9 +24,11 @@
     "gulp-coffeelint": "^0.4.0",
     "gulp-download-atom-shell": "0.0.4",
     "gulp-shell": "^0.2.9",
-    "immutable": "^3.3.0",
+    "immutable": "^3.4.0",
     "main-bower-files": "^2.1.0",
-    "react": "^0.12.1"
+    "react": "^0.12.1",
+    "react-router": "^0.11.6",
+    "sass": "^0.5.0"
   },
   "devDependencies": {}
 }
