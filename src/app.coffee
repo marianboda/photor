@@ -29,7 +29,6 @@ SubPage = React.createClass
         items: treeDataStore.data.get('items')
         name: treeDataStore.data.get('name')
 
-
 App = React.createClass
   displayName: 'App'
   render: ->
@@ -47,14 +46,12 @@ routes =
       React.createElement Route, {name: 'detail', path: ':id', handler: SubPage}
     React.createElement Router.DefaultRoute, {handler:DefPage}
 
-Router.run routes, (Handler, state) ->
-  console.log 'state', state
-  React.render React.createElement(Handler, {params: state.params}), document.getElementById('content')
-
 window.onload = ->
   fs.readdir '/users/marianboda/temp/', (err, files) ->
     console.log 'read some shit', err, files
-
+  Router.run routes, (Handler, state) ->
+    console.log 'state', state
+    React.render React.createElement(Handler, {params: state.params}), document.getElementById('content')
   console.log 'some shit happened'
   # tree = React.render React.createElement(TreeNode, treeDataStore.data),
   #   document.getElementById('content')
