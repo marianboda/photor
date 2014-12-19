@@ -1,6 +1,6 @@
 React = require 'react'
-TreeNode = require './app/tree'
-treeDataRaw = require './app/treedata'
+TreeNode = require './tree'
+treeDataRaw = require './treedata'
 fs = require 'fs'
 Flux = require 'flux'
 Dispatcher = new Flux.Dispatcher()
@@ -13,25 +13,14 @@ treeDataStore =
   data: treeData
   token: null
 
-DefPage = React.createClass
-  displayName: 'DefPage'
-  render: ->
-    React.DOM.h3 {}, 'DEFAULT'
+DefPage = require './pages/Home'
 
-SubPage = React.createClass
-  displayName: 'SubPage'
-  render: ->
-    console.log 'subpage props', @props
-    React.DOM.div {},
-      React.DOM.h3 {}, 'SUBPAGE: ' + @props.params.id
-      React.createElement TreeNode,
-        collapsed: false
-        items: treeDataStore.data.get('items')
-        name: treeDataStore.data.get('name')
+ScanPage = require './pages/Scan'
 
 App = React.createClass
   displayName: 'App'
   render: ->
+    console.log 'rendering App: ', location.hash
     React.DOM.div {},
       React.DOM.h1 {}, 'React Head1'
       React.DOM.a {href: '#/'}, 'Ins'
@@ -41,9 +30,9 @@ App = React.createClass
 
 routes =
   React.createElement Route, {name: 'app', path: '/', handler: App},
-    React.createElement Route, {name: 'inside', path: 'inside', handler: SubPage}
-    React.createElement Route, {name: 'sub', path: 'sub', handler: SubPage},
-      React.createElement Route, {name: 'detail', path: ':id', handler: SubPage}
+    React.createElement Route, {name: 'scan', path: 'scan', handler: ScanPage}
+    React.createElement Route, {name: 'sub', path: 'sub', handler: ScanPage},
+      React.createElement Route, {name: 'detail', path: ':id', handler: ScanPage}
     React.createElement Router.DefaultRoute, {handler:DefPage}
 
 window.onload = ->
