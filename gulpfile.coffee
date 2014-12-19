@@ -42,4 +42,7 @@ gulp.task 'sass', ->
   .pipe(sass({'sourcemap=none': true})).on('error', (e) -> console.log e)
   .pipe(gulp.dest(destDirs.styles))
 
-gulp.task 'default', ['coffee', 'sass', 'demo']
+gulp.task 'copy', ->
+  gulp.src('index.html').pipe(gulp.dest('app'))
+
+gulp.task 'default', ['coffee', 'sass', 'copy', 'demo']
