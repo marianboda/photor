@@ -42,5 +42,3 @@ window.onload = ->
     console.log 'state', state
     React.render React.createElement(Handler, {params: state.params}), document.getElementById('content')
   console.log 'some shit happened'
-  # tree = React.render React.createElement(TreeNode, treeDataStore.data),
-  #   document.getElementById('content')
