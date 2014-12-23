@@ -1,17 +1,12 @@
 React = require 'react'
 TreeNode = require './tree'
-treeDataRaw = require './treedata'
+dirStore = require './stores/DirStore'
 fs = require 'fs'
 Flux = require 'flux'
 Dispatcher = new Flux.Dispatcher()
 Router = require 'react-router'
 Route = Router.Route
 I = require 'immutable'
-
-treeData = I.Map treeDataRaw
-treeDataStore =
-  data: treeData
-  token: null
 
 DefPage = require './pages/Home'
 
@@ -22,10 +17,11 @@ App = React.createClass
   render: ->
     console.log 'rendering App: ', location.hash
     React.DOM.div {},
-      React.DOM.h1 {}, 'React Head1'
+      React.DOM.h1 {}, 'App Head1'
       React.DOM.a {href: '#/'}, 'Ins'
       React.DOM.span {}, ' '
       React.DOM.a {href: '#/sub/33'}, 'Inside2'
+      React.DOM.hr {}
       React.createElement Router.RouteHandler, React.__spread({},  this.props)
 
 routes =
