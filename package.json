@@ -26,7 +26,8 @@
     "gulp-shell": "^0.2.11",
     "immutable": "^3.4.1",
     "react": "^0.12.2",
-    "react-router": "^0.11.6"
+    "react-router": "^0.11.6",
+    "reflux": "^0.2.1"
   },
   "devDependencies": {}
 }
