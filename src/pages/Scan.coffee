@@ -1,3 +1,6 @@
+DirStore = require '../stores/DirStore'
+TreeNode = require '../tree'
+
 Page = React.createClass
   displayName: 'SubPage'
   render: ->
@@ -6,7 +9,7 @@ Page = React.createClass
       React.DOM.h3 {}, 'SUBPAGE: ' + @props.params.id
       React.createElement TreeNode,
         collapsed: false
-        items: treeDataStore.data.get('items')
-        name: treeDataStore.data.get('name')
+        items: DirStore.data.get('items')
+        name: DirStore.data.get('name')
 
 module.exports = Page
