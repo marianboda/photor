@@ -17,7 +17,6 @@ App = React.createClass
   render: ->
     console.log 'rendering App: ', location.hash
     React.DOM.div {},
-      React.DOM.h1 {}, 'App Head1'
       React.DOM.a {href: '#/'}, 'Ins'
       React.DOM.span {}, ' '
       React.DOM.a {href: '#/sub/33'}, 'Inside2'
@@ -36,5 +35,5 @@ window.onload = ->
     console.log 'read some shit', err, files
   Router.run routes, (Handler, state) ->
     console.log 'state', state
-    React.render React.createElement(Handler, {params: state.params}), document.getElementById('content')
+    React.render React.createElement(Handler, {params: state.params}), document.body
   console.log 'some shit happened'

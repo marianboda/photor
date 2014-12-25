@@ -6,7 +6,7 @@ Page = React.createClass
   render: ->
     console.log 'subpage props', @props
     React.DOM.div {},
-      React.DOM.h3 {}, 'SUBPAGE: ' + @props.params.id
+      React.DOM.h3 {}, 'SCAN: ' + @props.params.id
       React.createElement TreeNode,
         collapsed: false
         items: DirStore.data.get('items')

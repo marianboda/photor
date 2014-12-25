@@ -1,6 +1,6 @@
 Page = React.createClass
   displayName: 'HomePage'
   render: ->
-    React.DOM.h1 {}, 'Home Page'
+    React.DOM.h3 {}, 'HOME'
 
 module.exports = Page
