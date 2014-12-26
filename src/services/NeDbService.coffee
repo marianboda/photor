@@ -1,5 +1,8 @@
 DB = require 'nedb'
 $q = require 'q'
+fs = require 'fs'
+
+DB_PATH = '.'
 
 db =
   dir: new DB {filename: "#{DB_PATH}/dirs.nedb", autoload: true}

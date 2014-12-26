@@ -8,6 +8,10 @@ Router = require 'react-router'
 Route = Router.Route
 I = require 'immutable'
 Q = require 'q'
+file = require 'file'
+
+
+ProcessService = require './services/ProcessService'
 
 DefPage = require './pages/Home'
 
@@ -32,8 +36,14 @@ routes =
     React.createElement Router.DefaultRoute, {handler:DefPage}
 
 window.onload = ->
+
   fs.readdir '/users/marianboda/temp/', (err, files) ->
     console.log 'read some shit', err, files
+
+  proc = new ProcessService()
+
+  console.log 'proc', proc
+
   Router.run routes, (Handler, state) ->
     console.log 'state', state
     React.render React.createElement(Handler, {params: state.params}), document.body

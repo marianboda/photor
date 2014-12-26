@@ -14,7 +14,7 @@ TreeNode = React.createClass
     collapsed = @props.collapsed ? @state.collapsed
     triangle = if collapsed then '\u25b6' else '\u25bc'
     console.log 'props', @props
-    triangle = '' if @props.items.size is 0
+    triangle = '' if @props.items.length is 0
     nodes = if collapsed then null else @props.items.map (item) ->
       React.createElement TreeNode, item
     lengthString = if @props.items.length > 0 then @props.items.length + '' else '-'

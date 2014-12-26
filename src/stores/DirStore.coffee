@@ -1,6 +1,8 @@
 
 I = require 'immutable'
 
+console.log 'DirStore INITIALIZATION -------'
+
 treeData =
   name: 'root', items: [
     {name: 'Applications', items: [
@@ -14,6 +16,7 @@ treeData =
         ]}
       ]}
     ]
+
 
 treeDataStore =
   data: I.Map treeData
