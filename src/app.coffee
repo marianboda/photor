@@ -7,6 +7,7 @@ Dispatcher = new Flux.Dispatcher()
 Router = require 'react-router'
 Route = Router.Route
 I = require 'immutable'
+Q = require 'q'
 
 DefPage = require './pages/Home'
 
