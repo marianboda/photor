@@ -23,7 +23,7 @@ dataStore =
             found = i
             break
         if found is -1
-          current.items.push {name: p, items: []}
+          current.items.push {name: p, key: path, items: []}
           found = current.items.length-1
         current = current.items[found]
       current
@@ -31,7 +31,7 @@ dataStore =
     file.walk process.env.HOME + '/temp', (a, b, dirs, files) =>
       currentDir = getSubtree b
       for f in files
-        currentDir.items.push {name: f.split('/').pop(), items: []}
+        currentDir.items.push {name: f.split('/').pop(), key: f, items: []}
       @data = I.Map dirTree
 
   data: I.Map {name: 'default', items: [{name: '1', items: [{name: '1.1', items: []}]}]}
