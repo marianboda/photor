@@ -1,25 +1,39 @@
-
+Reflux = require 'reflux'
 I = require 'immutable'
 
 console.log 'DirStore INITIALIZATION -------'
 
-treeData =
-  name: 'root', items: [
-    {name: 'Applications', items: [
-      {name: 'App Store', items: []}
-      {name: 'Atom', items: []}
-      ]}
-    {name: 'Extra', items: [
-      {name: 'modules', items: []}
-      {name: 'Themes', items: [
-        {name: 'Default', items: []}
-        ]}
-      ]}
-    ]
+dataStore =
+  init: ->
+    console.log 'dataStore initializing'
+    @scan()
+  scan: ->
+    console.log 'SCANNING STARTED'
+    dirTree =
+      name: 'TEMP'
+      items: []
+    getSubtree = (path) ->
+      parts = path.split('/')
+      parts.shift() if parts[0] is ''
+      current = dirTree
+      for p in parts
+        found = -1
+        for item, i in current.items
+          if item.name is p
+            found = i
+            break
+        if found is -1
+          current.items.push {name: p, items: []}
+          found = current.items.length-1
+        current = current.items[found]
+      current
 
+    file.walk process.env.HOME + '/temp', (a, b, dirs, files) =>
+      currentDir = getSubtree b
+      for f in files
+        currentDir.items.push {name: f.split('/').pop(), items: []}
+      @data = I.Map dirTree
 
-treeDataStore =
-  data: I.Map treeData
-  token: null
+  data: I.Map {name: 'default', items: [{name: '1', items: [{name: '1.1', items: []}]}]}
 
-module.exports = treeDataStore
+module.exports = Reflux.createStore dataStore

@@ -1,6 +1,5 @@
 React = require 'react'
 TreeNode = require './tree'
-dirStore = require './stores/DirStore'
 fs = require 'fs'
 Flux = require 'flux'
 Dispatcher = new Flux.Dispatcher()
@@ -10,12 +9,10 @@ I = require 'immutable'
 Q = require 'q'
 file = require 'file'
 
-
 ProcessService = require './services/ProcessService'
-
 DefPage = require './pages/Home'
-
 ScanPage = require './pages/Scan'
+dirStore = require './stores/DirStore'
 
 App = React.createClass
   displayName: 'App'
@@ -36,15 +33,5 @@ routes =
     React.createElement Router.DefaultRoute, {handler:DefPage}
 
 window.onload = ->
-
-  fs.readdir '/users/marianboda/temp/', (err, files) ->
-    console.log 'read some shit', err, files
-
-  proc = new ProcessService()
-
-  console.log 'proc', proc
-
   Router.run routes, (Handler, state) ->
-    console.log 'state', state
     React.render React.createElement(Handler, {params: state.params}), document.body
-  console.log 'some shit happened'

@@ -8,12 +8,12 @@ TreeNode = React.createClass
 
   clickHandler: (e) ->
     @setState collapsed: !@state.collapsed
-    console.log 'clicked', @state.collapsed
 
   render: ->
+    unless @props.items?
+      return R.div {}
     collapsed = @props.collapsed ? @state.collapsed
     triangle = if collapsed then '\u25b6' else '\u25bc'
-    console.log 'props', @props
     triangle = '' if @props.items.length is 0
     nodes = if collapsed then null else @props.items.map (item) ->
       React.createElement TreeNode, item
