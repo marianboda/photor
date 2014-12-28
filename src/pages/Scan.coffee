@@ -2,6 +2,7 @@ DirStore = require '../stores/DirStore'
 TreeNode = require '../tree'
 DB = require '../services/NeDbService'
 ProcessService = require '../services/ProcessService'
+Reflux = require 'reflux'
 
 console.log 'screen SCAN INITIALIZATION ========'
 console.log 'process.env.NODE_PATH', process.env.NODE_PATH
@@ -10,6 +11,9 @@ Actions = require '../actions'
 
 Page = React.createClass
   displayName: 'SubPage'
+  mixins: [Reflux.ListenerMixin]
+  componentDidMount: ->
+    @listenTo DirStore, -> @forceUpdate()
 
   buttonClickHandler: ->
     console.log 'yeah, it was clicked'

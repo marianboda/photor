@@ -37,6 +37,7 @@ dataStore =
       for f in files
         currentDir.items.push {name: f.split('/').pop(), key: f, items: []}
       @data = I.Map dirTree
+      @trigger({})
 
   data: I.Map {name: 'default', items: [{name: '1', items: [{name: '1.1', items: []}]}]}
 

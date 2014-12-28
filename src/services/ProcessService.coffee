@@ -3,9 +3,11 @@ gm = require 'gm'
 $a = require 'q'
 async = require 'async'
 
-thumbDir = process.env.HOME + '/temp/preview/thumb'
-getPrevPath = (photo) -> "#{PREVIEW_PATH}/#{photo.md5[0...16]}.jpg"
-getThumbPath = (photo) -> "#{THUMB_PATH}/#{photo.md5[0...16]}.jpg"
+config = require '../config'
+
+thumbDir = config.THUMB_PATH
+getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.md5[0...16]}.jpg"
+getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.md5[0...16]}.jpg"
 
 class ProcessService
   CONCURENCY: 4
