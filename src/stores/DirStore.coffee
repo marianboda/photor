@@ -1,12 +1,16 @@
 Reflux = require 'reflux'
 I = require 'immutable'
+Actions = require '../actions'
 
 console.log 'DirStore INITIALIZATION -------'
 
 dataStore =
   init: ->
     console.log 'dataStore initializing'
-    @scan()
+    @listenTo Actions.scan, ->
+      console.log 'listened'
+      @scan()
+
   scan: ->
     console.log 'SCANNING STARTED'
     dirTree =
