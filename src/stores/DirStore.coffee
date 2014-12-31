@@ -1,16 +1,31 @@
 Reflux = require 'reflux'
 I = require 'immutable'
 Actions = require '../actions'
+DB = require '../services/NeDbService'
 
 console.log 'DirStore INITIALIZATION -------'
 
 dataStore =
+  scannedFiles: 0
+  totalFiles: 0
+  photos: []
+  DB: new DB
   init: ->
     console.log 'dataStore initializing'
+    @DB.getPhotos().then( (data) =>
+      @photos = data[0..20]
+      setTimeout @trigger({}), 10
+      console.log data.length
+    )
     @listenTo Actions.scan, ->
       console.log 'listened'
       @scan()
 
+  photoToDB: (photo) ->
+    @DB.getPhoto(photo.path + 'adf').then (data) ->
+      return if data?
+      @DB.addPhoto photo
+      # @photos.push photo
   scan: ->
     console.log 'SCANNING STARTED'
     dirTree =
@@ -36,6 +51,8 @@ dataStore =
       currentDir = getSubtree b
       for f in files
         currentDir.items.push {name: f.split('/').pop(), key: f, items: []}
+        @photoToDB {path: f}
+        @scannedFiles++
       @data = I.Map dirTree
       @trigger({})
 

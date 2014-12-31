@@ -28,6 +28,12 @@ class DbService
       defer.resolve(rec)
     defer.promise
 
+  getPhotos: ->
+    defer = $q.defer()
+    db.photo.find {}, (err, rec) ->
+      defer.resolve(rec)
+    defer.promise
+    
   photoCount: ->
     @recordCount 'photo'
 
