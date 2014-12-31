@@ -9,18 +9,23 @@ dataStore =
   scannedFiles: 0
   totalFiles: 0
   photos: []
+  dirs: []
   DB: new DB
   init: ->
     console.log 'dataStore initializing'
     @DB.getPhotos().then( (data) =>
       @photos = data[0..20]
-      setTimeout @trigger({}), 10
-      console.log data.length
+      @trigger()
+    )
+    @DB.getDirs().then( (data) =>
+      @dirs = data
+      @trigger()
     )
     @listenTo Actions.scan, ->
       console.log 'listened'
       @scan()
-
+  dirToDB: (dir) ->
+    @DB.addDir {path: dir, added: new Date()}
   photoToDB: (photo) ->
     @DB.getPhoto(photo.path + 'adf').then (data) ->
       return if data?
@@ -48,6 +53,7 @@ dataStore =
       current
 
     file.walk process.env.HOME + '/temp', (a, b, dirs, files) =>
+      @dirToDB b
       currentDir = getSubtree b
       for f in files
         currentDir.items.push {name: f.split('/').pop(), key: f, items: []}
