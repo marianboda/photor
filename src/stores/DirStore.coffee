@@ -14,6 +14,7 @@ dataStore =
   init: ->
     console.log 'dataStore initializing'
     @DB.getPhotos().then( (data) =>
+      console.log data.length
       @photos = data[0..20]
       @trigger()
     )

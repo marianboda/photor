@@ -1,12 +1,15 @@
 DB = require 'nedb'
 $q = require 'q'
 fs = require 'fs'
+config = require '../config'
 
-DB_PATH = "#{process.env.HOME}/Documents/photorData"
+console.log 'config', config
+
+console.log "#{config.DB_PATH}/photos.nedb"
 
 db =
-  dir: new DB {filename: "#{DB_PATH}/dirs.nedb", autoload: true}
-  photo: new DB {filename: "#{DB_PATH}/photos.nedb", autoload: true}
+  dir: new DB {filename: "#{config.DB_PATH}/dirs.nedb", autoload: true}
+  photo: new DB {filename: "#{config.DB_PATH}/photos.nedb", autoload: true}
 
 db.dir.ensureIndex {fieldName: 'path', unique: true}, (err) ->
   console.error err if err?
@@ -33,7 +36,7 @@ class DbService
     db.photo.find {}, (err, rec) ->
       defer.resolve(rec)
     defer.promise
-    
+
   photoCount: ->
     @recordCount 'photo'
 

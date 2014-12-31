@@ -1,7 +1,6 @@
 home = process.env.HOME
-st = require './stores/DirStore'
 
 module.exports =
-  PREVIEW_PATH: "#{home}/Documents/Photor/preview"
-  THUMB_PATH: "#{home}/Documents/Photor/thumb"
-  DB_PATH: "#{home}/Documents/Photor/db"
+  PREVIEW_PATH: "#{home}/Documents/photorData/preview"
+  THUMB_PATH: "#{home}/Documents/photorData/thumb"
+  DB_PATH: "#{home}/Documents/photorData"
