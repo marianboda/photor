@@ -26,6 +26,7 @@ Page = React.createClass
         items: DirStore.data.get('items') #DirStore.data.get('items')
         name: DirStore.data.get('name') #DirStore.data.get('name')
       React.DOM.hr {}
-      React.DOM.button {onClick: @buttonClickHandler}, 'lala'
+      React.DOM.button {onClick: @buttonClickHandler}, 'SCAN'
+      React.DOM.button {}, 'SOMETHIN ELSE'
 
 module.exports = Page
