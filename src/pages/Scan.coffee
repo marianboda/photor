@@ -18,7 +18,6 @@ Page = React.createClass
     @listenTo DirStore, -> @forceUpdate()
 
   buttonClickHandler: ->
-    # console.log 'yeah, it was clicked'
     Actions.scan()
 
   render: ->
