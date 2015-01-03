@@ -15,7 +15,7 @@ dataStore =
     console.log 'dataStore initializing'
     @DB.getPhotos().then( (data) =>
       console.log data.length
-      @photos = data[0..20]
+      @photos = data
       @trigger()
     )
     @DB.getDirs().then( (data) =>
@@ -63,6 +63,6 @@ dataStore =
       @data = I.Map dirTree
       @trigger({})
 
-  data: I.Map {name: 'default', items: [{name: '1', items: [{name: '1.1', items: []}]}]}
+  data: I.Map {name: '_blank', items: []}
 
 module.exports = Reflux.createStore dataStore
