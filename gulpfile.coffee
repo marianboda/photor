@@ -45,4 +45,8 @@ gulp.task 'sass', ->
 gulp.task 'copy', ->
   gulp.src('index.html').pipe(gulp.dest('app'))
 
+gulp.task 'watch', ->
+  gulp.watch [paths.csFiles], ['coffee']
+  gulp.watch [paths.sassFiles], ['sass']
+
 gulp.task 'default', ['coffee', 'sass', 'copy', 'demo']
