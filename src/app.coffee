@@ -1,23 +1,22 @@
 React = require 'react'
-TreeNode = require './tree'
 fs = require 'fs'
 Flux = require 'flux'
 Reflux = require 'reflux'
-Dispatcher = new Flux.Dispatcher()
-Router = require 'react-router'
-Route = Router.Route
 I = require 'immutable'
 Q = require 'q'
 file = require 'file'
-config = require './config'
+Router = require 'react-router'
 
+config = require './config'
+TreeNode = require './components/Tree'
 ProcessService = require './services/ProcessService'
 DefPage = require './pages/Home'
 ScanPage = require './pages/Scan'
 dirStore = require './stores/DirStore'
-
 Actions = require './actions'
 
+Dispatcher = new Flux.Dispatcher()
+Route = Router.Route
 
 App = React.createClass
   displayName: 'App'
