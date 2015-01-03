@@ -10,8 +10,8 @@ Router = require 'react-router'
 config = require './config'
 TreeNode = require './components/Tree'
 ProcessService = require './services/ProcessService'
-DefPage = require './pages/Home'
-ScanPage = require './pages/Scan'
+DefPage = require './pages/HomePage'
+ScanPage = require './pages/ScanPage'
 ProcessPage = require './pages/ProcessPage'
 dirStore = require './stores/DirStore'
 Actions = require './actions'
@@ -36,7 +36,7 @@ routes =
   React.createElement Route, {name: 'app', path: '/', handler: App},
     React.createElement Route, {name: 'scan', path: 'scan', handler: ScanPage},
       React.createElement Route, {name: 'detail', path: ':id', handler: ScanPage}
-    React.createElement Route, {name: 'process', path: 'process', handler: ProcessPage},
+    React.createElement Route, {name: 'process', path: 'process', handler: ProcessPage}
     React.createElement Router.DefaultRoute, {handler:DefPage}
 
 window.onload = ->
