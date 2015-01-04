@@ -34,7 +34,7 @@ gulp.task 'lint', ->
 
 gulp.task 'coffee', ->
   gulp.src(paths.csFiles)
-  .pipe(coffee({bare: true}).on('error', (a,b) -> console.log a,b))
+  .pipe(coffee({bare: true}).on('error', (e) -> console.log "#{e}"; @end() ))
   .pipe(gulp.dest(destDirs.js))
 
 gulp.task 'sass', ->
