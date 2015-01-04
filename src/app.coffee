@@ -24,11 +24,12 @@ App = React.createClass
   render: ->
     console.log 'rendering App: ', location.hash
     React.DOM.div {},
-      React.DOM.a {href: '#/'}, 'HOME'
-      React.DOM.span {}, ' '
-      React.DOM.a {href: '#/scan/33'}, 'SCAN'
-      React.DOM.span {}, ' '
-      React.DOM.a {href: '#/process'}, 'PROCESS'
+      React.DOM.div {className: 'main_nav'},
+        React.DOM.a {href: '#/'}, 'HOME'
+        React.DOM.span {}, ' '
+        React.DOM.a {href: '#/scan/33'}, 'SCAN'
+        React.DOM.span {}, ' '
+        React.DOM.a {href: '#/process'}, 'PROCESS'
       React.DOM.hr {}
       React.createElement Router.RouteHandler, React.__spread({},  this.props)
 

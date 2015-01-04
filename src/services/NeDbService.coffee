@@ -22,7 +22,7 @@ class DbService
 
   addDir: (dir) ->
     db.dir.find {path: dir.path}, (err, rec) ->
-      return if rec?
+      return if rec.length > 0
       db.dir.insert dir, (err, rec) ->
         console.error err if err?
 

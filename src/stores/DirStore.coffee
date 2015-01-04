@@ -10,6 +10,8 @@ dataStore =
   totalFiles: 0
   photos: []
   dirs: []
+
+
   DB: new DB
   init: ->
     console.log 'dataStore initializing'
@@ -26,7 +28,8 @@ dataStore =
       console.log 'listened'
       @scan()
   dirToDB: (dir) ->
-    @DB.addDir {path: dir, added: new Date()}
+    @DB.addDir {path: dir.path, files: dir.directFilesCount, added: new Date()}
+
   photoToDB: (photo) ->
     @DB.getPhoto(photo.path + 'adf').then (data) ->
       return if data?
@@ -53,13 +56,23 @@ dataStore =
         current = current.items[found]
       current
 
-    file.walk process.env.HOME + '/temp', (a, b, dirs, files) =>
-      @dirToDB b
-      currentDir = getSubtree b
+    file.walk process.env.HOME + '/temp', (err, path, dirs, files) =>
+      current =
+        directFilesCount: 0
+        # directUnrecognizedCount: 0
+        # totalFilesCount: 0
+
+      currentDir = getSubtree path
       for f in files
         currentDir.items.push {name: f.split('/').pop(), key: f, items: []}
+        current.directFilesCount += 1
         @photoToDB {path: f}
         @scannedFiles++
+
+      @dirToDB
+        path: path
+        directFilesCount: current.directFilesCount
+
       @data = I.Map dirTree
       @trigger({})
 
