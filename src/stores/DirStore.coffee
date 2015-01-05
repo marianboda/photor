@@ -73,24 +73,22 @@ dataStore =
       @files++
 
     walkQueue = async.queue (dirPath, callback)->
-      console.log 'something added to q'
       fs.readdir dirPath, (err, files) ->
-        # console.log "#{files.length} FILES IN #{dirPath}", files
-        for f in files
-          do ->
+        console.log '%cdir: ' + dirPath, 'color: #FF6600'
+        async.each files,
+          (f, callback) ->
             filePath = dirPath + Path.sep + f
-            # console.log 'doing' + filePath
             fs.lstat filePath, (err, stat) ->
-              # console.log "  STAT", stat
               if stat.isDirectory()
                 addOne()
-                # console.log "  DDDDIIIIIIRRRRRRR: #{filePath}"
                 walkQueue.push filePath
-                console.log 'pushed to Q'
-              # if stat.isFile
+              if stat.isFile()
+                console.log '%cfile ' + dirPath, 'color: #bada55'
+              callback()
+        , (err) ->
+          console.log '%c --%c-- ' + dirPath, 'color: #FF6600', 'color: #006699'
 
-        callback(err)
-      # console.log "Q - #{dirPath}"
+          callback(err)
     ,2
 
     walkQueue.drain = =>
