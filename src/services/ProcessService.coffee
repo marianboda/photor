@@ -21,7 +21,6 @@ class ProcessService
           callback()
         , (err) -> callback err
         , (notify) -> console.info notify
-
       ,@CONCURENCY
 
   queue: (filePath) ->
@@ -29,10 +28,9 @@ class ProcessService
     # console.log '%QUEUED FILE: %c'+ filePath, 'color: gray', 'color: orange'
     defer = $q.defer()
     @_queue.push photo, (err) ->
-      defer.reject(err) if err
+      defer.reject(err) if err?
       defer.resolve(photo)
     defer.promise
-
 
   _process: (photo) ->
     # console.log '%cPROCESSING FILE: %c'+ photo.path, 'color: gray', 'color: green'
