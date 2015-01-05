@@ -14,6 +14,7 @@ dataStore =
   totalFiles: 0
   photos: []
   dirs: []
+  files: 0
 
 
   DB: new DB
@@ -41,7 +42,8 @@ dataStore =
       @DB.addPhoto photo
       # @photos.push photo
 
-  scan: ->
+  scan: =>
+    @files = 0
     console.log 'SCANNING STARTED'
     dirTree =
       name: 'TEMP'
@@ -67,30 +69,34 @@ dataStore =
       fs.readdir dir, (err, list) ->
         console.log "#{dir} DONE!!", list
 
+    addOne = () =>
+      @files++
+
     walkQueue = async.queue (dirPath, callback)->
+      console.log 'something added to q'
       fs.readdir dirPath, (err, files) ->
-        console.log "#{files.length} FILES IN #{dirPath}", files
+        # console.log "#{files.length} FILES IN #{dirPath}", files
         for f in files
           do ->
             filePath = dirPath + Path.sep + f
-            console.log 'doing' + filePath
+            # console.log 'doing' + filePath
             fs.lstat filePath, (err, stat) ->
-              console.log "  STAT", stat
+              # console.log "  STAT", stat
               if stat.isDirectory()
-                console.log "  DDDDIIIIIIRRRRRRR: #{filePath}"
+                addOne()
+                # console.log "  DDDDIIIIIIRRRRRRR: #{filePath}"
+                walkQueue.push filePath
+                console.log 'pushed to Q'
               # if stat.isFile
 
         callback(err)
-      console.log "Q - #{dirPath}"
+      # console.log "Q - #{dirPath}"
     ,2
 
-    walkQueue.drain = ->
-      console.log "Q DONE"
+    walkQueue.drain = =>
+      console.log "Q DONE: " + @files
 
     walkQueue.push "#{process.env.HOME}/temp"
-    walkQueue.push "#{process.env.HOME}/work"
-    walkQueue.push "#{process.env.HOME}/work/db"
-    walkQueue.push "#{process.env.HOME}"
 
     # scanDir(process.env.HOME + '/temp')
 
