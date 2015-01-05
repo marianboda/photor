@@ -69,9 +69,12 @@ dataStore =
       fs.readdir dir, (err, list) ->
         console.log "#{dir} DONE!!", list
 
-    addOne = () =>
+    processDir = (path) =>
+      walkQueue.push path
       @files++
 
+    processFile = (fileObject) ->
+      console.log '%cfile ' + fileObject.name, 'color: #bada55'
     walkQueue = async.queue (dirPath, callback)->
       fs.readdir dirPath, (err, files) ->
         console.log '%cdir: ' + dirPath, 'color: #FF6600'
@@ -80,10 +83,12 @@ dataStore =
             filePath = dirPath + Path.sep + f
             fs.lstat filePath, (err, stat) ->
               if stat.isDirectory()
-                addOne()
-                walkQueue.push filePath
+                processDir filePath
               if stat.isFile()
-                console.log '%cfile ' + dirPath, 'color: #bada55'
+                processFile
+                  name: f
+                  dir: dirPath
+                  stat: stat
               callback()
         , (err) ->
           console.log '%c --%c-- ' + dirPath, 'color: #FF6600', 'color: #006699'
