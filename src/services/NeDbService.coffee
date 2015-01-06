@@ -8,7 +8,7 @@ console.log 'config', config
 console.log "#{config.DB_PATH}/photos.nedb"
 
 db =
-  dir: new DB {filename: "#{config.DB_PATH}/dirs.nedb", autoload: true}
+  dir: new DB {filename: "#{config.DB_PATH}/dirs.json", autoload: true}
   photo: new DB {filename: "#{config.DB_PATH}/photos.nedb", autoload: true}
 
 db.dir.ensureIndex {fieldName: 'path', unique: true}, (err) ->

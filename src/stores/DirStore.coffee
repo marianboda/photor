@@ -10,6 +10,9 @@ Path = require 'path'
 console.log 'DirStore INITIALIZATION -------'
 
 dataStore =
+  scanningPaths: [
+    "#{process.env.HOME}/temp"
+  ]
   scannedFiles: 0
   totalFiles: 0
   photos: []
@@ -34,7 +37,7 @@ dataStore =
       @scan()
 
   dirToDB: (dir) ->
-    @DB.addDir {path: dir.path, files: dir.directFilesCount, added: new Date()}
+    @DB.addDir dir # {path: dir.path, added: new Date()}
 
   photoToDB: (photo) ->
     @DB.getPhoto(photo.path + 'adf').then (data) ->
@@ -42,7 +45,7 @@ dataStore =
       @DB.addPhoto photo
       # @photos.push photo
 
-  scan: =>
+  scan: ->
     @files = 0
     console.log 'SCANNING STARTED'
     dirTree =
@@ -70,36 +73,54 @@ dataStore =
         console.log "#{dir} DONE!!", list
 
     processDir = (path) =>
-      walkQueue.push path
+      walkQueue.push path,
+        (err, dirRecord) => @dirToDB(dirRecord)
       @files++
 
-    processFile = (fileObject) ->
-      console.log '%cfile ' + fileObject.name, 'color: #bada55'
+    processFile = (fileObject) =>
+      @photoToDB fileObject
+      @scannedFiles++
+      # @trigger({})
+
     walkQueue = async.queue (dirPath, callback)->
       fs.readdir dirPath, (err, files) ->
         console.log '%cdir: ' + dirPath, 'color: #FF6600'
+        thisDir =
+          path: dirPath
+          files: []
+          dirs: []
+
+
         async.each files,
           (f, callback) ->
             filePath = dirPath + Path.sep + f
             fs.lstat filePath, (err, stat) ->
               if stat.isDirectory()
+                thisDir.dirs.push
+                  path: filePath
+                  stat: stat
                 processDir filePath
               if stat.isFile()
+                thisDir.files.push
+                  # path: dirPath + Path.sep + f
+                  name: f
+                  stat: stat
                 processFile
+                  path: dirPath + Path.sep + f
                   name: f
                   dir: dirPath
                   stat: stat
               callback()
         , (err) ->
-          console.log '%c --%c-- ' + dirPath, 'color: #FF6600', 'color: #006699'
+          console.log '%c ---- ' + dirPath, 'color: #006699'
 
-          callback(err)
+          callback(err, thisDir)
     ,2
 
     walkQueue.drain = =>
       console.log "Q DONE: " + @files
 
-    walkQueue.push "#{process.env.HOME}/temp"
+    @scanningPaths.map (item) -> walkQueue.push item
 
     # scanDir(process.env.HOME + '/temp')
 

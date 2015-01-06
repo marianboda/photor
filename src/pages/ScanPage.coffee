@@ -6,9 +6,6 @@ Reflux = require 'reflux'
 React = require 'react'
 R = React.DOM
 
-console.log 'screen SCAN INITIALIZATION ========'
-console.log 'process.env.NODE_PATH', process.env.NODE_PATH
-
 Actions = require '../actions'
 
 Page = React.createClass
@@ -21,8 +18,14 @@ Page = React.createClass
     Actions.scan()
 
   render: ->
+    # console.log 'rndr'
     R.div {},
       R.h3 {}, 'SCAN: ' + @props.params.id
+      R.h4 {}, 'Scanned Paths:'
+      R.ul {},
+        DirStore.scanningPaths.map \
+          (item) -> R.li {}, item
+      R.h4 {}, 'Tree:'
       React.createElement TreeNode,
         items: DirStore.data.get('items') #DirStore.data.get('items')
         name: DirStore.data.get('name') #DirStore.data.get('name')
