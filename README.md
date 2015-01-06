@@ -1,3 +1,3 @@
-# atom-shell Tryout
+# Photor
 
-A project for trying out atom-shell.
+### Photo organizer made with atom-shell
