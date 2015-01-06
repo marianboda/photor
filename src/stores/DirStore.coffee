@@ -5,6 +5,7 @@ DB = require '../services/NeDbService'
 fs = require 'fs'
 async = require 'async'
 Path = require 'path'
+config = require '../config'
 
 dataStore =
   scanningPaths: [
@@ -78,7 +79,7 @@ dataStore =
         # (err, dirRecord) => @dirToDB(dirRecord)
         (err, dirRecord) =>
           if dirObject.parent?
-            console.log 'dirOb', dirObject
+            # console.log 'dirOb', dirObject
             dirObject.parent.items.push dirRecord
           else
             @dirs.push dirRecord
@@ -88,62 +89,46 @@ dataStore =
 
     processFile = (fileObject) =>
       # @photoToDB fileObject
-      console.log '%csome file sent to process', 'color: #bada55'
+      # console.log '%csome file sent to process', 'color: #bada55'
       @scannedFiles++
       # @trigger({})
 
     walkQueue = async.queue (dirPath, callback)->
       fs.readdir dirPath, (err, files) ->
-        thisDir = {path: dirPath, name: Path.basename(dirPath), files: [], dirs: [], items:[]}
+        thisDir = {path: dirPath, name: Path.basename(dirPath), files: [], items:[], unrecognizedCount: 0}
         async.each files,
           (f, callback) ->
             filePath = dirPath + Path.sep + f
             fs.lstat filePath, (err, stat) ->
               if stat.isDirectory()
-                thisDir.dirs.push f
+                # thisDir.dirs.push f
                 processDir
                   path: filePath
                   parent: thisDir
               if stat.isFile()
-                thisDir.files.push
-                  name: f
-                  stat: stat
-                processFile(f)
+                if isRecognized(f)
+                  thisDir.files.push
+                    name: f
+                    stat: stat
+                  processFile(f)
+                else
+                  thisDir.unrecognizedCount += 1
               callback()
         , (err) ->
           callback(err, thisDir)
     ,2
+
+
+    isRecognized = (item) ->
+      Path.extname(item).substring(1).toLowerCase() in config.ACCEPTED_FORMATS
 
     walkQueue.drain = =>
       console.log "Q DONE: " + @files, @dirs[0]
       @data = I.Map @dirs[0]
       @trigger {}
 
-
     @scanningPaths.map (item) -> processDir {path: item}
 
-    # scanDir(process.env.HOME + '/temp')
-
-    # file.walk process.env.HOME + '/temp', (err, path, dirs, files) =>
-    #   current =
-    #     directFilesCount: 0
-    #     # totalFilesCount: 0
-    #     # directUnrecognizedCount: 0
-    #     # totalFilesCount: 0
-    #
-    #   currentDir = getSubtree path
-    #   for f in files
-    #     currentDir.items.push {name: f.split('/').pop(), key: f, items: []}
-    #     current.directFilesCount += 1
-    #     @photoToDB {path: f}
-    #     @scannedFiles++
-    #
-    #   @dirToDB
-    #     path: path
-    #     directFilesCount: current.directFilesCount
-    #
-    #   @data = I.Map dirTree
-    #   @trigger({})
 
   data: I.Map {name: '_blank', items: []}
 
