@@ -3,9 +3,6 @@ React = require 'react'
 R = React.DOM
 Reflux = require 'reflux'
 
-console.log 'process page '
-
-
 Page = React.createClass
   displayName: 'ProcessPage'
   mixins: [Reflux.ListenerMixin]

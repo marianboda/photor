@@ -3,8 +3,6 @@ React = require 'react'
 R = React.DOM
 Reflux = require 'reflux'
 
-console.log 'count '+DirStore.DB.photoCount()
-
 Page = React.createClass
   displayName: 'HomePage'
   mixins: [Reflux.ListenerMixin]

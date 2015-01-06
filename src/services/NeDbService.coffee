@@ -3,12 +3,8 @@ $q = require 'q'
 fs = require 'fs'
 config = require '../config'
 
-console.log 'config', config
-
-console.log "#{config.DB_PATH}/photos.nedb"
-
 db =
-  dir: new DB {filename: "#{config.DB_PATH}/dirs.json", autoload: true}
+  dir: new DB {filename: "#{config.DB_PATH}/dirs.nedb", autoload: true}
   photo: new DB {filename: "#{config.DB_PATH}/photos.nedb", autoload: true}
 
 db.dir.ensureIndex {fieldName: 'path', unique: true}, (err) ->
@@ -16,7 +12,6 @@ db.dir.ensureIndex {fieldName: 'path', unique: true}, (err) ->
 
 class DbService
   constructor: ->
-    console.log 'DbService started'
   getSome: ->
     console.log 'gettin some'
 

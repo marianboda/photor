@@ -6,12 +6,10 @@ fs = require 'fs'
 async = require 'async'
 Path = require 'path'
 
-
-console.log 'DirStore INITIALIZATION -------'
-
 dataStore =
   scanningPaths: [
-    "#{process.env.HOME}/temp"
+    "#{process.env.HOME}/temp/raw/aaa/ccc/eee"
+    # "#{process.env.HOME}/temp"
   ]
   scannedFiles: 0
   totalFiles: 0
@@ -19,18 +17,19 @@ dataStore =
   dirs: []
   files: 0
 
+  processingTree: {}
 
   DB: new DB
   init: ->
-    console.log 'dataStore initializing'
     @DB.getPhotos().then (data) =>
-      console.log data.length
-      @photos = data
+      # console.log data.length
+      @photos = data[0..30]
       @trigger()
 
-    @DB.getDirs().then (data) =>
-      @dirs = data
-      @trigger()
+    # @DB.getDirs().then (data) =>
+    #   console.log 'dirs in db: ', data.length
+    #   @dirs = data[0..30]
+    #   @trigger()
 
     @listenTo Actions.scan, ->
       console.log 'listened'
@@ -70,57 +69,52 @@ dataStore =
 
     scanDir = (dir, callback) ->
       fs.readdir dir, (err, list) ->
-        console.log "#{dir} DONE!!", list
+        # console.log "#{dir} DONE!!", list
 
-    processDir = (path) =>
+    processDir = (dirObject) =>
+      path = dirObject.path
+      parentPath = if dirObject.parent? then dirObject.parent.path else null
       walkQueue.push path,
-        (err, dirRecord) => @dirToDB(dirRecord)
+        # (err, dirRecord) => @dirToDB(dirRecord)
+        (err, dirRecord) =>
+          if dirObject.parent?
+            console.log 'dirOb', dirObject
+            dirObject.parent.items.push dirRecord
+          else
+            @dirs.push dirRecord
+
+          console.log dirRecord, parentPath
       @files++
 
     processFile = (fileObject) =>
-      @photoToDB fileObject
+      # @photoToDB fileObject
       @scannedFiles++
       # @trigger({})
 
     walkQueue = async.queue (dirPath, callback)->
       fs.readdir dirPath, (err, files) ->
-        console.log '%cdir: ' + dirPath, 'color: #FF6600'
-        thisDir =
-          path: dirPath
-          files: []
-          dirs: []
-
-
+        thisDir = {path: dirPath, files: [], dirs: [], items:[]}
         async.each files,
           (f, callback) ->
             filePath = dirPath + Path.sep + f
             fs.lstat filePath, (err, stat) ->
               if stat.isDirectory()
-                thisDir.dirs.push
+                thisDir.dirs.push f
+                processDir
                   path: filePath
-                  stat: stat
-                processDir filePath
+                  parent: thisDir
               if stat.isFile()
-                thisDir.files.push
-                  # path: dirPath + Path.sep + f
-                  name: f
-                  stat: stat
-                processFile
-                  path: dirPath + Path.sep + f
-                  name: f
-                  dir: dirPath
-                  stat: stat
+                thisDir.files.push f
               callback()
         , (err) ->
-          console.log '%c ---- ' + dirPath, 'color: #006699'
-
           callback(err, thisDir)
     ,2
 
     walkQueue.drain = =>
-      console.log "Q DONE: " + @files
+      console.log "Q DONE: " + @files, @dirs
 
-    @scanningPaths.map (item) -> walkQueue.push item
+
+    @scanningPaths.map (item) -> processDir {path: item}
 
     # scanDir(process.env.HOME + '/temp')
 
