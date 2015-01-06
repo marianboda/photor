@@ -8,8 +8,8 @@ Path = require 'path'
 
 dataStore =
   scanningPaths: [
-    "#{process.env.HOME}/temp/raw/aaa/ccc/eee"
-    # "#{process.env.HOME}/temp"
+    # "#{process.env.HOME}/temp/raw/aaa/ccc/eee"
+    "#{process.env.HOME}/temp"
   ]
   scannedFiles: 0
   totalFiles: 0
@@ -88,12 +88,13 @@ dataStore =
 
     processFile = (fileObject) =>
       # @photoToDB fileObject
+      console.log '%csome file sent to process', 'color: #bada55'
       @scannedFiles++
       # @trigger({})
 
     walkQueue = async.queue (dirPath, callback)->
       fs.readdir dirPath, (err, files) ->
-        thisDir = {path: dirPath, files: [], dirs: [], items:[]}
+        thisDir = {path: dirPath, name: Path.basename(dirPath), files: [], dirs: [], items:[]}
         async.each files,
           (f, callback) ->
             filePath = dirPath + Path.sep + f
@@ -104,14 +105,19 @@ dataStore =
                   path: filePath
                   parent: thisDir
               if stat.isFile()
-                thisDir.files.push f
+                thisDir.files.push
+                  name: f
+                  stat: stat
+                processFile(f)
               callback()
         , (err) ->
           callback(err, thisDir)
     ,2
 
     walkQueue.drain = =>
-      console.log "Q DONE: " + @files, @dirs
+      console.log "Q DONE: " + @files, @dirs[0]
+      @data = I.Map @dirs[0]
+      @trigger {}
 
 
     @scanningPaths.map (item) -> processDir {path: item}
