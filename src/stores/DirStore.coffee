@@ -10,8 +10,8 @@ config = require '../config'
 dataStore =
   scanningPaths: [
     # "#{process.env.HOME}/temp/raw/aaa/ccc/eee"
-    # "#{process.env.HOME}/Downloads"
-    "/Volumes/HardDrive/Foto"
+    "#{process.env.HOME}/temp"
+    # "/Volumes/HardDrive/Foto"
   ]
   scannedFiles: 0
   totalFiles: 0
@@ -83,7 +83,7 @@ dataStore =
           else
             @dirs.push dirRecord
 
-          console.log dirRecord, parentPath
+          # console.log dirRecord, parentPath
       @files++
 
     processFile = (fileObject) =>
@@ -122,6 +122,9 @@ dataStore =
       Path.extname(item).substring(1).toLowerCase() in config.ACCEPTED_FORMATS
 
 
+    isDirRelevant = (dir) ->
+      return dir.deepFilesCount > 0
+
     processTreeNode = (oldNode, newNode) ->
       newNode.name = oldNode.name
       return unless oldNode.items?
@@ -131,23 +134,23 @@ dataStore =
       newNode.deepUnrecognizedFilesCount = oldNode.unrecognizedCount
       newNode.items = []
       for item in oldNode.items
-        # newNode.items.push {name: item.name}
         newSubnode = {}
         processTreeNode item, newSubnode
         newNode.deepFilesCount += newSubnode.deepFilesCount
         newNode.deepUnrecognizedFilesCount += newSubnode.deepUnrecognizedFilesCount
-        newNode.items.push newSubnode
+        if isDirRelevant(newSubnode)
+          newNode.items.push newSubnode
 
       newNode.name += ' ' + newNode.deepFilesCount
 
     processTree = (tree) ->
       newTree = {}
       processTreeNode tree, newTree
-      console.log 'newTree', newTree
+      # console.log 'newTree', newTree
       newTree
 
     walkQueue.drain = =>
-      console.log "Q DONE: " + @files, @dirs[0]
+      console.log "Q DONE: " + @files
       # @data = I.Map @dirs[0]
       @data = I.Map processTree(@dirs[0])
       @trigger {}
