@@ -10,7 +10,8 @@ config = require '../config'
 dataStore =
   scanningPaths: [
     # "#{process.env.HOME}/temp/raw/aaa/ccc/eee"
-    "#{process.env.HOME}/temp"
+    # "#{process.env.HOME}/Downloads"
+    "/Volumes/HardDrive/Foto"
   ]
   scannedFiles: 0
   totalFiles: 0
@@ -125,6 +126,7 @@ dataStore =
       newNode.name = oldNode.name
       return unless oldNode.items?
       newNode.filesCount = oldNode.files.length
+      newNode.deepFilesCount = oldNode.files.length
       newNode.unrecognizedFilesCount = oldNode.unrecognizedCount
       newNode.deepUnrecognizedFilesCount = oldNode.unrecognizedCount
       newNode.items = []
@@ -132,10 +134,11 @@ dataStore =
         # newNode.items.push {name: item.name}
         newSubnode = {}
         processTreeNode item, newSubnode
+        newNode.deepFilesCount += newSubnode.deepFilesCount
         newNode.deepUnrecognizedFilesCount += newSubnode.deepUnrecognizedFilesCount
         newNode.items.push newSubnode
 
-      newNode.name += ' ' + newNode.deepUnrecognizedFilesCount
+      newNode.name += ' ' + newNode.deepFilesCount
 
     processTree = (tree) ->
       newTree = {}
@@ -146,8 +149,8 @@ dataStore =
     walkQueue.drain = =>
       console.log "Q DONE: " + @files, @dirs[0]
       # @data = I.Map @dirs[0]
-      @trigger {}
       @data = I.Map processTree(@dirs[0])
+      @trigger {}
 
 
 
