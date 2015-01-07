@@ -17,6 +17,9 @@ Page = React.createClass
   buttonClickHandler: ->
     Actions.scan()
 
+  processButtonClickHandler: ->
+    # Actions.processDirTree()
+
   render: ->
     # console.log 'rndr'
     R.div {},
@@ -31,7 +34,7 @@ Page = React.createClass
         name: DirStore.data.get('name') #DirStore.data.get('name')
       R.hr {}
       R.button {onClick: @buttonClickHandler}, 'SCAN'
-      R.button {}, 'SOMETHIN ELSE'
+      R.button {onClick: @processButtonClickHandler}, 'PROCESS TREE'
       R.hr {}
       R.p {}, DirStore['scannedFiles']
 

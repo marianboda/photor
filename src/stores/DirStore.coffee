@@ -18,8 +18,6 @@ dataStore =
   dirs: []
   files: 0
 
-  processingTree: {}
-
   DB: new DB
   init: ->
     @DB.getPhotos().then (data) =>
@@ -122,10 +120,36 @@ dataStore =
     isRecognized = (item) ->
       Path.extname(item).substring(1).toLowerCase() in config.ACCEPTED_FORMATS
 
+
+    processTreeNode = (oldNode, newNode) ->
+      newNode.name = oldNode.name
+      return unless oldNode.items?
+      newNode.filesCount = oldNode.files.length
+      newNode.unrecognizedFilesCount = oldNode.unrecognizedCount
+      newNode.deepUnrecognizedFilesCount = oldNode.unrecognizedCount
+      newNode.items = []
+      for item in oldNode.items
+        # newNode.items.push {name: item.name}
+        newSubnode = {}
+        processTreeNode item, newSubnode
+        newNode.deepUnrecognizedFilesCount += newSubnode.deepUnrecognizedFilesCount
+        newNode.items.push newSubnode
+
+      newNode.name += ' ' + newNode.deepUnrecognizedFilesCount
+
+    processTree = (tree) ->
+      newTree = {}
+      processTreeNode tree, newTree
+      console.log 'newTree', newTree
+      newTree
+
     walkQueue.drain = =>
       console.log "Q DONE: " + @files, @dirs[0]
-      @data = I.Map @dirs[0]
+      # @data = I.Map @dirs[0]
       @trigger {}
+      @data = I.Map processTree(@dirs[0])
+
+
 
     @scanningPaths.map (item) -> processDir {path: item}
 
