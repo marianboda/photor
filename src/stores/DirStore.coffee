@@ -11,6 +11,8 @@ dataStore =
   scanningPaths: [
     # "#{process.env.HOME}/temp/raw/aaa/ccc/eee"
     "#{process.env.HOME}/temp"
+    # "#{process.env.HOME}"
+
     # "/Volumes/HardDrive/Foto"
   ]
   scannedFiles: 0
@@ -36,7 +38,16 @@ dataStore =
       @scan()
 
   dirToDB: (dir) ->
-    @DB.addDir dir # {path: dir.path, added: new Date()}
+
+    dbRec = {}
+
+    for field of dir
+      console.log field
+      dbRec[field] = dir[field] unless field in ['items']
+
+    console.log dbRec
+
+    @DB.addDir dbRec # {path: dir.path, added: new Date()}
 
   photoToDB: (photo) ->
     @DB.getPhoto(photo.path + 'adf').then (data) ->
@@ -125,34 +136,57 @@ dataStore =
     isDirRelevant = (dir) ->
       return dir.deepFilesCount > 0
 
-    processTreeNode = (oldNode, newNode) ->
-      newNode.name = oldNode.name
-      return unless oldNode.items?
-      newNode.filesCount = oldNode.files.length
-      newNode.deepFilesCount = oldNode.files.length
-      newNode.unrecognizedFilesCount = oldNode.unrecognizedCount
-      newNode.deepUnrecognizedFilesCount = oldNode.unrecognizedCount
-      newNode.items = []
-      for item in oldNode.items
-        newSubnode = {}
-        processTreeNode item, newSubnode
-        newNode.deepFilesCount += newSubnode.deepFilesCount
-        newNode.deepUnrecognizedFilesCount += newSubnode.deepUnrecognizedFilesCount
-        if isDirRelevant(newSubnode)
-          newNode.items.push newSubnode
 
-      newNode.name += ' ' + newNode.deepFilesCount
 
     processTree = (tree) ->
+      processTreeNode = (oldNode, newNode) ->
+        newNode.name = oldNode.name
+        newNode.path = oldNode.path
+        return unless oldNode.items?
+        newNode.filesCount = oldNode.files.length
+        newNode.deepFilesCount = oldNode.files.length
+        newNode.unrecognizedFilesCount = oldNode.unrecognizedCount
+        newNode.deepUnrecognizedFilesCount = oldNode.unrecognizedCount
+        newNode.items = []
+        for item in oldNode.items
+          newSubnode = {}
+          processTreeNode item, newSubnode
+          newNode.deepFilesCount += newSubnode.deepFilesCount
+          newNode.deepUnrecognizedFilesCount += newSubnode.deepUnrecognizedFilesCount
+          if isDirRelevant(newSubnode)
+            newNode.items.push newSubnode
+
+        newNode.name += ' ' + newNode.deepFilesCount
       newTree = {}
       processTreeNode tree, newTree
       # console.log 'newTree', newTree
       newTree
 
+    traverseTree = (node, nodeFunction, callback1) ->
+      return unless node.items?
+
+      async.each node.items, (item) ->
+        if nodeFunction?
+          nodeFunction item
+        traverseTree item, nodeFunction
+      , (err) ->
+        console.log callback1 if callback1?
+        if callback1?
+          console.log 'all Traversal done'
+
+
+
+
+
+
     walkQueue.drain = =>
       console.log "Q DONE: " + @files
       # @data = I.Map @dirs[0]
       @data = I.Map processTree(@dirs[0])
+      @trigger {}
+
+      traverseTree(@dirs[0], @dirToDB, 1)
+
       @trigger {}
 
 
