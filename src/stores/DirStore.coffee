@@ -42,10 +42,9 @@ dataStore =
     dbRec = {}
 
     for field of dir
-      console.log field
       dbRec[field] = dir[field] unless field in ['items']
 
-    console.log dbRec
+    # console.log dbRec
 
     @DB.addDir dbRec # {path: dir.path, added: new Date()}
 
@@ -117,10 +116,11 @@ dataStore =
                   parent: thisDir
               if stat.isFile()
                 if isRecognized(f)
-                  thisDir.files.push
+                  thisDir.files.push f
+                  processFile
                     name: f
                     stat: stat
-                  processFile(f)
+
                 else
                   thisDir.unrecognizedCount += 1
               callback()
@@ -132,11 +132,8 @@ dataStore =
     isRecognized = (item) ->
       Path.extname(item).substring(1).toLowerCase() in config.ACCEPTED_FORMATS
 
-
     isDirRelevant = (dir) ->
       return dir.deepFilesCount > 0
-
-
 
     processTree = (tree) ->
       processTreeNode = (oldNode, newNode) ->
@@ -170,9 +167,9 @@ dataStore =
           nodeFunction item
         traverseTree item, nodeFunction
       , (err) ->
-        console.log callback1 if callback1?
-        if callback1?
-          console.log 'all Traversal done'
+        # console.log callback1 if callback1?
+        # if callback1?
+          # console.log 'all Traversal done'
 
 
 
