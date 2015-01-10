@@ -1,5 +1,5 @@
 DirStore = require '../stores/DirStore'
-TreeNode = require '../tree'
+TreeNode = require '../components/Tree'
 DB = require '../services/NeDbService'
 ProcessService = require '../services/ProcessService'
 Reflux = require 'reflux'

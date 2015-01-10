@@ -1,5 +1,6 @@
 React = require 'react'
 R = React.DOM
+Node = require './Node'
 
 TreeNode = React.createClass
   displayName: 'TreeNode'
@@ -7,23 +8,18 @@ TreeNode = React.createClass
     collapsed: true
 
   clickHandler: (e) ->
+    console.log 'treeEve'
     @setState collapsed: !@state.collapsed
 
   render: ->
     unless @props.items?
       return R.div {}
     collapsed = @props.collapsed ? @state.collapsed
-    triangle = if collapsed then '\u25b6' else '\u25bc'
-    triangle = '' if @props.items.length is 0
     nodes = if collapsed then null else @props.items.map (item) ->
       React.createElement TreeNode, item
-    lengthString = if @props.items.length > 0 then @props.items.length + '' else '-'
 
     R.div {key: @props.key, className:'treeNode'},
-      R.div {onClick: @clickHandler, className: 'nodeName'},
-        R.span {className: 'dirTriangle'}, triangle
-        R.span {}, @props.name
-        R.span {className: 'sizeLabel'}, lengthString
+      React.createElement Node, {onClick: @clickHandler, collapsed, name: @props.name, items: @props.items}
       R.div {className: 'treeSubNodes'}, nodes unless collapsed
 
 module.exports = TreeNode
