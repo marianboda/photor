@@ -30,8 +30,8 @@ App = React.createClass
         React.DOM.a {href: '#/scan/33'}, 'SCAN'
         React.DOM.span {}, ' '
         React.DOM.a {href: '#/process'}, 'PROCESS'
-      
-      React.createElement Router.RouteHandler, React.__spread({},  this.props)
+      React.DOM.div {className: 'main_content'},
+        React.createElement Router.RouteHandler, React.__spread({},  this.props)
 
 routes =
   React.createElement Route, {name: 'app', path: '/', handler: App},
