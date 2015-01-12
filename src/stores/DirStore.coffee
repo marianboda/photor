@@ -12,7 +12,6 @@ dataStore =
     # "#{process.env.HOME}/temp/raw/aaa/ccc/eee"
     "#{process.env.HOME}/temp"
     # "#{process.env.HOME}"
-
     # "/Volumes/HardDrive/Foto"
   ]
   scannedFiles: 0

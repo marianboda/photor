@@ -27,7 +27,7 @@ Page = React.createClass
       R.h4 {}, 'Scanned Paths:'
       R.ul {},
         DirStore.scanningPaths.map \
-          (item) -> R.li {}, item
+          (item) -> R.li {key: item}, item
       R.h4 {}, 'Tree:'
       React.createElement TreeNode,
         items: DirStore.data.get('items') #DirStore.data.get('items')
