@@ -18,6 +18,7 @@ dataStore =
   totalFiles: 0
   photos: []
   dirs: []
+  dirTree: {name: 'root', items: []}
   files: 0
 
   DB: new DB
@@ -27,14 +28,44 @@ dataStore =
       @photos = data[0..30]
       @trigger()
 
-    # @DB.getDirs().then (data) =>
-    #   console.log 'dirs in db: ', data.length
-    #   @dirs = data[0..30]
-    #   @trigger()
+    @dirsFromDB()
 
     @listenTo Actions.scan, ->
       console.log 'listened'
       @scan()
+
+  dirsFromDB: ->
+    @DB.getDirs().then (data) =>
+      console.log 'dirs in db: ', data.length
+      # @dirs = data[0..30]
+      dirTree =
+        name: 'TEMP'
+        items: []
+      getSubtree = (path) ->
+        parts = path.split(Path.sep)
+        parts.shift() if parts[0] is ''
+        current = dirTree
+        for p in parts
+          found = -1
+          for item, i in current.items
+            if item.name is p
+              found = i
+              break
+          if found is -1
+            current.items.push {name: p, items: []}
+            found = current.items.length-1
+          current = current.items[found]
+        current
+
+      for d in data
+        console.log d.path, getSubtree(d.path)
+
+      console.log dirTree
+
+      @dirTree = dirTree
+
+      @trigger()
+
 
   dirToDB: (dir) ->
 
@@ -56,25 +87,6 @@ dataStore =
   scan: ->
     @files = 0
     console.log 'SCANNING STARTED'
-    dirTree =
-      name: 'TEMP'
-      items: []
-    getSubtree = (path) ->
-      parts = path.split(Path.sep)
-      parts.shift() if parts[0] is ''
-      current = dirTree
-      for p in parts
-        found = -1
-        for item, i in current.items
-          if item.name is p
-            found = i
-            break
-        if found is -1
-          current.items.push {name: p, key: path, items: []}
-          found = current.items.length-1
-        current = current.items[found]
-      current
-
 
     scanDir = (dir, callback) ->
       fs.readdir dir, (err, list) ->
