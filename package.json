@@ -1,5 +1,5 @@
 {
-  "name": "ash",
+  "name": "Photor",
   "version": "0.0.1",
   "description": "atom shell test",
   "main": "main.js",
@@ -28,6 +28,7 @@
     "gulp-ruby-sass": "^0.7.1",
     "gulp-shell": "^0.2.11",
     "immutable": "^3.4.1",
+    "lodash": "^2.4.1",
     "nedb": "^1.0.1",
     "q": "^1.1.2",
     "react": "^0.12.2",

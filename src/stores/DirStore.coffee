@@ -6,6 +6,7 @@ fs = require 'fs'
 async = require 'async'
 Path = require 'path'
 config = require '../config'
+_ = require 'lodash'
 
 dataStore =
   scanningPaths: [
@@ -20,27 +21,51 @@ dataStore =
   dirs: []
   dirTree: {name: 'root', items: []}
   files: 0
+  selectedDir: null
 
   DB: new DB
   init: ->
     @DB.getPhotos().then (data) =>
-      # console.log data.length
+      console.log data.length
       @photos = data[0..30]
       @trigger()
 
     @dirsFromDB()
 
+
     @listenTo Actions.scan, ->
+      console.log 'listened'
+      @scan()
+
+    @listenTo Actions.selectDirectory, ->
       console.log 'listened'
       @scan()
 
   dirsFromDB: ->
     @DB.getDirs().then (data) =>
+
       console.log 'dirs in db: ', data.length
       # @dirs = data[0..30]
       dirTree =
-        name: 'TEMP'
+        name: '---'
         items: []
+      # getSubtree = (path) ->
+      #   parts = path.split(Path.sep)
+      #   parts.shift() if parts[0] is ''
+      #   current = dirTree
+      #   for p in parts
+      #     found = -1
+      #     for item, i in current.items
+      #       if item.name is p
+      #         found = i
+      #         break
+      #     if found is -1
+      #       current.items.push {name: p, items: []}
+      #       console.log item
+      #       found = current.items.length-1
+      #     current = current.items[found]
+      #   current
+
       getSubtree = (path) ->
         parts = path.split(Path.sep)
         parts.shift() if parts[0] is ''
@@ -53,12 +78,19 @@ dataStore =
               break
           if found is -1
             current.items.push {name: p, items: []}
+            console.error 'fail! path: ' + path + ': ' + p
             found = current.items.length-1
           current = current.items[found]
         current
 
-      for d in data
-        console.log d.path, getSubtree(d.path)
+      getParent = (str) ->
+        str.substr(0, str.lastIndexOf(Path.sep))
+
+      for d in _.sortBy data, 'path'
+        dir = getSubtree(getParent(d.path)).items.push _.extend(d, {items: [], key: d.path})
+
+      while dirTree.items.length is 1 and not dir.path
+        dirTree = dirTree.items[0]
 
       console.log dirTree
 
@@ -79,9 +111,9 @@ dataStore =
     @DB.addDir dbRec # {path: dir.path, added: new Date()}
 
   photoToDB: (photo) ->
-    @DB.getPhoto(photo.path + 'adf').then (data) ->
-      return if data?
-      @DB.addPhoto photo
+    # @DB.getPhoto(photo.path + 'adf').then (data) ->
+    #   return if data?
+    @DB.addPhoto photo
       # @photos.push photo
 
   scan: ->
@@ -108,8 +140,8 @@ dataStore =
       @files++
 
     processFile = (fileObject) =>
-      # @photoToDB fileObject
-      # console.log '%csome file sent to process', 'color: #bada55'
+      @photoToDB fileObject
+      console.log '%csome file sent to process', 'color: #bada55'
       @scannedFiles++
       # @trigger({})
 

@@ -9,14 +9,19 @@ body
   margin: 0
   padding: 0
 
+td
+  padding-right: 10px
+
 #content
   width: 400px
   font-size: 8pt
+  position: relative
 
 .main_nav a
   color: $accent-color
   text-decoration: none
   padding-right: 20px
+
 .main_nav a:hover
   color: #FB6
 
@@ -24,12 +29,34 @@ body
   background: #333
   padding: 10px 20px
 
+.main_nav a.active
+  color: #FD9
+
 .main_content
   padding: 10px 20px
 
+#left_panel
+  width: 300px
+  position: absolute
+  left: 0
+  bottom: 0
+  top: 38px
+  padding: 5px
+  // border-right: 1px solid #333
+  background: #e0e8f0
+  overflow: auto
+
+#right_content
+  position: absolute
+  left: 310px
+  right: 0
+  bottom: 0
+  top: 38px
+  padding: 5px
+  overflow: auto
+
 .treeSubNodes
   padding-left: 16px
-
 
 .dirTriangle
   font-size: 60%
