@@ -9,7 +9,8 @@ Router = require 'react-router'
 
 
 config = require './config'
-TreeNode = require './components/Tree'
+# TreeNode = require './components/TreeNode'
+# Tree = require './components/Tree'
 ProcessService = require './services/ProcessService'
 dirStore = require './stores/DirStore'
 PageStore = require './stores/PageStore'

@@ -7,8 +7,8 @@ TreeNode = React.createClass
     collapsed: true
 
   clickHandler: (e) ->
-    console.log 'node event'
-    @setState collapsed: !@state.collapsed
+    # console.log 'node event'
+    # @setState collapsed: !@state.collapsed
 
   render: ->
     unless @props.items?

@@ -2,7 +2,7 @@ DirStore = require '../stores/DirStore'
 React = require 'react'
 R = React.DOM
 Reflux = require 'reflux'
-TreeNode = require '../components/Tree'
+Tree = require '../components/Tree'
 Actions = require '../actions'
 
 Page = React.createClass
@@ -13,16 +13,17 @@ Page = React.createClass
 
   treeItemClickHandler: (event) ->
     console.log 'item was clicked somehow: ', event
-    Actions.selectDirectory(event)
+    # Actions.selectDirectory(event)
 
 
   render: ->
+    console.log 'rendering data page'
     R.div {},
       R.div {id: 'left_panel'},
-        React.createElement TreeNode,
+        React.createElement Tree,
+
           onClick: @treeItemClickHandler
-          items: DirStore.dirTree['items']
-          name: DirStore.dirTree['name']
+          data: DirStore.dirTree
       R.div {id: 'right_content'},
         R.p {}, 'count: ' + DirStore.photos.length
         R.table {},
