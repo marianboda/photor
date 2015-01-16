@@ -15,9 +15,7 @@ Page = React.createClass
     console.log 'item was clicked somehow: ', event
     # Actions.selectDirectory(event)
 
-
   render: ->
-    console.log 'rendering data page'
     R.div {},
       R.div {id: 'left_panel'},
         React.createElement Tree,

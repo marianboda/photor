@@ -8,33 +8,28 @@ console.log 'Tree init'
 
 Tree = React.createClass
   displayName: 'Tree'
+  selectedItem: null
+
   getInitialState: ->
     collapsed: false
 
   clickHandler: (e) ->
-    console.log 'Tree event', e
-    @props.onClick?(@props.path)
+    @props.onClick?(e)
+    @selectedItem = e
+    @forceUpdate()
 
   render: ->
-    unless @props.data?
-      return R.div {}
+    return R.div {} unless @props.data?
+
     collapsed = @props.collapsed ? @state.collapsed
     treeNodeProps =
       onClick: @clickHandler
       collapsed: collapsed
       name: @props.data.name
       items: @props.data.items
+      selectedItem: @selectedItem
 
-    console.log 'nodeprosp', treeNodeProps
-    # console.log 'props: ', @props
-    # nodes = if collapsed then null else @props.items.map (item) =>
-    #   React.createElement TreeNode, _.extend(item, {onClick: @props?.onClick, key: item.path})
-
-    R.div {key: @props.key, className:'tree'},
-      R.h3 {}, 'Tree: '
-      React.createElement TreeNode,
-        treeNodeProps
-      # React.createElement Node, {onClick: @clickHandler, collapsed, name: @props.data.name, items: @props.data.items}
-      # R.div {className: 'treeSubNodes'}, nodes unless collapsed
+    R.div {key: @props.key, className:'reac-tree'},
+      React.createElement TreeNode, treeNodeProps
 
 module.exports = Tree

@@ -9,21 +9,23 @@ TreeNode = React.createClass
     collapsed: true
 
   clickHandler: (e) ->
-    console.log 'treeEve', @props
-    @setState collapsed: !@state.collapsed
     @props.onClick?(@props.path)
+
+  toggleHandler: (e) ->
+    @setState collapsed: !@state.collapsed
 
   render: ->
     unless @props.items?
       return R.div {}
     collapsed = @props.collapsed ? @state.collapsed
 
-    # console.log 'props: ', @props
-    nodes = if collapsed then null else @props.items.map (item) =>
-      React.createElement TreeNode, _.extend(item, {onClick: @props?.onClick, key: item.path})
+    selected = @props.selectedItem is @props.path
 
-    R.div {key: @props.key, className:'treeNode'},
-      React.createElement Node, {onClick: @clickHandler, collapsed, name: @props.name, items: @props.items}
-      R.div {className: 'treeSubNodes'}, nodes unless collapsed
+    nodes = if collapsed then null else @props.items.map (item) =>
+      React.createElement TreeNode, _.extend(item, {onClick: @props?.onClick, key: item.path, selectedItem: @props.selectedItem})
+
+    R.div {key: @props.key, className:'tree-node-container'},
+      React.createElement Node, {onClick: @clickHandler, onToggle: @toggleHandler, collapsed, name: @props.name, items: @props.items, selected: selected}
+      R.div {className: 'tree-sub-nodes'}, nodes unless collapsed
 
 module.exports = TreeNode

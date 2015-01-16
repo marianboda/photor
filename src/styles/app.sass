@@ -3,6 +3,12 @@ $primary-color: #333
 $grey: #ccc
 $accent-color: #F60
 
+=block
+  vertical-align: middle
+  display: inline-block
+  float: left
+
+
 body
   font: 100% $font-stack
   color: $primary-color
@@ -35,6 +41,9 @@ td
 .main_content
   padding: 10px 20px
 
+*
+  box-sizing: border-box
+
 #left_panel
   width: 300px
   position: absolute
@@ -55,25 +64,35 @@ td
   padding: 5px
   overflow: auto
 
-.treeSubNodes
-  padding-left: 16px
+.reac-tree
+  .tree-sub-nodes
+    padding-left: 16px
 
-.dirTriangle
-  font-size: 60%
-  display: inline-block
-  width: 1em
-  padding: 0 6px
-  color: $grey
+  .node-toggler
+    font-size: 60%
+    +block
+    padding: 3px
+    width: 20px
+    height: 16px
+    color: $grey
 
-.nodeName
-  cursor: pointer
+  .tree-node
+    cursor: pointer
+    overflow: hidden
+    padding: 2px
 
-.nodeName *
-  vertical-align: middle
+  .node-label
+    vertical-align: middle
+    +block
+    // overflow: hidden
 
-.sizeLabel
-  display: inline-block
-  float: right
+  .selected
+    color: red
+
+
+  .size-label
+    display: inline-block
+    float: right
 
 
 // .treeNode:before

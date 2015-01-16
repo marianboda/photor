@@ -7,8 +7,13 @@ TreeNode = React.createClass
     collapsed: true
 
   clickHandler: (e) ->
-    # console.log 'node event'
-    # @setState collapsed: !@state.collapsed
+    target = e.dispatchMarker.split('.').pop()
+    if target is '$toggler'
+      console.log 'toggle collapse'
+      @props.onToggle?(e)
+    else
+      console.log 'select'
+      @props.onClick?(e)
 
   render: ->
     unless @props.items?
@@ -20,9 +25,9 @@ TreeNode = React.createClass
       React.createElement TreeNode, item
     lengthString = if @props.items.length > 0 then @props.items.length + '' else '--'
 
-    R.div {onClick: @props.onClick, className: 'nodeName'},
-      R.span {className: 'dirTriangle'}, triangle
-      R.span {}, @props.name
-      R.span {className: 'sizeLabel'}, lengthString
+    R.div {onClick: @clickHandler, className: 'tree-node' + if @props.selected then ' selected' else ''},
+      R.div {className: 'node-toggler', key: 'toggler'}, triangle
+      R.div {className: 'node-label'}, @props.name
+      R.div {className: 'size-label'}, lengthString
 
 module.exports = TreeNode
