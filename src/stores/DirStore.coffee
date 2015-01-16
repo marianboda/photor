@@ -22,12 +22,15 @@ dataStore =
   dirTree: {name: 'root', items: []}
   files: 0
   selectedDir: null
+  currentPhotos: []
 
   DB: new DB
   init: ->
     @DB.getPhotos().then (data) =>
       console.log data.length
-      @photos = data[0..30]
+      @photos = data
+      @currentPhotos = data[0..30]
+      console.log @currentPhotos
       @trigger()
 
     @dirsFromDB()
@@ -39,7 +42,10 @@ dataStore =
 
     @listenTo Actions.selectDirectory, (dir) ->
       console.log 'listened to Select dir', dir
+      @currentPhotos = @photos.filter (item) ->
+        item.dir is dir
       @selectedDir = dir
+      @trigger()
 
   dirsFromDB: ->
     @DB.getDirs().then (data) =>
@@ -114,6 +120,7 @@ dataStore =
     # @DB.getPhoto(photo.path + 'adf').then (data) ->
     #   return if data?
     @DB.addPhoto photo
+    # console.log 'todb', photo
       # @photos.push photo
 
   scan: ->
@@ -141,7 +148,7 @@ dataStore =
 
     processFile = (fileObject) =>
       @photoToDB fileObject
-      console.log '%csome file sent to process', 'color: #bada55'
+      # console.log '%csome file sent to process', 'color: #bada55'
       @scannedFiles++
       # @trigger({})
 
@@ -162,6 +169,7 @@ dataStore =
                   thisDir.files.push f
                   processFile
                     name: f
+                    dir: dirPath
                     stat: stat
 
                 else

@@ -23,8 +23,8 @@ Page = React.createClass
           onClick: @treeItemClickHandler
           data: DirStore.dirTree
       R.div {id: 'right_content'},
-        R.p {}, 'count: ' + DirStore.photos.length
+        R.p {}, 'count: ' + DirStore.currentPhotos.length
         R.table {},
-          R.tr({}, [R.td({}, i),R.td({}, item.name)]) for item,i in DirStore.photos
+          R.tr({}, [R.td({}, i),R.td({}, item.name)]) for item,i in DirStore.currentPhotos
 
 module.exports = Page
