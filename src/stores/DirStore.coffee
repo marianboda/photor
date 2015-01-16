@@ -37,9 +37,9 @@ dataStore =
       console.log 'listened'
       @scan()
 
-    @listenTo Actions.selectDirectory, ->
-      console.log 'listened'
-      @scan()
+    @listenTo Actions.selectDirectory, (dir) ->
+      console.log 'listened to Select dir', dir
+      @selectedDir = dir
 
   dirsFromDB: ->
     @DB.getDirs().then (data) =>

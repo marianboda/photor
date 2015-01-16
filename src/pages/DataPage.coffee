@@ -13,7 +13,7 @@ Page = React.createClass
 
   treeItemClickHandler: (event) ->
     console.log 'item was clicked somehow: ', event
-    # Actions.selectDirectory(event)
+    Actions.selectDirectory(event)
 
   render: ->
     R.div {},
