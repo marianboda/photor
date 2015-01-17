@@ -6,6 +6,7 @@ fs = require 'fs'
 async = require 'async'
 Path = require 'path'
 config = require '../config'
+TreeUtils = require '../utils/TreeUtils'
 _ = require 'lodash'
 
 dataStore =
@@ -27,93 +28,40 @@ dataStore =
   DB: new DB
   init: ->
     @DB.getPhotos().then (data) =>
-      console.log data.length
+      console.log 'Photos in db: ', data.length
       @photos = data
       @currentPhotos = data[0..30]
-      console.log @currentPhotos
       @trigger()
 
     @dirsFromDB()
 
 
     @listenTo Actions.scan, ->
-      console.log 'listened'
       @scan()
 
     @listenTo Actions.selectDirectory, (dir) ->
-      console.log 'listened to Select dir', dir
-      @currentPhotos = @photos.filter (item) ->
-        item.dir is dir
+      @currentPhotos = @photos.filter (item) -> item.dir is dir
       @selectedDir = dir
+      @trigger()
+
+    @listenTo Actions.addDirectoryToLibrary, (dirs) ->
+      @scanningPaths = _.uniq(@scanningPaths.concat(dirs).sort())
+      @trigger()
+
+    @listenTo Actions.removeDirectoryFromLibrary, (path) ->
+      @scanningPaths = _.without @scanningPaths, path
       @trigger()
 
   dirsFromDB: ->
     @DB.getDirs().then (data) =>
-
       console.log 'dirs in db: ', data.length
-      # @dirs = data[0..30]
-      dirTree =
-        name: '---'
-        items: []
-      # getSubtree = (path) ->
-      #   parts = path.split(Path.sep)
-      #   parts.shift() if parts[0] is ''
-      #   current = dirTree
-      #   for p in parts
-      #     found = -1
-      #     for item, i in current.items
-      #       if item.name is p
-      #         found = i
-      #         break
-      #     if found is -1
-      #       current.items.push {name: p, items: []}
-      #       console.log item
-      #       found = current.items.length-1
-      #     current = current.items[found]
-      #   current
-
-      getSubtree = (path) ->
-        parts = path.split(Path.sep)
-        parts.shift() if parts[0] is ''
-        current = dirTree
-        for p in parts
-          found = -1
-          for item, i in current.items
-            if item.name is p
-              found = i
-              break
-          if found is -1
-            current.items.push {name: p, items: []}
-            console.error 'fail! path: ' + path + ': ' + p
-            found = current.items.length-1
-          current = current.items[found]
-        current
-
-      getParent = (str) ->
-        str.substr(0, str.lastIndexOf(Path.sep))
-
-      for d in _.sortBy data, 'path'
-        dir = getSubtree(getParent(d.path)).items.push _.extend(d, {items: [], key: d.path})
-
-      while dirTree.items.length is 1 and not dir.path
-        dirTree = dirTree.items[0]
-
-      console.log dirTree
-
-      @dirTree = dirTree
-
+      @dirTree = TreeUtils.buildTree data, null, null, 'name'
       @trigger()
 
-
   dirToDB: (dir) ->
-
     dbRec = {}
-
     for field of dir
       dbRec[field] = dir[field] unless field in ['items']
-
-    # console.log dbRec
-
     @DB.addDir dbRec # {path: dir.path, added: new Date()}
 
   photoToDB: (photo) ->
@@ -125,6 +73,7 @@ dataStore =
 
   scan: ->
     @files = 0
+    @scannedFiles = 0
     console.log 'SCANNING STARTED'
 
     scanDir = (dir, callback) ->
@@ -138,12 +87,9 @@ dataStore =
         # (err, dirRecord) => @dirToDB(dirRecord)
         (err, dirRecord) =>
           if dirObject.parent?
-            # console.log 'dirOb', dirObject
             dirObject.parent.items.push dirRecord
           else
             @dirs.push dirRecord
-
-          # console.log dirRecord, parentPath
       @files++
 
     processFile = (fileObject) =>
@@ -170,6 +116,7 @@ dataStore =
                   processFile
                     name: f
                     dir: dirPath
+                    path: filePath
                     stat: stat
 
                 else
@@ -221,11 +168,6 @@ dataStore =
         # console.log callback1 if callback1?
         # if callback1?
           # console.log 'all Traversal done'
-
-
-
-
-
 
     walkQueue.drain = =>
       console.log "Q DONE: " + @files
