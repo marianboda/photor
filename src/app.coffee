@@ -7,10 +7,7 @@ Q = require 'q'
 file = require 'file'
 Router = require 'react-router'
 
-
 config = require './config'
-# TreeNode = require './components/TreeNode'
-# Tree = require './components/Tree'
 ProcessService = require './services/ProcessService'
 dirStore = require './stores/DirStore'
 PageStore = require './stores/PageStore'
@@ -19,9 +16,6 @@ Actions = require './actions'
 Dispatcher = new Flux.Dispatcher()
 Route = Router.Route
 R = React.DOM
-console.log PageStore
-# PageStore.init()
-
 
 App = React.createClass
   displayName: 'App'
@@ -43,6 +37,4 @@ PageStore.listen (status) ->
   Router.run routes, (Handler, state) ->
     React.render React.createElement(Handler, {params: state.params}), document.body
 
-
-
-window.onload = ->
+# window.onload = ->
