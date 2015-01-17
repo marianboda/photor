@@ -53,7 +53,7 @@ dataStore =
   dirsFromDB: ->
     @DB.getDirs().then (data) =>
       console.log 'dirs in db: ', data.length
-      @dirTree = TreeUtils.buildTree data, null, null, 'name'
+      @dirTree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
       @trigger()
 
   dirToDB: (dir) ->
