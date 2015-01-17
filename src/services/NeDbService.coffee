@@ -8,7 +8,9 @@ db =
   photo: new DB {filename: "#{config.DB_PATH}/photos.nedb", autoload: true}
 
 db.dir.ensureIndex {fieldName: 'path', unique: true}, (err) ->
-  console.error err if err?
+  # console.error err if err?
+db.photo.ensureIndex {fieldName: 'path', unique: true}, (err) ->
+  # console.error err if err?
 
 class DbService
   constructor: ->
@@ -45,9 +47,9 @@ class DbService
   addPhoto: (photo) ->
     defer = $q.defer()
     db.photo.insert photo, (err, newrec) ->
-      if err?
-        console.error err
-        return defer.reject err
+      # if err?
+      #   console.error err
+      #   return defer.reject err
       defer.resolve newrec
     defer.promise
 
