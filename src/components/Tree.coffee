@@ -4,8 +4,6 @@ Node = require './Node'
 _ = require 'lodash'
 TreeNode = require './TreeNode'
 
-console.log 'Tree init'
-
 Tree = React.createClass
   displayName: 'Tree'
   selectedItem: null
