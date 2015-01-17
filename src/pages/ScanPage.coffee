@@ -6,6 +6,9 @@ Reflux = require 'reflux'
 React = require 'react'
 R = React.DOM
 
+remote = require 'remote'
+Dialog = remote.require 'dialog'
+
 Actions = require '../actions'
 
 Page = React.createClass
@@ -20,19 +23,20 @@ Page = React.createClass
   processButtonClickHandler: ->
     # Actions.processDirTree()
 
+  addDirectoryHandler: ->
+    Dialog.showOpenDialog {properties: ['openDirectory', 'multiSelections']}, (files) ->
+      Actions.addDirectoryToLibrary files
+
+  removeDirectoryHandler: (e) ->
+    Actions.removeDirectoryFromLibrary e.dispatchMarker.split('.').pop()[1..]
+
   render: ->
-    # console.log 'rndr'
     R.div {},
-      R.h3 {}, 'SCAN: ' + @props.params.id
       R.h4 {}, 'Scanned Paths:'
       R.ul {},
         DirStore.scanningPaths.map \
-          (item) -> R.li {key: item}, item
-      R.h4 {}, 'Tree:'
-      React.createElement TreeNode,
-        items: DirStore.data.get('items') #DirStore.data.get('items')
-        name: DirStore.data.get('name') #DirStore.data.get('name')
-      R.hr {}
+          (item) => R.li {key: item}, [item, R.button({onClick: @removeDirectoryHandler, key: item}, '-')]
+      R.button {onClick: @addDirectoryHandler}, '+'
       R.button {onClick: @buttonClickHandler}, 'SCAN'
       R.button {onClick: @processButtonClickHandler}, 'PROCESS TREE'
       R.hr {}
