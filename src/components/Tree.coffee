@@ -6,14 +6,12 @@ TreeNode = require './TreeNode'
 
 Tree = React.createClass
   displayName: 'Tree'
-  selectedItem: null
 
   getInitialState: ->
     collapsed: false
 
   clickHandler: (e) ->
     @props.onClick?(e)
-    @selectedItem = e
     @forceUpdate()
 
   render: ->
@@ -25,7 +23,7 @@ Tree = React.createClass
       collapsed: collapsed
       name: @props.data.name
       items: @props.data.items
-      selectedItem: @selectedItem
+      selectedItem: @props.selectedItem
 
     R.div {key: @props.key, className:'reac-tree'},
       React.createElement TreeNode, treeNodeProps
