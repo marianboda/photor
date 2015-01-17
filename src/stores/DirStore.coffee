@@ -35,9 +35,7 @@ dataStore =
 
     @dirsFromDB()
 
-
-    @listenTo Actions.scan, ->
-      @scan()
+    @listenTo Actions.scan, -> @scan()
 
     @listenTo Actions.selectDirectory, (dir) ->
       @currentPhotos = @photos.filter (item) -> item.dir is dir
@@ -174,12 +172,8 @@ dataStore =
       # @data = I.Map @dirs[0]
       @data = I.Map processTree(@dirs[0])
       @trigger {}
-
       traverseTree(@dirs[0], @dirToDB, 1)
-
       @trigger {}
-
-
 
     @scanningPaths.map (item) -> processDir {path: item}
 
