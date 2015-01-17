@@ -4,15 +4,14 @@ R = React.DOM
 TreeNode = React.createClass
   displayName: 'TreeNodeTitle'
   getInitialState: ->
-    collapsed: true
+    # collapsed: true
+    null
 
   clickHandler: (e) ->
     target = e.dispatchMarker.split('.').pop()
     if target is '$toggler'
-      console.log 'toggle collapse'
       @props.onToggle?(e)
     else
-      console.log 'select'
       @props.onClick?(e)
 
   render: ->
