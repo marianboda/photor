@@ -24,6 +24,7 @@ Page = React.createClass
       R.div {id: 'right_content'},
         R.p {}, 'count: ' + DirStore.currentPhotos.length
         R.table {},
-          R.tr({key: item.name}, [R.td({key: item.name}, i),R.td({key: 'td2'+item.name}, item.name)]) for item,i in DirStore.currentPhotos
+          R.tbody {},
+            R.tr({key: item.name}, [R.td({key: item.name}, i),R.td({key: 'td2'+item.name}, item.name)]) for item,i in DirStore.currentPhotos
 
 module.exports = Page
