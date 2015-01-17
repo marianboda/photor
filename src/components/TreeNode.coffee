@@ -13,8 +13,13 @@ TreeNode = React.createClass
     @props.onClick?(@props.path)
 
   toggleHandler: (e) ->
-    localStorage.setItem("DirTreeNode-"+@props?.path, JSON.stringify(!@state.collapsed))
-    @setState collapsed: !@state.collapsed
+    collapsed = !@state.collapsed
+    console.log 'collapsed', collapsed, typeof collapsed
+    if collapsed
+      localStorage.removeItem("DirTreeNode-"+@props?.path)
+    else
+      localStorage.setItem("DirTreeNode-"+@props?.path, JSON.stringify(collapsed))
+    @setState collapsed: collapsed
 
   render: ->
     unless @props.items?
