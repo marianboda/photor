@@ -21,6 +21,7 @@ TreeNode = React.createClass
     collapsed: savedState ? true
 
   clickHandler: (e) ->
+    console.log @props
     @props.onClick?(@props.path)
 
   toggleHandler: (e) ->
@@ -38,11 +39,14 @@ TreeNode = React.createClass
     collapsed = @props.collapsed ? @state.collapsed
 
     selected = @props.selectedItem is @props.path
+
+    console.log 'sel ', @props.selectedItem
+
     nodes = if collapsed then null else @props.items.map (item) =>
       React.createElement TreeNode,
         data: item
         name: item.name
-        key: item.path
+        path: item.path
         items: item.items
         onClick: @props?.onClick
         selectedItem: @props.selectedItem
