@@ -28,9 +28,10 @@ Tree = React.createClass
     treeNodeProps =
       onClick: @clickHandler
       collapsed: collapsed
+      data: @props.data
       name: @props.data.name
       items: @props.data.items
-      data: @props.data
+      path: @props.path
       selectedItem: @props.selectedItem
       persistKeyPrefix: @props.persistKey
       nodeRenderer: @props.nodeRenderer
