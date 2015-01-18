@@ -25,6 +25,6 @@ TreeNode = React.createClass
     R.div {onClick: @clickHandler, className: 'tree-node' + if @props.selected then ' selected' else ''},
       R.div {className: 'node-toggler', key: 'toggler'}, triangle
       R.div {className: 'node-label'}, @props.data.name
-      R.div {className: 'size-label'}, @props.data.deepFilesCount
+      R.div {className: 'size-label'}, (@props.data.files?.length) + ' | ' + @props.data.deepFilesCount
 
 module.exports = TreeNode
