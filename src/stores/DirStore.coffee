@@ -53,7 +53,31 @@ dataStore =
   dirsFromDB: ->
     @DB.getDirs().then (data) =>
       console.log 'dirs in db: ', data.length
-      @dirTree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
+      console.log data[0...5]
+
+      dirTree =  TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
+
+      newTree = TreeUtils.transform dirTree, (item) ->
+        # console.log item.name
+
+        item.count = item.items.length + item.items.reduce (prev, current) ->
+          prev + (current.count ? 0)
+        ,0
+        item.unrecognizedCount = (item.unrecognizedCount ? 0) + item.items.reduce (prev, current) ->
+          prev + (current.unrecognizedCount ? 0)
+        ,0
+
+        item.deepFilesCount = if item.files?.length? then item.files.length else 0
+        item.deepFilesCount += item.items.reduce (prev, current) ->
+          prev + (current.deepFilesCount ? 0)
+        ,0
+
+      console.log data
+      console.log 'new Tree'
+
+      console.log newTree
+
+      @dirTree = newTree
       @trigger()
 
   dirToDB: (dir) ->

@@ -1,11 +1,18 @@
 React = require 'react'
 R = React.DOM
-Node = require './Node'
+Types = React.PropTypes
 _ = require 'lodash'
 TreeNode = require './TreeNode'
 
 Tree = React.createClass
   displayName: 'Tree'
+
+  propTypes: ->
+    data: Types.object
+    persistKey: Types.string
+    selectedItem: Types.string
+    collapsed: Types.bool
+    nodeRenderer: Types.element
 
   getInitialState: ->
     collapsed: false
@@ -23,7 +30,10 @@ Tree = React.createClass
       collapsed: collapsed
       name: @props.data.name
       items: @props.data.items
+      data: @props.data
       selectedItem: @props.selectedItem
+      persistKeyPrefix: @props.persistKey
+      nodeRenderer: @props.nodeRenderer
 
     R.div {key: @props.key, className:'reac-tree'},
       React.createElement TreeNode, treeNodeProps

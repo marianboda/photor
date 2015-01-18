@@ -5,18 +5,18 @@ class TreeUtils
   @traversePost = (node, callback, itemsField) ->
     itemsField ?= 'items'
     if node[itemsField]?.length > 0
-      traversePost(sub, callback) for sub in node[itemsField]
+      @traversePost(sub, callback) for sub in node[itemsField]
     callback node
 
   @traverse = (node, callback, itemsField) ->
     itemsField ?= 'items'
-    if node[itemsField]?.length > 0
-      traverse(sub, callback) for sub in node[itemsField]
     callback node
+    if node[itemsField]?.length > 0
+      @traverse(sub, callback) for sub in node[itemsField]
 
   @transform = (node, callback, itemsField) ->
     newTree = _.cloneDeep node
-    traverse(newTree, callback, itemsField)
+    @traversePost(newTree, callback, itemsField)
     newTree
 
   @transformPost = (node, callback, itemsField) ->

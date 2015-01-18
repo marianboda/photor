@@ -3,6 +3,7 @@ React = require 'react'
 R = React.DOM
 Reflux = require 'reflux'
 Tree = require '../components/Tree'
+DirNodeRenderer = require '../components/DirNodeRenderer'
 Actions = require '../actions'
 
 Page = React.createClass
@@ -21,6 +22,8 @@ Page = React.createClass
           selectedItem: DirStore.selectedDir
           onClick: @treeItemClickHandler
           data: DirStore.dirTree
+          persistKey: 'dirTree'
+          nodeRenderer: DirNodeRenderer
       R.div {id: 'right_content'},
         R.p {}, 'count: ' + DirStore.currentPhotos.length
         R.table {},
