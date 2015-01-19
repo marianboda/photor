@@ -10,12 +10,7 @@ TreeUtils = require '../utils/TreeUtils'
 _ = require 'lodash'
 
 dataStore =
-  scanningPaths: [
-    # "#{process.env.HOME}/temp/raw/aaa/ccc/eee"
-    "#{process.env.HOME}/temp"
-    # "#{process.env.HOME}"
-    # "/Volumes/HardDrive/Foto"
-  ]
+  scanningPaths: []
   scannedFiles: 0
   totalFiles: 0
   photos: []
@@ -27,6 +22,11 @@ dataStore =
 
   DB: new DB
   init: ->
+    @DB.getScanningPaths().then (data) =>
+      console.log 'Paths in db: ',data
+      @scanningPaths = data.map (item) -> item.path
+      @trigger()
+
     @DB.getPhotos().then (data) =>
       console.log 'Photos in db: ', data.length
       @photos = data
@@ -44,6 +44,8 @@ dataStore =
 
     @listenTo Actions.addDirectoryToLibrary, (dirs) ->
       @scanningPaths = _.uniq(@scanningPaths.concat(dirs).sort())
+      for s in dirs
+        @DB.addScanningPath s
       @trigger()
 
     @listenTo Actions.removeDirectoryFromLibrary, (path) ->
@@ -57,8 +59,6 @@ dataStore =
       dirTree =  TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
 
       newTree = TreeUtils.transform dirTree, (item) ->
-        # console.log item.name
-
         item.count = item.items.length + item.items.reduce (prev, current) ->
           prev + (current.count ? 0)
         ,0
@@ -70,6 +70,9 @@ dataStore =
         item.deepFilesCount += item.items.reduce (prev, current) ->
           prev + (current.deepFilesCount ? 0)
         ,0
+
+      for s in @scanningPaths
+        console.log s
 
       @dirTree = newTree
       @trigger()

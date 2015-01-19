@@ -6,16 +6,27 @@ config = require '../config'
 db =
   dir: new DB {filename: "#{config.DB_PATH}/dirs.nedb", autoload: true}
   photo: new DB {filename: "#{config.DB_PATH}/photos.nedb", autoload: true}
+  scanningPaths: new DB {filename: "#{config.DB_PATH}/scanningPaths.nedb", autoload: true}
 
 db.dir.ensureIndex {fieldName: 'path', unique: true}, (err) ->
   # console.error err if err?
 db.photo.ensureIndex {fieldName: 'path', unique: true}, (err) ->
   # console.error err if err?
+db.scanningPaths.ensureIndex {fieldName: 'path', unique: true}, (err) ->
 
 class DbService
   constructor: ->
   getSome: ->
     console.log 'gettin some'
+
+  addScanningPath: (path) ->
+    db.scanningPaths.insert {path: path}
+
+  getScanningPaths: () ->
+    defer = $q.defer()
+    db.scanningPaths.find {}, (err, rec) ->
+      defer.resolve(rec)
+    defer.promise
 
   addDir: (dir) ->
     db.dir.find {path: dir.path}, (err, rec) ->
