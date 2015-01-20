@@ -71,10 +71,12 @@ dataStore =
           prev + (current.deepFilesCount ? 0)
         ,0
 
-      for s in @scanningPaths
-        console.log s
 
-      @dirTree = newTree
+      current = newTree
+      current = current.items[0] until current.items.count is 0 or current.items[0].files?
+      console.log current.path
+
+      @dirTree = current
       @trigger()
 
   dirToDB: (dir) ->

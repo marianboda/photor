@@ -14,8 +14,8 @@ Tree = React.createClass
     collapsed: Types.bool
     nodeRenderer: Types.element
 
-  getInitialState: ->
-    collapsed: false
+  # getInitialState: ->
+  #   collapsed: false
 
   clickHandler: (e) ->
     @props.onClick?(e)
@@ -24,10 +24,10 @@ Tree = React.createClass
   render: ->
     return R.div {} unless @props.data?
 
-    collapsed = @props.collapsed ? @state.collapsed
+    # collapsed = @props.collapsed ? @state.collapsed
     treeNodeProps =
       onClick: @clickHandler
-      collapsed: collapsed
+      # collapsed: collapsed
       data: @props.data
       name: @props.data.name
       items: @props.data.items
