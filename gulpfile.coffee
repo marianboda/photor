@@ -28,6 +28,7 @@ gulp.task 'downloadatomshell', (cb) ->
   , cb
 
 gulp.task 'demo', shell.task(["#{destDirs.binaries}/Atom.app/Contents/MacOS/Atom ."])
+gulp.task 'linux', shell.task(["#{destDirs.binaries}/atom ."])
 
 gulp.task 'lint', ->
   gulp.src(paths.csFiles).pipe(coffeelint()).pipe(coffeelint.reporter())
