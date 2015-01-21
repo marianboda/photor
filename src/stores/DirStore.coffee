@@ -22,55 +22,60 @@ dataStore =
 
   DB: new DB
   init: ->
-    @DB.getScanningPaths().then (data) =>
-      console.log 'Paths in db: ',data
-      @scanningPaths = data.map (item) -> item.path
-      @trigger()
 
-    @DB.getPhotos().then (data) =>
-      console.log 'Photos in db: ', data.length
-      @photos = data
-      @currentPhotos = data[0..30]
-      @trigger()
+    @loadScanningPaths()
+    @loadPhotos()
+    @loadDirs()
 
-    @dirsFromDB()
-
-    @listenTo Actions.scan, -> @scan()
+    @listenTo Actions.scan, @scan
 
     @listenTo Actions.selectDirectory, (dir) ->
       @currentPhotos = @photos.filter (item) -> item.dir is dir
       @selectedDir = dir
       @trigger()
 
-    @listenTo Actions.addDirectoryToLibrary, (dirs) ->
-      @scanningPaths = _.uniq(@scanningPaths.concat(dirs).sort())
-      for s in dirs
-        @DB.addScanningPath s
+    @listenTo Actions.addDirectoryToLibrary, (paths) ->
+      newPaths = _.without(paths, @scanningPaths)
+      @scanningPaths = _.uniq(@scanningPaths.concat(newPaths).sort())
+      @DB.addScanningPath s for s in newPaths
       @trigger()
 
     @listenTo Actions.removeDirectoryFromLibrary, (path) ->
       @scanningPaths = _.without @scanningPaths, path
       @trigger()
 
-  dirsFromDB: ->
+  loadPhotos: ->
+    @DB.getPhotos().then (data) =>
+      console.log 'Photos in db: ', data.length
+      @photos = data
+      @currentPhotos = data[0..30]
+      @trigger()
+
+  loadScanningPaths: ->
+    @DB.getScanningPaths().then (data) =>
+      console.log 'Paths in db: ',data
+      @scanningPaths = data.map (item) -> item.path
+      @trigger()
+
+  loadDirs: ->
     @DB.getDirs().then (data) =>
       console.log 'dirs in db: ', data.length
 
       dirTree =  TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
 
       newTree = TreeUtils.transform dirTree, (item) ->
-        item.count = item.items.length + item.items.reduce (prev, current) ->
-          prev + (current.count ? 0)
-        ,0
-        item.unrecognizedCount = (item.unrecognizedCount ? 0) + item.items.reduce (prev, current) ->
-          prev + (current.unrecognizedCount ? 0)
-        ,0
+        subCountReducer = (field) ->
+          (prev, current) -> prev + (current[field] ? 0)
+        sumField = (node, field, initField) ->
+          reducer = subCountReducer(field)
+          node.items.reduce reducer, (node[initField] ? 0)
 
-        item.deepFilesCount = if item.files?.length? then item.files.length else 0
-        item.deepFilesCount += item.items.reduce (prev, current) ->
-          prev + (current.deepFilesCount ? 0)
-        ,0
+        item.filesCount = if item.files?.length? then item.files.length else 0
 
+        # item.count = item.items.reduce subCountReducer('count'), item.items.length
+        # item.deepUnrecognizedCount = sumField 'deepUnrecognizedCount', 'unrecognizedCount'
+
+        item.deepFilesCount = sumField item, 'deepFilesCount', 'filesCount'
 
       current = newTree
       current = current.items[0] until current.items.count is 0 or current.items[0].files?
