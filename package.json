@@ -13,7 +13,8 @@
   "jest": {
     "scriptPreprocessor": "preprocessor.js",
     "testFileExtensions": ["coffee", "js"],
-    "moduleFileExtensions": ["coffee", "js"]
+    "moduleFileExtensions": ["coffee", "js"],
+    "unmockedModulePathPatterns": ["node_modules/react"]
   },
   "author": "Marian Boda",
   "license": "ISC",
