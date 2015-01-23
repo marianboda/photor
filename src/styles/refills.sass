@@ -1,0 +1,36 @@
+$badge-font-size: 0.8em !default
+$medium-gray: #999999 !default
+$alert-color: #fff6bf !default
+$error-color: #fbe3e4 !default
+$notice-color: #e5edf8 !default
+$success-color: #e6efc2 !default
+
+=badge($color: $medium-gray)
+  background-color: $color
+  border-radius: $badge-font-size * 5
+  color: darken($color, 60%)
+  display: inline-block
+  font-size: $badge-font-size
+  font-weight: 600
+  line-height: 1
+  padding: 0.4em 0.6em 0.4em 0.7em
+
+.half-badge-left
+  +badge(#EFC94C)
+  border-top-right-radius: 0
+  border-bottom-right-radius: 0
+  padding: 0.3em 0.2em 0.3em 0.5em
+
+.half-badge-right
+  +badge(#45B29D)
+  border-top-left-radius: 0
+  border-bottom-left-radius: 0
+  padding: 0.3em 0.4em 0.3em 0.3em
+
+.badge
+  +badge
+
+.badge-blue
+  +badge(#45B29D)
+.badge-orange
+  +badge(#E27A3F)

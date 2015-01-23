@@ -1,15 +1,33 @@
-$font-stack:    Helvetica, sans-serif
 $primary-color: #333
 $grey: #ccc
-$accent-color: #0099b7
-$hover-color: #8ab6b8
-$highlight-color: #00dbeb
+$accent-color: #5b96af
+$hover-color: lighten($accent-color, 10)
+$highlight-color: #EFC94C
+$dark-back: #334D5C
+$OpenSansPath: '../assets/fonts' !default
+
+@mixin fontdef($OpenSansPath, $FontType:"Regular")
+  // src:  url('#{$OpenSansPath}/#{$FontType}/OpenSans-#{$FontType}.eot')
+  src:  url('#{$OpenSansPath}/OpenSans-#{$FontType}.ttf') format('truetype')
+
+@font-face
+  font-family: 'Open Sans'
+  @include fontdef($OpenSansPath, "Regular")
+  font-weight: normal
+  font-style: normal
+
+$font-stack: 'Open Sans'
+
+*
+  font-size: 13px
+
+
+@import refills
 
 =block
   vertical-align: middle
   display: inline-block
   float: left
-
 
 body
   font: 100% $font-stack
@@ -34,7 +52,7 @@ td
   color: $hover-color
 
 .main_nav
-  background: #444
+  background: $dark-back
   padding: 10px 20px
 
 .main_nav a.active
@@ -81,6 +99,7 @@ td
   .tree-node
     cursor: pointer
     overflow: hidden
+    border-top: 1px solid #CCC
     padding: 2px
 
   .node-label
