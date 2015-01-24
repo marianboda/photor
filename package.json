@@ -12,9 +12,17 @@
   },
   "jest": {
     "scriptPreprocessor": "preprocessor.js",
-    "testFileExtensions": ["coffee", "js"],
-    "moduleFileExtensions": ["coffee", "js"],
-    "unmockedModulePathPatterns": ["node_modules/react"]
+    "testFileExtensions": [
+      "coffee",
+      "js"
+    ],
+    "moduleFileExtensions": [
+      "coffee",
+      "js"
+    ],
+    "unmockedModulePathPatterns": [
+      "node_modules/react"
+    ]
   },
   "author": "Marian Boda",
   "license": "ISC",
@@ -33,12 +41,14 @@
     "gulp-download-atom-shell": "0.0.4",
     "gulp-ruby-sass": "^0.7.1",
     "gulp-shell": "^0.2.11",
+    "icono": "^0.9.5",
     "immutable": "^3.4.1",
     "lodash": "^2.4.1",
     "nedb": "^1.0.1",
     "q": "^1.1.2",
     "react": "^0.12.2",
     "react-router": "^0.11.6",
+    "react-svg": "^1.0.0",
     "reflux": "^0.2.1"
   },
   "devDependencies": {

@@ -6,6 +6,8 @@ $highlight-color: #EFC94C
 $dark-back: #334D5C
 $OpenSansPath: '../assets/fonts' !default
 
+@import 'bourbon/_bourbon.scss'
+// @import 'base/base'
 @mixin fontdef($OpenSansPath, $FontType:"Regular")
   // src:  url('#{$OpenSansPath}/#{$FontType}/OpenSans-#{$FontType}.eot')
   src:  url('#{$OpenSansPath}/OpenSans-#{$FontType}.ttf') format('truetype')
@@ -13,8 +15,43 @@ $OpenSansPath: '../assets/fonts' !default
 @font-face
   font-family: 'Open Sans'
   @include fontdef($OpenSansPath, "Regular")
-  font-weight: normal
+  font-weight: 400
   font-style: normal
+@font-face
+  font-family: 'Open Sans'
+  @include fontdef($OpenSansPath, "Italic")
+  font-weight: 400
+  font-style: italic
+@font-face
+  font-family: 'Open Sans'
+  @include fontdef($OpenSansPath, "Light")
+  font-weight: 300
+  font-style: normal
+@font-face
+  font-family: 'Open Sans'
+  @include fontdef($OpenSansPath, "LightItalic")
+  font-weight: 300
+  font-style: italic
+@font-face
+  font-family: 'Open Sans'
+  @include fontdef($OpenSansPath, "Semibold")
+  font-weight: 600
+  font-style: normal
+@font-face
+  font-family: 'Open Sans'
+  @include fontdef($OpenSansPath, "SemiboldItalic")
+  font-weight: 600
+  font-style: italic
+@font-face
+  font-family: 'Open Sans'
+  @include fontdef($OpenSansPath, "Bold")
+  font-weight: 700
+  font-style: normal
+@font-face
+  font-family: 'Open Sans'
+  @include fontdef($OpenSansPath, "BoldItalic")
+  font-weight: 700
+  font-style: italic
 
 $font-stack: 'Open Sans'
 

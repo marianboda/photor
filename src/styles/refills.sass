@@ -5,6 +5,40 @@ $error-color: #fbe3e4 !default
 $notice-color: #e5edf8 !default
 $success-color: #e6efc2 !default
 
+td
+  border-bottom: 1px solid #ccc
+
+h4
+  font-size: 14px
+  margin: 4px
+
+button
+  background: #bada55
+  border: 0
+  border-radius: 4px
+  font-size: 12px
+  padding: 0.2em 0.3em
+  :focus
+    border: 1px solid #FF6600
+    background: #FFFFFF
+
+
+.button-text
+
+.svg-icon
+  width: 16px
+  path
+    fill: #333
+
+button
+  .svg-icon
+    display: inline-block
+    vertical-align: middle
+  span
+    display: inline-block
+    vertical-align: middle
+    margin-left: 0.3em
+
 =badge($color: $medium-gray)
   background-color: $color
   border-radius: $badge-font-size * 5

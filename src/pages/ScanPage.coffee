@@ -5,6 +5,7 @@ ProcessService = require '../services/ProcessService'
 Reflux = require 'reflux'
 React = require 'react'
 R = React.DOM
+Button = require '../components/IconButton'
 
 remote = require 'remote'
 Dialog = remote.require 'dialog'
@@ -17,7 +18,7 @@ Page = React.createClass
   componentDidMount: ->
     @listenTo DirStore, -> @forceUpdate()
 
-  buttonClickHandler: ->
+  scanButtonHandler: ->
     Actions.scan()
 
   processButtonClickHandler: ->
@@ -28,17 +29,23 @@ Page = React.createClass
       Actions.addDirectoryToLibrary files
 
   removeDirectoryHandler: (e) ->
+    console.log 'removing ', e.dispatchMarker.split('.').pop()[1..]
     Actions.removeDirectoryFromLibrary e.dispatchMarker.split('.').pop()[1..]
 
   render: ->
     R.div {},
-      R.h4 {}, 'Scanned Paths:'
-      R.ul {},
-        DirStore.scanningPaths.map \
-          (item) => R.li {key: item}, [item, R.button({onClick: @removeDirectoryHandler, key: item}, '-')]
-      R.button {onClick: @addDirectoryHandler}, '+'
-      R.button {onClick: @buttonClickHandler}, 'SCAN'
-      R.button {onClick: @processButtonClickHandler}, 'PROCESS TREE'
+      R.h4 {}, 'Scanned Paths'
+      R.table {},
+        R.tbody {},
+          DirStore.scanningPaths.map \
+            (item) =>
+              R.tr {key: item},
+                R.td {key: item+'_td'}, item
+                R.td {},
+                  React.createElement Button, {icon: 'minus', onClick: @removeDirectoryHandler, key: item}
+      R.br {}
+      React.createElement Button, {icon: 'plus', onClick: @addDirectoryHandler}
+      React.createElement Button, {icon: 'cycle', onClick: @scanButtonHandler}
       R.hr {}
       R.p {}, DirStore['scannedFiles']
 
