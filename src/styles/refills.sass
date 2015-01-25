@@ -1,12 +1,19 @@
 $badge-font-size: 0.8em !default
 $medium-gray: #999999 !default
 $alert-color: #fff6bf !default
-$error-color: #fbe3e4 !default
+$error-color: #DF5A49 !default
 $notice-color: #e5edf8 !default
 $success-color: #e6efc2 !default
 
-td
-  border-bottom: 1px solid #ccc
+table
+  border-collapse: collapse
+  border-top: 1px solid #eee
+  border-bottom: 1px solid #eee
+
+
+tr:nth-child(even) td
+  // border-bottom: 1px solid #ccc
+  background: #eef8ff
 
 h4
   font-size: 14px
@@ -18,22 +25,30 @@ button
   border-radius: 4px
   font-size: 12px
   padding: 0.2em 0.3em
-  :focus
-    border: 1px solid #FF6600
-    background: #FFFFFF
 
+button:focus
+  outline: none
 
-.button-text
+// .button-text
+
+.svg-icon.delete:hover
+  path
+    fill: #E27A3F
+
+.svg-icon.delete
+  path
+    fill: #EFC94C
 
 .svg-icon
-  width: 16px
-  path
-    fill: #333
+  display: inline-block
+  vertical-align: middle
+  width: 20px
 
 button
   .svg-icon
-    display: inline-block
-    vertical-align: middle
+    width: 16px
+    path
+      fill: #333
   span
     display: inline-block
     vertical-align: middle

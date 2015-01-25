@@ -22,6 +22,9 @@ class DbService
   addScanningPath: (path) ->
     db.scanningPaths.insert {path: path}
 
+  removeScanningPath: (path) ->
+    db.scanningPaths.remove {path: path}
+
   getScanningPaths: () ->
     defer = $q.defer()
     db.scanningPaths.find {}, (err, rec) ->

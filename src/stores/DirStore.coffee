@@ -42,6 +42,8 @@ dataStore =
 
     @listenTo Actions.removeDirectoryFromLibrary, (path) ->
       @scanningPaths = _.without @scanningPaths, path
+      @DB.removeScanningPath path
+      console.log 'scanning paths', @scanningPaths, path
       @trigger()
 
   loadPhotos: ->

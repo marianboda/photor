@@ -6,6 +6,7 @@ Reflux = require 'reflux'
 React = require 'react'
 R = React.DOM
 Button = require '../components/IconButton'
+Icon = require '../components/Icon'
 
 remote = require 'remote'
 Dialog = remote.require 'dialog'
@@ -29,8 +30,9 @@ Page = React.createClass
       Actions.addDirectoryToLibrary files
 
   removeDirectoryHandler: (e) ->
-    console.log 'removing ', e.dispatchMarker.split('.').pop()[1..]
-    Actions.removeDirectoryFromLibrary e.dispatchMarker.split('.').pop()[1..]
+    path = e.dispatchMarker.split('.')
+    path.pop()
+    Actions.removeDirectoryFromLibrary path.pop()[1..]
 
   render: ->
     R.div {},
@@ -42,7 +44,12 @@ Page = React.createClass
               R.tr {key: item},
                 R.td {key: item+'_td'}, item
                 R.td {},
-                  React.createElement Button, {icon: 'minus', onClick: @removeDirectoryHandler, key: item}
+                  React.createElement Icon,
+                    icon: 'squared-minus'
+                    key: item
+                    classes: ['delete']
+                    onClick: @removeDirectoryHandler
+
       R.br {}
       React.createElement Button, {icon: 'plus', onClick: @addDirectoryHandler}
       React.createElement Button, {icon: 'cycle', onClick: @scanButtonHandler}
