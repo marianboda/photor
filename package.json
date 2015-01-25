@@ -41,7 +41,6 @@
     "gulp-download-atom-shell": "0.0.4",
     "gulp-ruby-sass": "^0.7.1",
     "gulp-shell": "^0.2.11",
-    "icono": "^0.9.5",
     "immutable": "^3.4.1",
     "lodash": "^2.4.1",
     "nedb": "^1.0.1",

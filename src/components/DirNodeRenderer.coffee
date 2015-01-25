@@ -21,14 +21,15 @@ TreeNode = React.createClass
     triangle = if collapsed then '\u25b6' else '\u25bc'
     triangle = '' if @props.items.length is 0
     lengthString = if @props.items.length > 0 then @props.items.length + '' else '--'
-    filesCount = if @props.data.files? then @props.data.files.length else '-'
-    deepFilesCount = @props.data.deepFilesCount - filesCount ? '-'
+    deepFilesCount = if @props.data.deepFilesCount? then @props.data.deepFilesCount - @props.data.filesCount else '-'
 
     R.div {onClick: @clickHandler, className: 'tree-node' + if @props.selected then ' selected' else ''},
       R.div {className: 'node-toggler', key: 'toggler'}, triangle
       R.div {className: 'node-label'}, @props.data.name
       R.div {className: 'size-label'},
-        R.span {className: 'half-badge-left'}, filesCount
-        R.span {className: 'half-badge-right'}, deepFilesCount
+        R.span {className: 'half-badge-left'},
+          if @props.data.filesCount > 0 then@props.data.filesCount else '-'
+        R.span {className: 'half-badge-right'},
+          if deepFilesCount > 0 then deepFilesCount else '-'
 
 module.exports = TreeNode

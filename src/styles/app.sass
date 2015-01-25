@@ -58,9 +58,6 @@ $font-stack: 'Open Sans'
 *
   font-size: 13px
 
-
-@import refills
-
 =block
   vertical-align: middle
   display: inline-block
@@ -153,6 +150,91 @@ td
     display: inline-block
     float: right
 
+$badge-font-size: 0.8em !default
+$medium-gray: #999999 !default
+$alert-color: #fff6bf !default
+$error-color: #DF5A49 !default
+$notice-color: #e5edf8 !default
+$success-color: #e6efc2 !default
+
+table
+  border-collapse: collapse
+  border-top: 1px solid #eee
+  border-bottom: 1px solid #eee
+
+
+tr:nth-child(even) td
+  // border-bottom: 1px solid #ccc
+  background: #eef8ff
+
+h4
+  font-size: 14px
+  margin: 4px
+
+button
+  background: #45B29D
+  border: 0
+  border-radius: 4px
+  font-size: 12px
+  padding: 0.2em 0.3em
+
+button:focus
+  outline: none
+
+// .button-text
+
+.svg-icon.delete:hover
+  path
+    fill: #E27A3F
+
+.svg-icon.delete
+  path
+    fill: #EFC94C
+
+.svg-icon
+  display: inline-block
+  vertical-align: middle
+  width: 20px
+
+button
+  .svg-icon
+    width: 16px
+    path
+      fill: #333
+  span
+    display: inline-block
+    vertical-align: middle
+    margin-left: 0.3em
+
+=badge($color: $medium-gray)
+  background-color: $color
+  border-radius: $badge-font-size * 5
+  color: darken($color, 60%)
+  display: inline-block
+  font-size: $badge-font-size
+  font-weight: 600
+  line-height: 1
+  padding: 0.4em 0.6em 0.4em 0.7em
+
+.half-badge-left
+  +badge(#EFC94C)
+  border-top-right-radius: 0
+  border-bottom-right-radius: 0
+  padding: 0.3em 0.2em 0.3em 0.5em
+
+.half-badge-right
+  +badge(#45B29D)
+  border-top-left-radius: 0
+  border-bottom-left-radius: 0
+  padding: 0.3em 0.4em 0.3em 0.3em
+
+.badge
+  +badge
+
+.badge-blue
+  +badge(#45B29D)
+.badge-orange
+  +badge(#E27A3F)
 
 // .treeNode:before
 //   content: "\25B6"

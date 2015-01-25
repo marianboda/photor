@@ -7,12 +7,14 @@ db =
   dir: new DB {filename: "#{config.DB_PATH}/dirs.nedb", autoload: true}
   photo: new DB {filename: "#{config.DB_PATH}/photos.nedb", autoload: true}
   scanningPaths: new DB {filename: "#{config.DB_PATH}/scanningPaths.nedb", autoload: true}
+  ignorePaths: new DB {filename: "#{config.DB_PATH}/ignorePaths.nedb", autoload: true}
 
 db.dir.ensureIndex {fieldName: 'path', unique: true}, (err) ->
   # console.error err if err?
 db.photo.ensureIndex {fieldName: 'path', unique: true}, (err) ->
   # console.error err if err?
 db.scanningPaths.ensureIndex {fieldName: 'path', unique: true}, (err) ->
+db.ignorePaths.ensureIndex {fieldName: 'path', unique: true}, (err) ->
 
 class DbService
   constructor: ->
@@ -24,6 +26,12 @@ class DbService
 
   removeScanningPath: (path) ->
     db.scanningPaths.remove {path: path}
+
+  addIgnorePath: (path) ->
+    db.ignorePaths.insert {path: path}
+
+  removeIgnorePath: (path) ->
+    db.ignorePaths.remove {path: path}
 
   getScanningPaths: () ->
     defer = $q.defer()

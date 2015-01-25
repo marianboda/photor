@@ -78,9 +78,10 @@ dataStore =
         # item.deepUnrecognizedCount = sumField 'deepUnrecognizedCount', 'unrecognizedCount'
 
         item.deepFilesCount = sumField item, 'deepFilesCount', 'filesCount'
+        console.log item.path, item.deepFilesCount
 
       current = newTree
-      current = current.items[0] until current.items.count is 0 or current.items[0].files?
+      # current = current.items[0] until current.items.count is 0 or current.items[0].files?
       console.log current.path
 
       @dirTree = current
