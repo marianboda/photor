@@ -16,12 +16,12 @@ class TreeUtils
 
   @transform = (node, callback, itemsField) ->
     newTree = _.cloneDeep node
-    @traversePost(newTree, callback, itemsField)
+    @traverse(newTree, callback, itemsField)
     newTree
 
   @transformPost = (node, callback, itemsField) ->
     newTree = _.cloneDeep node
-    traversePost(newTree, callback, itemsField)
+    @traversePost(newTree, callback, itemsField)
     newTree
 
   @getNode = (tree, path, keyField, itemsField) ->
@@ -70,27 +70,3 @@ class TreeUtils
     tree
 
 module.exports = TreeUtils
-
-    # processTree = (tree) ->
-    #   processTreeNode = (oldNode, newNode) ->
-    #     newNode.name = oldNode.name
-    #     newNode.path = oldNode.path
-    #     return unless oldNode.items?
-    #     newNode.filesCount = oldNode.files.length
-    #     newNode.deepFilesCount = oldNode.files.length
-    #     newNode.unrecognizedFilesCount = oldNode.unrecognizedCount
-    #     newNode.deepUnrecognizedFilesCount = oldNode.unrecognizedCount
-    #     newNode.items = []
-    #     for item in oldNode.items
-    #       newSubnode = {}
-    #       processTreeNode item, newSubnode
-    #       newNode.deepFilesCount += newSubnode.deepFilesCount
-    #       newNode.deepUnrecognizedFilesCount += newSubnode.deepUnrecognizedFilesCount
-    #       if isDirRelevant(newSubnode)
-    #         newNode.items.push newSubnode
-    #
-    #     newNode.name += ' ' + newNode.deepFilesCount
-    #   newTree = {}
-    #   processTreeNode tree, newTree
-    #   # console.log 'newTree', newTree
-    #   newTree
