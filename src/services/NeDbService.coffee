@@ -27,15 +27,21 @@ class DbService
   removeScanningPath: (path) ->
     db.scanningPaths.remove {path: path}
 
+  getScanningPaths: () ->
+    defer = $q.defer()
+    db.scanningPaths.find {}, (err, rec) ->
+      defer.resolve(rec)
+    defer.promise
+
   addIgnorePath: (path) ->
     db.ignorePaths.insert {path: path}
 
   removeIgnorePath: (path) ->
     db.ignorePaths.remove {path: path}
 
-  getScanningPaths: () ->
+  getIgnorePaths: () ->
     defer = $q.defer()
-    db.scanningPaths.find {}, (err, rec) ->
+    db.ignorePaths.find {}, (err, rec) ->
       defer.resolve(rec)
     defer.promise
 

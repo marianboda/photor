@@ -34,6 +34,16 @@ Page = React.createClass
     path.pop()
     Actions.removeDirectoryFromLibrary path.pop()[1..]
 
+  addIgnorePathHandler: ->
+    Dialog.showOpenDialog {properties: ['openDirectory', 'multiSelections']}, (paths) ->
+      Actions.addIgnorePath paths
+
+  removeIgnorePathsHandler: (e) ->
+    path = e.dispatchMarker.split('.')
+    path.pop()
+    console.log path
+    Actions.removeIgnorePath path.pop()[1..]
+
   render: ->
     R.div {},
       R.h4 {}, 'Scanned Paths'
@@ -49,9 +59,34 @@ Page = React.createClass
                     key: item
                     classes: ['delete']
                     onClick: @removeDirectoryHandler
+          R.tr {},
+            R.td {colSpan: 2},
+              React.createElement Icon,
+                icon: 'squared-plus'
+                classes: ['add']
+                onClick: @addDirectoryHandler
+
+      R.h4 {}, 'Ignore Paths'
+      R.table {},
+        R.tbody {},
+          DirStore.ignorePaths.map \
+            (item) =>
+              R.tr {key: item},
+                R.td {key: item+'_td'}, item
+                R.td {},
+                  React.createElement Icon,
+                    icon: 'squared-minus'
+                    key: item
+                    classes: ['delete']
+                    onClick: @removeIgnorePathsHandler
+          R.tr {},
+            R.td {colSpan: 2},
+              React.createElement Icon,
+                icon: 'squared-plus'
+                classes: ['add']
+                onClick: @addIgnorePathHandler
 
       R.br {}
-      React.createElement Button, {icon: 'plus', onClick: @addDirectoryHandler}
       React.createElement Button, {icon: 'cycle', onClick: @scanButtonHandler}
       R.hr {}
       R.p {}, DirStore['scannedFiles']

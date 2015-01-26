@@ -11,10 +11,9 @@ _ = require 'lodash'
 
 dataStore =
   scanningPaths: []
+  ignorePaths: []
   scannedFiles: 0
-  totalFiles: 0
   photos: []
-  dirs: []
   dirTree: {name: 'root', items: []}
   files: 0
   selectedDir: null
@@ -22,8 +21,8 @@ dataStore =
 
   DB: new DB
   init: ->
-
     @loadScanningPaths()
+    @loadIgnorePaths()
     @loadPhotos()
     @loadDirs()
 
@@ -43,48 +42,39 @@ dataStore =
     @listenTo Actions.removeDirectoryFromLibrary, (path) ->
       @scanningPaths = _.without @scanningPaths, path
       @DB.removeScanningPath path
-      console.log 'scanning paths', @scanningPaths, path
+      @trigger()
+
+    @listenTo Actions.addIgnorePath, (paths) ->
+      newPaths = _.without(paths, @ignorePaths)
+      @ignorePaths = @ignorePaths.concat(newPaths).sort()
+      @DB.addIgnorePath s for s in newPaths
+      @trigger()
+
+    @listenTo Actions.removeIgnorePath, (path) ->
+      @ignorePaths = _.without @ignorePaths, path
+      @DB.removeIgnorePath path
       @trigger()
 
   loadPhotos: ->
     @DB.getPhotos().then (data) =>
       console.log 'Photos in db: ', data.length
       @photos = data
-      @currentPhotos = data[0..30]
       @trigger()
 
   loadScanningPaths: ->
     @DB.getScanningPaths().then (data) =>
-      console.log 'Paths in db: ',data
       @scanningPaths = data.map (item) -> item.path
+      @trigger()
+
+  loadIgnorePaths: ->
+    @DB.getIgnorePaths().then (data) =>
+      @ignorePaths = data.map (item) -> item.path
       @trigger()
 
   loadDirs: ->
     @DB.getDirs().then (data) =>
       console.log 'dirs in db: ', data.length
-
-      dirTree =  TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
-
-      newTree = TreeUtils.transform dirTree, (item) ->
-        subCountReducer = (field) ->
-          (prev, current) -> prev + (current[field] ? 0)
-        sumField = (node, field, initField) ->
-          reducer = subCountReducer(field)
-          node.items.reduce reducer, (node[initField] ? 0)
-
-        item.filesCount = if item.files?.length? then item.files.length else 0
-
-        # item.count = item.items.reduce subCountReducer('count'), item.items.length
-        # item.deepUnrecognizedCount = sumField 'deepUnrecognizedCount', 'unrecognizedCount'
-
-        item.deepFilesCount = sumField item, 'deepFilesCount', 'filesCount'
-        console.log item.path, item.deepFilesCount
-
-      current = newTree
-      # current = current.items[0] until current.items.count is 0 or current.items[0].files?
-      console.log current.path
-
-      @dirTree = current
+      @dirTree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
       @trigger()
 
   dirToDB: (dir) ->
@@ -93,122 +83,67 @@ dataStore =
       dbRec[field] = dir[field] unless field in ['items']
     @DB.addDir dbRec # {path: dir.path, added: new Date()}
 
-  photoToDB: (photo) ->
-    # @DB.getPhoto(photo.path + 'adf').then (data) ->
-    #   return if data?
-    @DB.addPhoto photo
-    # console.log 'todb', photo
-      # @photos.push photo
+  photoToDB: (photo) -> @DB.addPhoto photo
 
   scan: ->
-    @files = 0
     @scannedFiles = 0
     console.log 'SCANNING STARTED'
-
-    scanDir = (dir, callback) ->
-      fs.readdir dir, (err, list) ->
-        # console.log "#{dir} DONE!!", list
+    dirs = []
 
     processDir = (dirObject) =>
-      path = dirObject.path
-      parentPath = if dirObject.parent? then dirObject.parent.path else null
-      walkQueue.push path,
-        # (err, dirRecord) => @dirToDB(dirRecord)
-        (err, dirRecord) =>
-          if dirObject.parent?
-            dirObject.parent.items.push dirRecord
-          else
-            @dirs.push dirRecord
-      @files++
+      walkQueue.push dirObject.path, (e, ob) -> dirs.push ob
 
     processFile = (fileObject) =>
       @photoToDB fileObject
-      # console.log '%csome file sent to process', 'color: #bada55'
       @scannedFiles++
-      # @trigger({})
+      @trigger()
 
+    ignorePaths = @ignorePaths
     walkQueue = async.queue (dirPath, callback)->
       fs.readdir dirPath, (err, files) ->
         thisDir = {path: dirPath, name: Path.basename(dirPath), files: [], items:[], unrecognizedCount: 0}
         async.each files,
-          (f, callback) ->
+          (f, eachCallback) ->
             filePath = dirPath + Path.sep + f
             fs.lstat filePath, (err, stat) ->
               if stat.isDirectory()
-                # thisDir.dirs.push f
-                processDir
-                  path: filePath
-                  parent: thisDir
+                if filePath not in ignorePaths
+                  processDir {path: filePath}
               if stat.isFile()
                 if isRecognized(f)
                   thisDir.files.push f
-                  processFile
-                    name: f
-                    dir: dirPath
-                    path: filePath
-                    stat: stat
-
+                  processFile {name: f, dir: dirPath, path: filePath, stat: stat}
                 else
                   thisDir.unrecognizedCount += 1
-              callback()
-        , (err) ->
-          callback(err, thisDir)
+              eachCallback()
+        , (err) -> callback(err, thisDir)
     ,2
-
 
     isRecognized = (item) ->
       Path.extname(item).substring(1).toLowerCase() in config.ACCEPTED_FORMATS
 
-    isDirRelevant = (dir) ->
-      return dir.deepFilesCount > 0
-
-    processTree = (tree) ->
-      processTreeNode = (oldNode, newNode) ->
-        newNode.name = oldNode.name
-        newNode.path = oldNode.path
-        return unless oldNode.items?
-        newNode.filesCount = oldNode.files.length
-        newNode.deepFilesCount = oldNode.files.length
-        newNode.unrecognizedFilesCount = oldNode.unrecognizedCount
-        newNode.deepUnrecognizedFilesCount = oldNode.unrecognizedCount
-        newNode.items = []
-        for item in oldNode.items
-          newSubnode = {}
-          processTreeNode item, newSubnode
-          newNode.deepFilesCount += newSubnode.deepFilesCount
-          newNode.deepUnrecognizedFilesCount += newSubnode.deepUnrecognizedFilesCount
-          if isDirRelevant(newSubnode)
-            newNode.items.push newSubnode
-
-        newNode.name += ' ' + newNode.deepFilesCount
-      newTree = {}
-      processTreeNode tree, newTree
-      # console.log 'newTree', newTree
-      newTree
-
-    traverseTree = (node, nodeFunction, callback1) ->
-      return unless node.items?
-
-      async.each node.items, (item) ->
-        if nodeFunction?
-          nodeFunction item
-        traverseTree item, nodeFunction
-      , (err) ->
-        # console.log callback1 if callback1?
-        # if callback1?
-          # console.log 'all Traversal done'
-
     walkQueue.drain = =>
-      console.log "Q DONE: " + @files
-      # @data = I.Map @dirs[0]
-      @data = I.Map processTree(@dirs[0])
-      @trigger {}
-      traverseTree(@dirs[0], @dirToDB, 1)
+      console.log "Q DONE: ", dirs
+      dirTree = TreeUtils.buildTree dirs, null, null, 'name'
+
+      newTree = TreeUtils.transformPost dirTree, (item) ->
+        subCountReducer = (field) ->
+          (prev, current) -> prev + (current[field] ? 0)
+        sumField = (node, field, initField) ->
+          reducer = subCountReducer(field)
+          node.items.reduce reducer, (node[initField] ? 0)
+
+        item.filesCount = if item.files?.length? then item.files.length else 0
+        item.deepFilesCount = sumField item, 'deepFilesCount', 'filesCount'
+        item.deepUnrecognizedCount = sumField item, 'deepUnrecognizedCount', 'unrecognizedCount'
+
+      TreeUtils.traverse newTree, (item) -> console.log item #@DB.addDir
+      TreeUtils.traverse newTree, @DB.addDir
+
+      @dirTree = newTree
+      console.log @dirTree
       @trigger {}
 
     @scanningPaths.map (item) -> processDir {path: item}
-
-
-  data: I.Map {name: '_blank', items: []}
 
 module.exports = Reflux.createStore dataStore
