@@ -123,7 +123,7 @@ dataStore =
       Path.extname(item).substring(1).toLowerCase() in config.ACCEPTED_FORMATS
 
     walkQueue.drain = =>
-      console.log "Q DONE: ", dirs
+      console.log "Q DONE: ", dirs.length
       dirTree = TreeUtils.buildTree dirs, null, null, 'name'
 
       newTree = TreeUtils.transformPost dirTree, (item) ->
@@ -137,11 +137,9 @@ dataStore =
         item.deepFilesCount = sumField item, 'deepFilesCount', 'filesCount'
         item.deepUnrecognizedCount = sumField item, 'deepUnrecognizedCount', 'unrecognizedCount'
 
-      TreeUtils.traverse newTree, (item) -> console.log item #@DB.addDir
       TreeUtils.traverse newTree, @DB.addDir
 
       @dirTree = newTree
-      console.log @dirTree
       @trigger {}
 
     @scanningPaths.map (item) -> processDir {path: item}

@@ -12,6 +12,7 @@ module.exports =
     'tiff'
     'cr2'
     'mov'
+    'mp4'
   ]
   PREVIEW_SIZE: 2048
   THUMB_SIZE: 600
