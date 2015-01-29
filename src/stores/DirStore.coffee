@@ -123,10 +123,11 @@ dataStore =
       Path.extname(item).substring(1).toLowerCase() in config.ACCEPTED_FORMATS
 
     walkQueue.drain = =>
-      console.log "Q DONE: ", dirs.length
+      console.log "Q DONE: ", dirs
       dirTree = TreeUtils.buildTree dirs, null, null, 'name'
 
       newTree = TreeUtils.transformPost dirTree, (item) ->
+        # console.log item.path
         subCountReducer = (field) ->
           (prev, current) -> prev + (current[field] ? 0)
         sumField = (node, field, initField) ->

@@ -24,6 +24,12 @@ Page = React.createClass
           data: DirStore.dirTree
           persistKey: 'dirTree'
           nodeRenderer: DirNodeRenderer
+        # React.createElement Tree,
+        #   selectedItem: DirStore.selectedDir
+        #   onClick: @treeItemClickHandler
+        #   data: DirStore.dirTree
+        #   persistKey: 'dirTree'
+        #   nodeRenderer: DirNodeRenderer
       R.div {id: 'right_content'},
         R.p {}, 'count: ' + DirStore.currentPhotos.length
         R.table {},
