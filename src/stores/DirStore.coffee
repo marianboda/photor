@@ -9,6 +9,7 @@ config = require '../config'
 TreeUtils = require '../utils/TreeUtils'
 _ = require 'lodash'
 
+
 dataStore =
   scanningPaths: []
   ignorePaths: []
@@ -58,7 +59,7 @@ dataStore =
   loadPhotos: ->
     @DB.getPhotos().then (data) =>
       console.log 'Photos in db: ', data.length
-      @photos = data
+      @photos = _.sortBy(data, 'path')
       @trigger()
 
   loadScanningPaths: ->
