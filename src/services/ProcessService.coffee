@@ -1,7 +1,8 @@
 fs = require 'fs'
 gm = require 'gm'
-$a = require 'q'
+$q = require 'q'
 async = require 'async'
+_ = require 'lodash'
 
 config = require '../config'
 
@@ -36,9 +37,9 @@ class ProcessService
     # console.log '%cPROCESSING FILE: %c'+ photo.path, 'color: gray', 'color: green'
     defer = $q.defer()
     async.series [
-      (callback) => @dbFind(photo).then (data) ->
-        callback(null, data)
-      ,(err) -> console.log 'chyba'; defer.reject("#{photo.path} already in DB"); callback "#{photo.path} in DB";
+      # (callback) => @dbFind(photo).then (data) ->
+      #   callback(null, data)
+      # ,(err) -> console.log 'chyba'; defer.reject("#{photo.path} already in DB"); callback "#{photo.path} in DB";
       (callback) => @md5(photo).then (data) =>
         console.log "hash:#{data} %c#{photo.path}", 'color: orange'
         photo.md5 = data
@@ -64,9 +65,9 @@ class ProcessService
         photo.thumb = false
         callback null, photo
 
-      (callback) => @save(photo).then (data) ->
-        defer.notify 'save done'
-        callback null, data
+      # (callback) => @save(photo).then (data) ->
+      #   defer.notify 'save done'
+      #   callback null, data
     ], (err) ->
       defer.reject err if err?
 
@@ -78,26 +79,29 @@ class ProcessService
 
   dbFind: (photo) ->
     defer = $q.defer()
+    photo = if _.isString(photo) then photo else photo.path
     DbService.getPhoto(photo.path).then (data) ->
       if data is null
         defer.resolve(null)
       else
         console.log 'exists in DB'
-        defer.reject('error, already in DB')
+        defer.reject 'error, already in DB'
     defer.promise
 
   md5: (photo) ->
     crypto = require 'crypto'
 
-    fd = fs.createReadStream(photo.path);
-    hash = crypto.createHash('md5');
-    hash.setEncoding('hex');
+    photo =
+
+    fd = fs.createReadStream photo.path
+    hash = crypto.createHash 'md5'
+    hash.setEncoding 'hex'
     defer = $q.defer()
 
     fd.on 'end', ->
       hash.end()
       hashString = hash.read()
-      # console.log hashString
+      console.log hashString
       defer.resolve hashString
 
     fd.pipe(hash);
@@ -170,4 +174,4 @@ class ProcessService
 
 
 
-module.exports = ProcessService
+module.exports = new ProcessService()

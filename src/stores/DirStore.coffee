@@ -8,6 +8,7 @@ Path = require 'path'
 config = require '../config'
 TreeUtils = require '../utils/TreeUtils'
 _ = require 'lodash'
+ProcessService = require '../services/ProcessService'
 
 
 dataStore =
@@ -60,7 +61,10 @@ dataStore =
     @DB.getPhotos().then (data) =>
       console.log 'Photos in db: ', data.length
       @photos = _.sortBy(data, 'path')
+      ProcessService.queue(data[0].path)
       @trigger()
+    .catch (e) ->
+      console.error "fuck",e
 
   loadScanningPaths: ->
     @DB.getScanningPaths().then (data) =>

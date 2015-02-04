@@ -23,7 +23,7 @@ paths =
 
 gulp.task 'downloadatomshell', (cb) ->
   downloadatomshell
-    version: '0.17.2',
+    version: '0.21.0',
     outputDir: destDirs.binaries
   , cb
 
