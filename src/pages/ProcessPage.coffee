@@ -5,7 +5,6 @@ DirStore = require '../stores/DirStore'
 React = require 'react'
 R = React.DOM
 Reflux = require 'reflux'
-DirStore = require '../stores/DirStore'
 FixedDataTable = require 'fixed-data-table'
 Table = FixedDataTable.Table
 Column = FixedDataTable.Column
@@ -38,7 +37,6 @@ Page = React.createClass
       tableHeight: 400 #this.refs.processPage.getDOMNode().offsetHeight
 
   render: ->
-
     rowGetter = (index) -> _.extend {index: index}, DirStore.photos[index]
 
     tableProps =
@@ -53,6 +51,7 @@ Page = React.createClass
       React.createElement Table, tableProps,
         React.createElement Column,
           {label: '#', cellRenderer: ((a,b,c,index) -> R.span {}, index+1), width: 50, align: 'right'}
-        React.createElement Column, {label: 'PATH', dataKey: 'path', width: 750}
+        React.createElement Column, {label: 'PATH', dataKey: 'path', width: 600}
+        React.createElement Column, {label: 'HASH', dataKey: 'hash', width: 200}
 
 module.exports = Page

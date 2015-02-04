@@ -21,7 +21,7 @@ dataStore =
   selectedDir: null
   currentPhotos: []
 
-  DB: new DB
+  DB: DB
   init: ->
     @loadScanningPaths()
     @loadIgnorePaths()
@@ -61,7 +61,7 @@ dataStore =
     @DB.getPhotos().then (data) =>
       console.log 'Photos in db: ', data.length
       @photos = _.sortBy(data, 'path')
-      ProcessService.queue(data[0].path)
+      data.forEach (i) -> ProcessService.queue(i.path)
       @trigger()
     .catch (e) ->
       console.error "fuck",e

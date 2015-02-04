@@ -1,7 +1,9 @@
+"use strict"
 fs = require 'fs'
 gm = require 'gm'
 $q = require 'q'
 async = require 'async'
+exec = require 'exec'
 _ = require 'lodash'
 
 config = require '../config'
@@ -9,6 +11,8 @@ config = require '../config'
 thumbDir = config.THUMB_PATH
 getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.md5[0...16]}.jpg"
 getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.md5[0...16]}.jpg"
+getExt = (str) -> str.split('.').pop().toLowerCase()
+
 
 class ProcessService
   CONCURENCY: 4
@@ -54,10 +58,12 @@ class ProcessService
         callback null, data
       ,(err) ->
         defer.reject(err)
+        console.error err
         photo.preview = false
         callback null, photo
 
       (callback) => @thumb(photo).then (data) ->
+        console.log 'are we here or what?'
         defer.notify('thumb done')
         callback null, data
       , (err) ->
@@ -69,11 +75,14 @@ class ProcessService
       #   defer.notify 'save done'
       #   callback null, data
     ], (err) ->
+      console.error err
       defer.reject err if err?
 
       # console.error 'series callback', err if err?
       # console.log 'all done: '+photo.path
       defer.resolve('all done: '+photo.path)
+    , (event) ->
+      console.log 'some progress', event
 
     defer.promise
 
@@ -108,26 +117,29 @@ class ProcessService
     defer.promise
 
   exif: (photo) ->
-    # console.log 'going to EXIFY'
     defer = $q.defer()
+
     exec "exiftool -n -j \"#{photo.path}\"", (e,so,se) ->
-      console.error err if err?
       # console.log obj
       defer.resolve JSON.parse(so)[0]
     defer.promise
 
   preview: (photo) ->
-    # console.log 'going to get a preview'
+    console.log 'going to get a preview'
     defer = $q.defer()
     if not photo.md5
       defer.reject()
       return defer.promise
 
     previewPath = getPrevPath photo
+    console.log previewPath
+    console.log getExt(photo.path)
 
     if getExt(photo.path) is 'cr2'
       cmd = "exiftool -b -PreviewImage \"#{photo.path}\" > #{previewPath}"
+      console.log cmd
       exec cmd, (e, so, se) ->
+        console.log e,so,se
         orient = photo.exif.Orientation
         # console.log 'orient is: '+orient
         if orient is 1
@@ -141,6 +153,7 @@ class ProcessService
     else
       cmd = "cp \"#{photo.path}\" #{previewPath}"
       exec cmd, (e, so, se) ->
+        console.error 'e', e, 'so', so, 'se', se if se
         defer.resolve ''
 
     defer.promise
@@ -148,21 +161,26 @@ class ProcessService
   thumb: (photo) ->
     defer = $q.defer()
     previewPath = getPrevPath photo
-    # console.log '%cTHUMBING: '+photo.path, 'color: orange'
+    console.log '%cTHUMBING: '+photo.path, 'color: orange'
     thumbPath = getThumbPath photo
+    previewSize = config.PREVIEW_SIZE
+    thumbSize = config.THUMB_SIZE
     exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\"", (e,so,se) ->
-      if e isnt null
-        # console.error "nejaky error #{e}"
+      console.log 'here in mogrify', e, so, se
+      if e? and e > 0
+        console.error "nejaky error #{e}"
         return defer.reject e
-      if se isnt ''
-        # console.error "nejaky serror #{se}"
+      if se? and se isnt '' and se isnt 0
+        console.error "nejaky serror #{se}"
         return defer.reject se
+      console.log 'here in mogrify', e, so, se
       exec "gm convert -resize #{thumbSize}x#{thumbSize}\\> \"#{previewPath}\" \"#{thumbPath}\"", (e,so,se) ->
-        if e isnt null
-          # console.error "nejaky error #{e}"
+        console.log "#{e},#{so},#{se}"
+        if e? and e isnt 0 and e isnt ''
+          console.error "nejaky errorp #{e}"
           return defer.reject e
-        if se isnt ''
-          # console.error "nejaky serror #{se}"
+        if se? and se isnt '' and se isnt 0
+          console.error "nejaky serror #{se}"
           return defer.reject se
         defer.resolve(photo)
     defer.promise

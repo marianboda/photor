@@ -101,4 +101,4 @@ class DbService
           defer.resolve results
     defer.promise
 
-module.exports = DbService
+module.exports = new DbService()
