@@ -8,6 +8,7 @@ module.exports =
     'jpg'
     'jpe'
     'jpeg'
+    'png'
     'tif'
     'tiff'
     'cr2'
