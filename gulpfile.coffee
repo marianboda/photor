@@ -39,9 +39,9 @@ gulp.task 'coffee', ->
   .pipe(gulp.dest(destDirs.js))
 
 gulp.task 'sass', ->
-  gulp.src(paths.sassFiles)
-  .pipe(sass({'sourcemap=none': true})).on('error', (e) -> console.log e)
-  .pipe(gulp.dest(destDirs.styles))
+  sass("#{srcDirs.sass}/app.sass", {'sourcemap=none': true})
+    .on('error', (e) -> console.log e)
+    .pipe(gulp.dest(destDirs.styles))
 
 gulp.task 'copy', ->
   gulp.src('index.html').pipe(gulp.dest('app'))
