@@ -37,6 +37,9 @@ class ProcessService
       defer.resolve(photo)
     defer.promise
 
+  killQueue: ->
+    @_queue.kill()
+
   _process: (photo) ->
     # console.log '%cPROCESSING FILE: %c'+ photo.path, 'color: gray', 'color: green'
     defer = $q.defer()

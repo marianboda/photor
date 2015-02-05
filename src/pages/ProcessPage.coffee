@@ -8,6 +8,7 @@ Reflux = require 'reflux'
 FixedDataTable = require 'fixed-data-table'
 Table = FixedDataTable.Table
 Column = FixedDataTable.Column
+Button = require '../components/IconButton'
 
 Page = React.createClass
   displayName: 'ProcessPage'
@@ -36,6 +37,9 @@ Page = React.createClass
       tableWidth: this.refs.processPage.getDOMNode().offsetWidth
       tableHeight: 400 #this.refs.processPage.getDOMNode().offsetHeight
 
+  processButtonHandler: (e) ->
+    Actions.process()
+
   render: ->
     rowGetter = (index) -> _.extend {index: index}, DirStore.photos[index]
 
@@ -53,5 +57,9 @@ Page = React.createClass
           {label: '#', cellRenderer: ((a,b,c,index) -> R.span {}, index+1), width: 50, align: 'right'}
         React.createElement Column, {label: 'PATH', dataKey: 'path', width: 600}
         React.createElement Column, {label: 'HASH', dataKey: 'hash', width: 200}
+
+      React.createElement Button, {icon: 'eye', onClick: @processButtonHandler}
+      React.createElement Button, {icon: 'cross', onClick: -> Actions.stopProcess()}
+
 
 module.exports = Page

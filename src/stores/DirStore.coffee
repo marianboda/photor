@@ -1,15 +1,16 @@
+fs = require 'fs'
+
+_ = require 'lodash'
 Reflux = require 'reflux'
 I = require 'immutable'
-Actions = require '../actions'
-DB = require '../services/NeDbService'
-fs = require 'fs'
 async = require 'async'
 Path = require 'path'
+
+Actions = require '../actions'
+DB = require '../services/NeDbService'
 config = require '../config'
 TreeUtils = require '../utils/TreeUtils'
-_ = require 'lodash'
 ProcessService = require '../services/ProcessService'
-
 
 dataStore =
   scanningPaths: []
@@ -29,6 +30,14 @@ dataStore =
     @loadDirs()
 
     @listenTo Actions.scan, @scan
+
+    @listenTo Actions.process, ->
+      console.log 'proc'
+      @photos.forEach (i) -> ProcessService.queue(i.path)
+
+    @listenTo Actions.stopProcess, ->
+      console.log 'stop'
+      ProcessService.killQueue()
 
     @listenTo Actions.selectDirectory, (dir) ->
       @currentPhotos = @photos.filter (item) -> item.dir is dir
@@ -61,7 +70,6 @@ dataStore =
     @DB.getPhotos().then (data) =>
       console.log 'Photos in db: ', data.length
       @photos = _.sortBy(data, 'path')
-      data.forEach (i) -> ProcessService.queue(i.path)
       @trigger()
     .catch (e) ->
       console.error "fuck",e
