@@ -32,11 +32,9 @@ dataStore =
     @listenTo Actions.scan, @scan
 
     @listenTo Actions.process, ->
-      console.log 'proc'
       @photos.forEach (i) -> ProcessService.queue(i.path)
 
     @listenTo Actions.stopProcess, ->
-      console.log 'stop'
       ProcessService.killQueue()
 
     @listenTo Actions.selectDirectory, (dir) ->
@@ -68,7 +66,6 @@ dataStore =
 
   loadPhotos: ->
     @DB.getPhotos().then (data) =>
-      console.log 'Photos in db: ', data.length
       @photos = _.sortBy(data, 'path')
       @trigger()
     .catch (e) ->
@@ -86,7 +83,6 @@ dataStore =
 
   loadDirs: ->
     @DB.getDirs().then (data) =>
-      console.log 'dirs in db: ', data.length
       @dirTree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
       @trigger()
 
