@@ -9,10 +9,10 @@ _ = require 'lodash'
 
 config = require '../config'
 
-console.log fs.exists config.PREVIEW_PATH, (exists) ->
+fs.exists config.PREVIEW_PATH, (exists) ->
   mkdirp config.PREVIEW_PATH, (e, dir) ->
     console.error 'error creating dir: ' + dir, e if e
-console.log fs.exists config.THUMB_PATH, (exists) ->
+fs.exists config.THUMB_PATH, (exists) ->
   mkdirp config.THUMB_PATH, (e, dir) ->
     console.error 'error creating dir: ' + dir, e if e
 
@@ -55,7 +55,6 @@ class ProcessService
       #   callback(null, data)
       # ,(err) -> console.log 'chyba'; defer.reject("#{photo.path} already in DB"); callback "#{photo.path} in DB";
       (callback) => @md5(photo).then (data) =>
-        console.log "hash:#{data} %c#{photo.path}", 'color: orange'
         photo.md5 = data
         defer.notify 'md5 done'
         callback null, data
@@ -68,12 +67,11 @@ class ProcessService
         callback null, data
       ,(err) ->
         defer.reject(err)
-        console.error err
+        console.error 'rejected preview somehow ',err
         photo.preview = false
         callback null, photo
 
       (callback) => @thumb(photo).then (data) ->
-        console.log 'are we here or what?'
         defer.notify('thumb done')
         callback null, data
       , (err) ->
@@ -85,8 +83,9 @@ class ProcessService
       #   defer.notify 'save done'
       #   callback null, data
     ], (err) ->
-      console.error err
-      defer.reject err if err?
+      if err?
+        console.error 'queue error', err
+        defer.reject err
 
       # console.error 'series callback', err if err?
       # console.log 'all done: '+photo.path
@@ -130,15 +129,11 @@ class ProcessService
     defer = $q.defer()
 
     exec "exiftool -n -j \"#{photo.path}\"", (e,so,se) ->
-      console.log "exiftool -n -j \"#{photo.path}\""
-      console.log "#{e}, #{so}, #{se}"
-      console.log JSON.parse(so)[0]
-
       defer.resolve JSON.parse(so)[0]
     defer.promise
 
   preview: (photo) ->
-    console.log 'going to get a preview'
+    # console.log 'going to get a preview'
     defer = $q.defer()
     if not photo.md5
       defer.reject()
@@ -146,14 +141,11 @@ class ProcessService
 
 
     previewPath = getPrevPath photo
-    console.log previewPath
-    console.log getExt(photo.path)
 
     if getExt(photo.path) is 'cr2'
       cmd = "exiftool -b -PreviewImage \"#{photo.path}\" > #{previewPath}"
-      console.log cmd
       exec cmd, (e, so, se) ->
-        console.log e,so,se
+        # console.log e,so,se
         orient = photo.exif.Orientation
         # console.log 'orient is: '+orient
         if orient is 1
@@ -175,21 +167,17 @@ class ProcessService
   thumb: (photo) ->
     defer = $q.defer()
     previewPath = getPrevPath photo
-    console.log '%cTHUMBING: '+photo.path, 'color: orange'
     thumbPath = getThumbPath photo
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
     exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\"", (e,so,se) ->
-      console.log 'here in mogrify', e, so, se
       if e? and e > 0
         console.error "nejaky error #{e}"
         return defer.reject e
       if se? and se isnt '' and se isnt 0
         console.error "nejaky serror #{se}"
         return defer.reject se
-      console.log 'here in mogrify', e, so, se
       exec "gm convert -resize #{thumbSize}x#{thumbSize}\\> \"#{previewPath}\" \"#{thumbPath}\"", (e,so,se) ->
-        console.log "#{e},#{so},#{se}"
         if e? and e isnt 0 and e isnt ''
           console.error "nejaky errorp #{e}"
           return defer.reject e
