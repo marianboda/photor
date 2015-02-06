@@ -2,13 +2,20 @@
 fs = require 'fs'
 gm = require 'gm'
 $q = require 'q'
+mkdirp = require 'mkdirp'
 async = require 'async'
 exec = require 'exec'
 _ = require 'lodash'
 
 config = require '../config'
 
-thumbDir = config.THUMB_PATH
+console.log fs.exists config.PREVIEW_PATH, (exists) ->
+  mkdirp config.PREVIEW_PATH, (e, dir) ->
+    console.error 'error creating dir: ' + dir, e if e
+console.log fs.exists config.THUMB_PATH, (exists) ->
+  mkdirp config.THUMB_PATH, (e, dir) ->
+    console.error 'error creating dir: ' + dir, e if e
+
 getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.md5[0...16]}.jpg"
 getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.md5[0...16]}.jpg"
 getExt = (str) -> str.split('.').pop().toLowerCase()
@@ -123,7 +130,10 @@ class ProcessService
     defer = $q.defer()
 
     exec "exiftool -n -j \"#{photo.path}\"", (e,so,se) ->
-      # console.log obj
+      console.log "exiftool -n -j \"#{photo.path}\""
+      console.log "#{e}, #{so}, #{se}"
+      console.log JSON.parse(so)[0]
+
       defer.resolve JSON.parse(so)[0]
     defer.promise
 
@@ -133,6 +143,7 @@ class ProcessService
     if not photo.md5
       defer.reject()
       return defer.promise
+
 
     previewPath = getPrevPath photo
     console.log previewPath
