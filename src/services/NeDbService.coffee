@@ -81,6 +81,15 @@ class DbService
       defer.resolve newrec
     defer.promise
 
+  updatePhoto: (photo) ->
+    defer = $q.defer()
+    db.photo.update {path: photo.path}, photo, (err, newrec) ->
+      # if err?
+      #   console.error err
+      #   return defer.reject err
+      defer.resolve newrec
+    defer.promise
+
   getDirs: () ->
     defer = $q.defer()
     db.dir.find {}, (err, recs) ->

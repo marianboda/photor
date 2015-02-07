@@ -32,13 +32,17 @@ dataStore =
     @listenTo Actions.scan, @scan
 
     @listenTo Actions.process, ->
-      @photos.forEach (i) -> ProcessService.queue(i.path)
+      ph = @photos
+        .filter (i) -> return (not i.hash?) or i.hash? is ''
+      console.log "ALL: #{@photos.length}, TO PROCESS: #{ph.length}"
+      ph.forEach (i) -> ProcessService.queue(i)
 
     @listenTo Actions.stopProcess, ->
       ProcessService.killQueue()
 
     @listenTo Actions.selectDirectory, (dir) ->
       @currentPhotos = @photos.filter (item) -> item.dir is dir
+      console.log 'dir sel: ' + dir, @currentPhotos.length
       @selectedDir = dir
       @trigger()
 

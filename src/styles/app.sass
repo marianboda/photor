@@ -8,6 +8,8 @@ $OpenSansPath: '../assets/fonts' !default
 
 @import 'table.sass'
 @import 'bourbon/_bourbon.scss'
+@import 'components/IconButton.sass'
+
 // @import 'base/base'
 @mixin fontdef($OpenSansPath, $FontType:"Regular")
   // src:  url('#{$OpenSansPath}/#{$FontType}/OpenSans-#{$FontType}.eot')
@@ -163,7 +165,6 @@ table
   border-top: 1px solid #eee
   border-bottom: 1px solid #eee
 
-
 tr:nth-child(even) td
   // border-bottom: 1px solid #ccc
   background: #eef8ff
@@ -171,49 +172,6 @@ tr:nth-child(even) td
 h4
   font-size: 14px
   margin: 4px
-
-button
-  background: #45B29D
-  border: 0
-  border-radius: 4px
-  font-size: 12px
-  padding: 0.2em 0.3em
-
-button:focus
-  outline: none
-
-// .button-text
-
-.svg-icon.delete:hover
-  path
-    fill: #E27A3F
-
-.svg-icon.delete
-  path
-    fill: #EFC94C
-
-.svg-icon.add:hover
-  path
-    fill: #334D5C
-
-.svg-icon.add
-  path
-    fill: #45B29D
-
-.svg-icon
-  display: inline-block
-  vertical-align: middle
-  width: 20px
-
-button
-  .svg-icon
-    width: 16px
-    path
-      fill: #333
-  span
-    display: inline-block
-    vertical-align: middle
-    margin-left: 0.3em
 
 =badge($color: $medium-gray)
   background-color: $color

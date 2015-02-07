@@ -5,6 +5,7 @@ Reflux = require 'reflux'
 Tree = require '../components/Tree'
 DirNodeRenderer = require '../components/DirNodeRenderer'
 Actions = require '../actions'
+config = require '../config'
 
 Page = React.createClass
   displayName: 'DataPage'
@@ -32,8 +33,12 @@ Page = React.createClass
         #   nodeRenderer: DirNodeRenderer
       R.div {id: 'right_content'},
         R.p {}, 'count: ' + DirStore.currentPhotos.length
-        R.table {},
-          R.tbody {},
-            R.tr({key: item.name}, [R.td({key: item.name}, i),R.td({key: 'td2'+item.name}, item.name)]) for item,i in DirStore.currentPhotos
+        # R.span({}, "#{config.THUMB_PATH}/#{item.hash}.jpg") for item,i in DirStore.currentPhotos
+        R.img({src: "file://#{config.THUMB_PATH}/#{item.hash[0...16]}.jpg"}) for item,i in DirStore.currentPhotos when item.hash?
+
+        # R.table {},
+        #   R.tbody {},
+        #     R.tr({key: item.name}, [R.td({key: item.name}, i),R.td({key: 'td2'+item.name}, item.name)]) for item,i in DirStore.currentPhotos
+
 
 module.exports = Page

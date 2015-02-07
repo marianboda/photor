@@ -6,7 +6,7 @@ mkdirp = require 'mkdirp'
 async = require 'async'
 exec = require 'exec'
 _ = require 'lodash'
-
+DbService = require './NeDbService'
 config = require '../config'
 
 fs.exists config.PREVIEW_PATH, (exists) ->
@@ -16,13 +16,16 @@ fs.exists config.THUMB_PATH, (exists) ->
   mkdirp config.THUMB_PATH, (e, dir) ->
     console.error 'error creating dir: ' + dir, e if e
 
-getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.md5[0...16]}.jpg"
-getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.md5[0...16]}.jpg"
+getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.hash[0...16]}.jpg"
+getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.hash[0...16]}.jpg"
 getExt = (str) -> str.split('.').pop().toLowerCase()
+getOrientCommand = (num) ->
+  ['','','-flop','-rotate 180','-flip','-flip -rotate 90',
+  	'-rotate 90','-flop -rotate 90','-rotate 270'][num]
 
 
 class ProcessService
-  CONCURENCY: 4
+  CONCURENCY: 8
   _queue: null
 
   constructor: ->
@@ -35,9 +38,7 @@ class ProcessService
         , (notify) -> console.info notify
       ,@CONCURENCY
 
-  queue: (filePath) ->
-    photo = path:filePath
-    # console.log '%QUEUED FILE: %c'+ filePath, 'color: gray', 'color: orange'
+  queue: (photo) ->
     defer = $q.defer()
     @_queue.push photo, (err) ->
       defer.reject(err) if err?
@@ -55,7 +56,7 @@ class ProcessService
       #   callback(null, data)
       # ,(err) -> console.log 'chyba'; defer.reject("#{photo.path} already in DB"); callback "#{photo.path} in DB";
       (callback) => @md5(photo).then (data) =>
-        photo.md5 = data
+        photo.hash = data
         defer.notify 'md5 done'
         callback null, data
       (callback) => @exif(photo).then (data) ->
@@ -79,9 +80,9 @@ class ProcessService
         photo.thumb = false
         callback null, photo
 
-      # (callback) => @save(photo).then (data) ->
-      #   defer.notify 'save done'
-      #   callback null, data
+      (callback) => @save(photo).then (data) ->
+        defer.notify 'save done'
+        callback null, data
     ], (err) ->
       if err?
         console.error 'queue error', err
@@ -109,8 +110,6 @@ class ProcessService
   md5: (photo) ->
     crypto = require 'crypto'
 
-    photo =
-
     fd = fs.createReadStream photo.path
     hash = crypto.createHash 'md5'
     hash.setEncoding 'hex'
@@ -119,7 +118,7 @@ class ProcessService
     fd.on 'end', ->
       hash.end()
       hashString = hash.read()
-      console.log hashString
+      # console.log hashString
       defer.resolve hashString
 
     fd.pipe(hash);
@@ -133,33 +132,27 @@ class ProcessService
     defer.promise
 
   preview: (photo) ->
-    # console.log 'going to get a preview'
     defer = $q.defer()
-    if not photo.md5
+    if not photo.hash
       defer.reject()
       return defer.promise
-
 
     previewPath = getPrevPath photo
 
     if getExt(photo.path) is 'cr2'
       cmd = "exiftool -b -PreviewImage \"#{photo.path}\" > #{previewPath}"
       exec cmd, (e, so, se) ->
-        # console.log e,so,se
-        orient = photo.exif.Orientation
-        # console.log 'orient is: '+orient
+        orient = photo.exif?.Orientation?
         if orient is 1
-          # console.log "orient is one"
           defer.resolve ''
-        else
-          # console.log "rotating image #{photo.md5}"
-          exec "gm mogrify #{getOrientCommand orient} #{previewPath}", ->
-            # previewResizeQueue.push task
-            defer.resolve ''
+          return
+        exec "gm mogrify #{getOrientCommand orient} #{previewPath}", ->
+          # previewResizeQueue.push task
+          defer.resolve ''
     else
       cmd = "cp \"#{photo.path}\" #{previewPath}"
       exec cmd, (e, so, se) ->
-        console.error 'e', e, 'so', so, 'se', se if se
+        # console.error 'e', e, 'so', so, 'se', se if se
         defer.resolve ''
 
     defer.promise
@@ -171,25 +164,21 @@ class ProcessService
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
     exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\"", (e,so,se) ->
-      if e? and e > 0
-        console.error "nejaky error #{e}"
-        return defer.reject e
-      if se? and se isnt '' and se isnt 0
-        console.error "nejaky serror #{se}"
-        return defer.reject se
+      if (se? and se isnt '' and se isnt 0) or (e? and e isnt '' and e isnt 0)
+        console.error "mogrify (s)error #{e} #{se} #{so}"
+        # return defer.reject 'mogrify error'
+        return defer.resolve _.assign(photo, {status: 'unrecognized'})
       exec "gm convert -resize #{thumbSize}x#{thumbSize}\\> \"#{previewPath}\" \"#{thumbPath}\"", (e,so,se) ->
-        if e? and e isnt 0 and e isnt ''
-          console.error "nejaky errorp #{e}"
-          return defer.reject e
-        if se? and se isnt '' and se isnt 0
-          console.error "nejaky serror #{se}"
-          return defer.reject se
+        if (e? and e isnt 0 and e isnt '') or (se? and se isnt '' and se isnt 0)
+          console.error "convert (s)error #{e} #{se} #{so}"
+          # return defer.reject 'convert error'
+          return defer.resolve _.assign(photo, {status: 'unrecognized'})
         defer.resolve(photo)
     defer.promise
 
   save: (photo) ->
-    # console.log 'saving '+photo.path
-    DbService.addPhoto(photo)
+    console.log 'saving '+photo.path
+    DbService.updatePhoto(photo)
 
 
 
