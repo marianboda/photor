@@ -128,6 +128,8 @@ class ProcessService
     defer = $q.defer()
 
     exec "exiftool -n -j \"#{photo.path}\"", (e,so,se) ->
+      if se > 0
+        defer.resolve {}
       defer.resolve JSON.parse(so)[0]
     defer.promise
 
@@ -177,7 +179,7 @@ class ProcessService
     defer.promise
 
   save: (photo) ->
-    console.log 'saving '+photo.path
+    # console.log 'saving '+photo.path
     DbService.updatePhoto(photo)
 
 
