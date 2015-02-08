@@ -6,6 +6,8 @@ Tree = require '../components/Tree'
 DirNodeRenderer = require '../components/DirNodeRenderer'
 Actions = require '../actions'
 config = require '../config'
+Element = React.createElement
+Thumb = require '../components/Thumb'
 
 Page = React.createClass
   displayName: 'DataPage'
@@ -25,20 +27,7 @@ Page = React.createClass
           data: DirStore.dirTree
           persistKey: 'dirTree'
           nodeRenderer: DirNodeRenderer
-        # React.createElement Tree,
-        #   selectedItem: DirStore.selectedDir
-        #   onClick: @treeItemClickHandler
-        #   data: DirStore.dirTree
-        #   persistKey: 'dirTree'
-        #   nodeRenderer: DirNodeRenderer
       R.div {id: 'right_content'},
-        R.p {}, 'count: ' + DirStore.currentPhotos.length
-        # R.span({}, "#{config.THUMB_PATH}/#{item.hash}.jpg") for item,i in DirStore.currentPhotos
-        R.img({src: "file://#{config.THUMB_PATH}/#{item.hash[0...16]}.jpg"}) for item,i in DirStore.currentPhotos when item.hash?
-
-        # R.table {},
-        #   R.tbody {},
-        #     R.tr({key: item.name}, [R.td({key: item.name}, i),R.td({key: 'td2'+item.name}, item.name)]) for item,i in DirStore.currentPhotos
-
+        Element Thumb, {src: "file://#{config.THUMB_PATH}/#{item.hash[0...16]}.jpg"} for item,i in DirStore.currentPhotos when item.hash?
 
 module.exports = Page

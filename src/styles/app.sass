@@ -4,11 +4,13 @@ $accent-color: #5b96af
 $hover-color: lighten($accent-color, 10)
 $highlight-color: #EFC94C
 $dark-back: #334D5C
+$light-back: #e0e8f0
 $OpenSansPath: '../assets/fonts' !default
 
 @import 'table.sass'
 @import 'bourbon/_bourbon.scss'
 @import 'components/IconButton.sass'
+@import 'components/Thumb.sass'
 
 // @import 'base/base'
 @mixin fontdef($OpenSansPath, $FontType:"Regular")
@@ -60,6 +62,7 @@ $font-stack: 'Open Sans'
 
 *
   font-size: 13px
+  box-sizing: border-box
 
 =block
   vertical-align: middle
@@ -78,6 +81,7 @@ td
 
 #content
   width: 400px
+  background: #FFCC00
   font-size: 7pt
   position: relative
 
@@ -96,12 +100,6 @@ td
 .main_nav a.active
   color: $highlight-color
 
-.main_content
-  padding: 10px 20px
-
-*
-  box-sizing: border-box
-
 #left_panel
   width: 300px
   position: absolute
@@ -110,17 +108,31 @@ td
   top: 38px
   padding: 5px
   // border-right: 1px solid #333
-  background: #e0e8f0
+  background: $light-back
   overflow: auto
+
+#left_panel::-webkit-scrollbar
+  width: 12px
+  background-color: none
+
+#left_panel::-webkit-scrollbar-thumb
+  background-color: darken($light-back, 20%)
+  border-radius: 8px
+  border: 4px solid $light-back
+
+#left_panel::-webkit-scrollbar-thumb:hover
+  background-color: darken($light-back, 35%)
 
 #right_content
   position: absolute
-  left: 310px
+  left: 300px
   right: 0
   bottom: 0
   top: 38px
   padding: 5px
   overflow: auto
+  background: #666
+
 
 .reac-tree
   .tree-sub-nodes
@@ -143,11 +155,9 @@ td
   .node-label
     vertical-align: middle
     +block
-    // overflow: hidden
 
   .selected
     color: red
-
 
   .size-label
     display: inline-block
@@ -166,7 +176,6 @@ table
   border-bottom: 1px solid #eee
 
 tr:nth-child(even) td
-  // border-bottom: 1px solid #ccc
   background: #eef8ff
 
 h4
@@ -200,8 +209,6 @@ h4
 
 .badge-blue
   +badge(#45B29D)
+
 .badge-orange
   +badge(#E27A3F)
-
-// .treeNode:before
-//   content: "\25B6"
