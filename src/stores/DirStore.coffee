@@ -21,6 +21,8 @@ dataStore =
   files: 0
   selectedDir: null
   currentPhotos: []
+  processingState: false
+  processedFiles: 0
 
   DB: DB
   init: ->
@@ -35,7 +37,11 @@ dataStore =
       ph = @photos
         .filter (i) -> return (not i.hash?) or i.hash? is ''
       console.log "ALL: #{@photos.length}, TO PROCESS: #{ph.length}"
-      ph.forEach (i) -> ProcessService.queue(i)
+      ph.forEach (i) =>
+        ProcessService.queue(i).then (photo) =>
+          @processedFiles++
+          @trigger()
+
 
     @listenTo Actions.stopProcess, ->
       ProcessService.killQueue()
@@ -71,9 +77,12 @@ dataStore =
   loadPhotos: ->
     @DB.getPhotos().then (data) =>
       @photos = _.sortBy(data, 'path')
+      @processedFiles = @photos
+        .filter (i) -> return i.hash?
+        .length
       @trigger()
     .catch (e) ->
-      console.error "fuck",e
+      console.error "some error in loadPhotos", e
 
   loadScanningPaths: ->
     @DB.getScanningPaths().then (data) =>

@@ -144,7 +144,7 @@ class ProcessService
     if getExt(photo.path) is 'cr2'
       cmd = "exiftool -b -PreviewImage \"#{photo.path}\" > #{previewPath}"
       exec cmd, (e, so, se) ->
-        orient = photo.exif?.Orientation?
+        orient = photo.exif.Orientation ? 1
         if orient is 1
           defer.resolve ''
           return
