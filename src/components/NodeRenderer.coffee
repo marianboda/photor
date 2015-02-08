@@ -24,7 +24,7 @@ TreeNode = React.createClass
 
     R.div {onClick: @clickHandler, className: 'tree-node' + if @props.selected then ' selected' else ''},
       R.div {className: 'node-toggler', key: 'toggler'}, triangle
-      R.div {className: 'node-label'}, @props.name
+      R.div {className: 'node-label', title: @props.name}, @props.name
       R.div {className: 'size-label'}, @props.value
 
 module.exports = TreeNode

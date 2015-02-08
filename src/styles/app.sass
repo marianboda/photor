@@ -134,41 +134,9 @@ td
   background: #666
 
 
-.reac-tree
-  .tree-sub-nodes
-    padding-left: 16px
+@import 'components/Tree.sass'
 
-  .node-toggler
-    font-size: 60%
-    +block
-    padding: 3px
-    width: 20px
-    height: 16px
-    color: $grey
 
-  .tree-node
-    cursor: pointer
-    overflow: hidden
-    border-top: 1px solid #CCC
-    padding: 2px
-
-  .node-label
-    vertical-align: middle
-    +block
-
-  .selected
-    color: red
-
-  .size-label
-    display: inline-block
-    float: right
-
-$badge-font-size: 0.8em !default
-$medium-gray: #999999 !default
-$alert-color: #fff6bf !default
-$error-color: #DF5A49 !default
-$notice-color: #e5edf8 !default
-$success-color: #e6efc2 !default
 
 table
   border-collapse: collapse
@@ -182,33 +150,4 @@ h4
   font-size: 14px
   margin: 4px
 
-=badge($color: $medium-gray)
-  background-color: $color
-  border-radius: $badge-font-size * 5
-  color: darken($color, 60%)
-  display: inline-block
-  font-size: $badge-font-size
-  font-weight: 600
-  line-height: 1
-  padding: 0.4em 0.6em 0.4em 0.7em
-
-.half-badge-left
-  +badge(#EFC94C)
-  border-top-right-radius: 0
-  border-bottom-right-radius: 0
-  padding: 0.3em 0.2em 0.3em 0.5em
-
-.half-badge-right
-  +badge(#45B29D)
-  border-top-left-radius: 0
-  border-bottom-left-radius: 0
-  padding: 0.3em 0.4em 0.3em 0.3em
-
-.badge
-  +badge
-
-.badge-blue
-  +badge(#45B29D)
-
-.badge-orange
-  +badge(#E27A3F)
+@import 'components/Badge.sass'

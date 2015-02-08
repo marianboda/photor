@@ -37,9 +37,13 @@ dataStore =
       ph = @photos
         .filter (i) -> return (not i.hash?) or i.hash? is ''
       console.log "ALL: #{@photos.length}, TO PROCESS: #{ph.length}"
+      @processingState = true if ph.length > 0
+
       ph.forEach (i) =>
         ProcessService.queue(i).then (photo) =>
           @processedFiles++
+          if @processedFiles is @photos.length
+            @processingState = false
           @trigger()
 
 

@@ -25,7 +25,7 @@ TreeNode = React.createClass
 
     R.div {onClick: @clickHandler, className: 'tree-node' + if @props.selected then ' selected' else ''},
       R.div {className: 'node-toggler', key: 'toggler'}, triangle
-      R.div {className: 'node-label'}, @props.data.name
+      R.div {className: 'node-label', title: @props.data.name}, @props.data.name
       R.div {className: 'size-label'},
         R.span {className: 'half-badge-left'},
           if @props.data.filesCount > 0 then@props.data.filesCount else '-'
