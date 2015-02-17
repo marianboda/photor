@@ -8,6 +8,7 @@ exec = require 'exec'
 _ = require 'lodash'
 DbService = require './NeDbService'
 config = require '../config'
+Utils = require '../utils/Utils'
 
 fs.exists config.PREVIEW_PATH, (exists) ->
   mkdirp config.PREVIEW_PATH, (e, dir) ->
@@ -18,18 +19,6 @@ fs.exists config.THUMB_PATH, (exists) ->
 
 getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.hash[0...16]}.jpg"
 getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.hash[0...16]}.jpg"
-getExt = (str) -> str.split('.').pop().toLowerCase()
-getOrientCommand = (num) -> [
-    ''
-    ''
-    '-flop'
-    '-rotate 180'
-    '-flip'
-    '-flip -rotate 90'
-    '-rotate 90'
-    '-flop -rotate 90'
-    '-rotate 270'
-  ][num]
 
 class ProcessService
   CONCURENCY: 8
@@ -148,7 +137,7 @@ class ProcessService
 
     previewPath = getPrevPath photo
 
-    if getExt(photo.path) is 'cr2'
+    if Utils.getExt(photo.path) is 'cr2'
       cmd = "exiftool -b -PreviewImage \"#{photo.path}\" > #{previewPath}"
       exec cmd, (e, so, se) ->
         orient = photo.exif.Orientation ? 1

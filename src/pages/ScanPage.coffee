@@ -49,16 +49,15 @@ Page = React.createClass
       R.h4 {}, 'Scanned Paths'
       R.table {},
         R.tbody {},
-          DirStore.scanningPaths.map
-            (item) =>
-              R.tr {key: item},
-                R.td {key: item+'_td'}, item
-                R.td {},
-                  React.createElement Icon,
-                    icon: 'squared-minus'
-                    key: item
-                    classes: ['delete']
-                    onClick: @removeDirectoryHandler
+          DirStore.scanningPaths.map (item) =>
+            R.tr {key: item},
+              R.td {key: item+'_td'}, item
+              R.td {},
+                React.createElement Icon,
+                  icon: 'squared-minus'
+                  key: item
+                  classes: ['delete']
+                  onClick: @removeDirectoryHandler
           R.tr {},
             R.td {colSpan: 2},
               React.createElement Icon,
@@ -69,16 +68,15 @@ Page = React.createClass
       R.h4 {}, 'Ignore Paths'
       R.table {},
         R.tbody {},
-          DirStore.ignorePaths.map
-            (item) =>
-              R.tr {key: item},
-                R.td {key: item+'_td'}, item
-                R.td {},
-                  React.createElement Icon,
-                    icon: 'squared-minus'
-                    key: item
-                    classes: ['delete']
-                    onClick: @removeIgnorePathsHandler
+          DirStore.ignorePaths.map (item) =>
+            R.tr {key: item},
+              R.td {key: item+'_td'}, item
+              R.td {},
+                React.createElement Icon,
+                  icon: 'squared-minus'
+                  key: item
+                  classes: ['delete']
+                  onClick: @removeIgnorePathsHandler
           R.tr {},
             R.td {colSpan: 2},
               React.createElement Icon,
