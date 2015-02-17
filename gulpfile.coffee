@@ -12,8 +12,8 @@ srcDirs =
 destDirs =
   js: 'app'
   lib: 'app/lib'
-  templates:'app'
-  styles:'app/css'
+  templates: 'app'
+  styles: 'app/css'
   binaries: 'binaries'
 
 paths =
@@ -32,6 +32,7 @@ gulp.task 'linux', shell.task(["#{destDirs.binaries}/atom ."])
 
 gulp.task 'lint', ->
   gulp.src(paths.csFiles).pipe(coffeelint()).pipe(coffeelint.reporter())
+
 
 gulp.task 'coffee', ->
   gulp.src(paths.csFiles)

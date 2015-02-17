@@ -50,7 +50,7 @@ TreeNode = React.createClass
         persistKeyPrefix: @props.persistKeyPrefix
         nodeRenderer: @props.nodeRenderer
 
-    R.div {key: @props.key, className:'tree-node-container'},
+    R.div {key: @props.key, className: 'tree-node-container'},
       React.createElement @props.nodeRenderer,
         onClick: @clickHandler
         onToggle: @toggleHandler

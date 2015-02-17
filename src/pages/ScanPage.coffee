@@ -49,7 +49,7 @@ Page = React.createClass
       R.h4 {}, 'Scanned Paths'
       R.table {},
         R.tbody {},
-          DirStore.scanningPaths.map \
+          DirStore.scanningPaths.map
             (item) =>
               R.tr {key: item},
                 R.td {key: item+'_td'}, item
@@ -69,7 +69,7 @@ Page = React.createClass
       R.h4 {}, 'Ignore Paths'
       R.table {},
         R.tbody {},
-          DirStore.ignorePaths.map \
+          DirStore.ignorePaths.map
             (item) =>
               R.tr {key: item},
                 R.td {key: item+'_td'}, item

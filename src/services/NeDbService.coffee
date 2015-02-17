@@ -53,7 +53,7 @@ class DbService
 
   getPhoto: (path) ->
     defer = $q.defer()
-    db.photo.findOne {path:path}, (err, rec) ->
+    db.photo.findOne {path: path}, (err, rec) ->
       defer.resolve(rec)
     defer.promise
 
@@ -104,10 +104,10 @@ class DbService
       (callback) -> db.dir.remove {}, {multi: true}, (err, num) ->
         callback(err, num)
     ], (err, results) ->
-        if err?
-          defer.reject err
-        else
-          defer.resolve results
+      if err?
+        defer.reject err
+      else
+        defer.resolve results
     defer.promise
 
 module.exports = new DbService()

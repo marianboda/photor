@@ -19,10 +19,17 @@ fs.exists config.THUMB_PATH, (exists) ->
 getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.hash[0...16]}.jpg"
 getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.hash[0...16]}.jpg"
 getExt = (str) -> str.split('.').pop().toLowerCase()
-getOrientCommand = (num) ->
-  ['','','-flop','-rotate 180','-flip','-flip -rotate 90',
-  	'-rotate 90','-flop -rotate 90','-rotate 270'][num]
-
+getOrientCommand = (num) -> [
+    ''
+    ''
+    '-flop'
+    '-rotate 180'
+    '-flip'
+    '-flip -rotate 90'
+    '-rotate 90'
+    '-flop -rotate 90'
+    '-rotate 270'
+  ][num]
 
 class ProcessService
   CONCURENCY: 8
@@ -55,7 +62,7 @@ class ProcessService
       # (callback) => @dbFind(photo).then (data) ->
       #   callback(null, data)
       # ,(err) -> console.log 'chyba'; defer.reject("#{photo.path} already in DB"); callback "#{photo.path} in DB";
-      (callback) => @md5(photo).then (data) =>
+      (callback) => @md5(photo).then (data) ->
         photo.hash = data
         defer.notify 'md5 done'
         callback null, data
@@ -121,7 +128,7 @@ class ProcessService
       # console.log hashString
       defer.resolve hashString
 
-    fd.pipe(hash);
+    fd.pipe(hash)
     defer.promise
 
   exif: (photo) ->
@@ -181,8 +188,5 @@ class ProcessService
   save: (photo) ->
     # console.log 'saving '+photo.path
     DbService.updatePhoto(photo)
-
-
-
 
 module.exports = new ProcessService()

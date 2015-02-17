@@ -46,7 +46,6 @@ dataStore =
             @processingState = false
           @trigger()
 
-
     @listenTo Actions.stopProcess, ->
       ProcessService.killQueue()
 
@@ -116,7 +115,7 @@ dataStore =
     console.log 'SCANNING STARTED'
     dirs = []
 
-    processDir = (dirObject) =>
+    processDir = (dirObject) ->
       walkQueue.push dirObject.path, (e, ob) -> dirs.push ob
 
     processFile = (fileObject) =>
@@ -125,9 +124,9 @@ dataStore =
       @trigger()
 
     ignorePaths = @ignorePaths
-    walkQueue = async.queue (dirPath, callback)->
+    walkQueue = async.queue (dirPath, callback) ->
       fs.readdir dirPath, (err, files) ->
-        thisDir = {path: dirPath, name: Path.basename(dirPath), files: [], items:[], unrecognizedCount: 0}
+        thisDir = {path: dirPath, name: Path.basename(dirPath), files: [], items: [], unrecognizedCount: 0}
         async.each files,
           (f, eachCallback) ->
             filePath = dirPath + Path.sep + f

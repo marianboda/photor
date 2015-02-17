@@ -36,7 +36,7 @@ Tree = React.createClass
       persistKeyPrefix: @props.persistKey
       nodeRenderer: @props.nodeRenderer
 
-    R.div {key: @props.key, className:'reac-tree'},
+    R.div {key: @props.key, className: 'reac-tree'},
       React.createElement TreeNode, treeNodeProps
 
 module.exports = Tree

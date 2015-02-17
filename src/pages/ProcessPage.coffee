@@ -63,5 +63,4 @@ Page = React.createClass
       React.createElement Button, {icon: 'cross', onClick: -> Actions.stopProcess()}
       R.progress {value: DirStore.processedFiles, max: DirStore.photos.length, style: {width: '100%'}}
 
-
 module.exports = Page

@@ -28,6 +28,7 @@ Page = React.createClass
           persistKey: 'dirTree'
           nodeRenderer: DirNodeRenderer
       R.div {id: 'right_content'},
-        Element Thumb, {src: "file://#{config.THUMB_PATH}/#{item.hash[0...16]}.jpg"} for item,i in DirStore.currentPhotos when item.hash?
+        for item,i in DirStore.currentPhotos when item.hash?
+          Element Thumb, {src: "file://#{config.THUMB_PATH}/#{item.hash[0...16]}.jpg"}
 
 module.exports = Page
