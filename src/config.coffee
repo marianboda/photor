@@ -14,6 +14,8 @@ module.exports =
     'cr2'
     'mov'
     'mp4'
+    'avi'
+    '3gp'
   ]
   PREVIEW_SIZE: 800
   THUMB_SIZE: 200

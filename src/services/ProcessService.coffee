@@ -44,6 +44,56 @@ class ProcessService
   killQueue: ->
     @_queue.kill()
 
+  processPhoto: (photo, callback) ->
+    async.series [
+      (callback) => @exif(photo).then (data) ->
+        photo.exif = data
+        callback null, data
+
+      (callback) => @preview(photo).then (data) ->
+        callback null, data
+      , (err) ->
+        console.error 'rejected preview somehow ',err
+        photo.preview = false
+        defer.reject(err)
+        callback null, photo
+
+      (callback) => @thumb(photo).then (data) ->
+        callback null, data
+      , (err) ->
+        photo.thumb = false
+        console.error err
+        defer.reject(err)
+        callback null, photo
+    ], (err) ->
+      if err?
+        console.error 'queue error', err
+        callback err
+      console.log 'all fine ;)'
+      callback null
+
+  processVideo: (video, callback) ->
+    console.log 'video? '
+    @videoThumb video, callback
+
+  videoThumb: (photo, callback) ->
+    console.log 'in video thumb'
+    previewPath = getPrevPath photo
+    thumbPath = getThumbPath photo
+    previewSize = config.PREVIEW_SIZE
+    thumbSize = config.THUMB_SIZE
+    cmd = "ffmpeg -an -i #{photo.path} -vframes 1 -s 320x240 #{previewPath}"
+    console.log 'in video thumb cmd'
+    console.log cmd
+    exec cmd, (e,so,se) ->
+      if (se? and se isnt '' and se isnt 0) or (e? and e isnt '' and e isnt 0)
+        console.error "ffmpeg (s)error #{e} #{se} #{so} #{photo.path}"
+        console.log {e: e, so: so, se: se}
+        _.assign(photo, {status: 'unrecognized'})
+        return callback('err')
+      return callback(null, photo)
+
+
   _process: (photo) ->
     # console.log '%cPROCESSING FILE: %c'+ photo.path, 'color: gray', 'color: green'
     defer = $q.defer()
@@ -52,29 +102,18 @@ class ProcessService
       #   callback(null, data)
       # ,(err) -> console.log 'chyba'; defer.reject("#{photo.path} already in DB"); callback "#{photo.path} in DB";
       (callback) => @md5(photo).then (data) ->
+        console.log 'photo', photo
         photo.hash = data
         defer.notify 'md5 done'
         callback null, data
-      (callback) => @exif(photo).then (data) ->
-        photo.exif = data
-        defer.notify 'exif done'
-        callback null, data
-      (callback) => @preview(photo).then (data) ->
-        defer.notify 'preview done'
-        callback null, data
-      ,(err) ->
-        defer.reject(err)
-        console.error 'rejected preview somehow ',err
-        photo.preview = false
-        callback null, photo
 
-      (callback) => @thumb(photo).then (data) ->
-        defer.notify('thumb done')
-        callback null, data
-      , (err) ->
-        defer.reject(err)
-        photo.thumb = false
-        callback null, photo
+      (callback) =>
+        console.log 'photo', photo.path
+        console.log 'extension is', Utils.getExt(photo.path)
+        if Utils.getExt(photo.path) in ['mp4', 'avi', 'mov', '3gp']
+          @processVideo photo, callback
+        else
+          @processPhoto photo, callback
 
       (callback) => @save(photo).then (data) ->
         defer.notify 'save done'
@@ -163,7 +202,7 @@ class ProcessService
     thumbSize = config.THUMB_SIZE
     exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\"", (e,so,se) ->
       if (se? and se isnt '' and se isnt 0) or (e? and e isnt '' and e isnt 0)
-        console.error "mogrify (s)error #{e} #{se} #{so}"
+        console.error "mogrify (s)error #{e} #{se} #{so} #{photo.path}"
         # return defer.reject 'mogrify error'
         return defer.resolve _.assign(photo, {status: 'unrecognized'})
       exec "gm convert -resize #{thumbSize}x#{thumbSize}\\> \"#{previewPath}\" \"#{thumbPath}\"", (e,so,se) ->

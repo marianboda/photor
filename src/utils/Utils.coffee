@@ -1,7 +1,8 @@
 Path = require 'path'
 
 class Utils
-  @getExt: (path) -> Path.extname('path')[1..]
+  @getExt: (path) ->
+    Path.extname(path)[1..].toLowerCase()
 
   @getOrientCommand: (num) -> [
       ''
