@@ -44,6 +44,35 @@ class ProcessService
   killQueue: ->
     @_queue.kill()
 
+  processPhoto: (photo, callback) ->
+    async.series [
+      (callback) => @exif(photo).then (data) ->
+        photo.exif = data
+        callback null, data
+
+      (callback) => @preview(photo).then (data) ->
+        callback null, data
+      , (err) ->
+        console.error 'rejected preview somehow ',err
+        photo.preview = false
+        defer.reject(err)
+        callback null, photo
+
+      (callback) => @thumb(photo).then (data) ->
+        callback null, data
+      , (err) ->
+        photo.thumb = false
+        console.error err
+        defer.reject(err)
+        callback null, photo
+    ], (err) ->
+      if err?
+        console.error 'queue error', err
+        callback err
+      callback null
+
+
+
   _process: (photo) ->
     # console.log '%cPROCESSING FILE: %c'+ photo.path, 'color: gray', 'color: green'
     defer = $q.defer()
@@ -55,29 +84,12 @@ class ProcessService
         photo.hash = data
         defer.notify 'md5 done'
         callback null, data
-      (callback) => @exif(photo).then (data) ->
-        photo.exif = data
-        defer.notify 'exif done'
-        callback null, data
-      (callback) => @preview(photo).then (data) ->
-        defer.notify 'preview done'
-        callback null, data
-      ,(err) ->
-        defer.reject(err)
-        console.error 'rejected preview somehow ',err
-        photo.preview = false
-        callback null, photo
 
-      (callback) => @thumb(photo).then (data) ->
-        defer.notify('thumb done')
-        callback null, data
-      , (err) ->
-        defer.reject(err)
-        photo.thumb = false
-        callback null, photo
+      (callback) => @processPhoto(photo, callback)
 
       (callback) => @save(photo).then (data) ->
         defer.notify 'save done'
+        console.log 'here???? '
         callback null, data
     ], (err) ->
       if err?
@@ -163,7 +175,7 @@ class ProcessService
     thumbSize = config.THUMB_SIZE
     exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\"", (e,so,se) ->
       if (se? and se isnt '' and se isnt 0) or (e? and e isnt '' and e isnt 0)
-        console.error "mogrify (s)error #{e} #{se} #{so}"
+        console.error "mogrify (s)error #{e} #{se} #{so} #{photo.path}"
         # return defer.reject 'mogrify error'
         return defer.resolve _.assign(photo, {status: 'unrecognized'})
       exec "gm convert -resize #{thumbSize}x#{thumbSize}\\> \"#{previewPath}\" \"#{thumbPath}\"", (e,so,se) ->
