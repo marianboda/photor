@@ -69,30 +69,23 @@ class ProcessService
       if err?
         console.error 'queue error', err
         callback err
-      console.log 'all fine ;)'
       callback null
 
   processVideo: (video, callback) ->
-    console.log 'video? '
     @videoThumb video, callback
 
   videoThumb: (photo, callback) ->
-    console.log 'in video thumb'
     previewPath = getPrevPath photo
     thumbPath = getThumbPath photo
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
     cmd = "ffmpeg -an -i #{photo.path} -vframes 1 -s 320x240 #{previewPath}"
-    console.log 'in video thumb cmd'
-    console.log cmd
     exec cmd, (e,so,se) ->
       if (se? and se isnt '' and se isnt 0) or (e? and e isnt '' and e isnt 0)
-        console.error "ffmpeg (s)error #{e} #{se} #{so} #{photo.path}"
         console.log {e: e, so: so, se: se}
         _.assign(photo, {status: 'unrecognized'})
         return callback('err')
       return callback(null, photo)
-
 
   _process: (photo) ->
     # console.log '%cPROCESSING FILE: %c'+ photo.path, 'color: gray', 'color: green'
@@ -102,14 +95,11 @@ class ProcessService
       #   callback(null, data)
       # ,(err) -> console.log 'chyba'; defer.reject("#{photo.path} already in DB"); callback "#{photo.path} in DB";
       (callback) => @md5(photo).then (data) ->
-        console.log 'photo', photo
         photo.hash = data
         defer.notify 'md5 done'
         callback null, data
 
       (callback) =>
-        console.log 'photo', photo.path
-        console.log 'extension is', Utils.getExt(photo.path)
         if Utils.getExt(photo.path) in ['mp4', 'avi', 'mov', '3gp']
           @processVideo photo, callback
         else
@@ -117,6 +107,7 @@ class ProcessService
 
       (callback) => @save(photo).then (data) ->
         defer.notify 'save done'
+        console.log 'here???? '
         callback null, data
     ], (err) ->
       if err?
