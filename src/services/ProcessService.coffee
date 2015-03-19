@@ -4,7 +4,7 @@ gm = require 'gm'
 $q = require 'q'
 mkdirp = require 'mkdirp'
 async = require 'async'
-exec = require 'exec'
+exec = require('child_process').exec
 _ = require 'lodash'
 DbService = require './NeDbService'
 config = require '../config'
@@ -55,7 +55,6 @@ class ProcessService
       , (err) ->
         console.error 'rejected preview somehow ',err
         photo.preview = false
-        defer.reject(err)
         callback null, photo
 
       (callback) => @thumb(photo).then (data) ->
@@ -63,16 +62,27 @@ class ProcessService
       , (err) ->
         photo.thumb = false
         console.error err
-        defer.reject(err)
         callback null, photo
+
     ], (err) ->
       if err?
         console.error 'queue error', err
         callback err
       callback null
 
-  processVideo: (video, callback) ->
-    @videoThumb video, callback
+  processVideo: (file, callback) ->
+    async.series [
+      (callback) => @videoThumb file, callback
+
+      (callback) => @thumb(file).then (data) ->
+        callback null, data
+      , (err) ->
+        file.thumb = false
+        console.error err
+        callback null, photo
+
+    ], (err) ->
+      callback(err)
 
   videoThumb: (photo, callback) ->
     previewPath = getPrevPath photo
@@ -80,12 +90,14 @@ class ProcessService
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
     cmd = "ffmpeg -an -i #{photo.path} -vframes 1 -s 320x240 #{previewPath}"
+    console.info cmd
     exec cmd, (e,so,se) ->
-      if (se? and se isnt '' and se isnt 0) or (e? and e isnt '' and e isnt 0)
-        console.log {e: e, so: so, se: se}
+      console.log 'we gettin somewhere'
+      if (e? and e isnt '' and e isnt 0)
         _.assign(photo, {status: 'unrecognized'})
-        return callback('err')
-      return callback(null, photo)
+        console.error e
+        return callback(e)
+      callback(null, photo)
 
   _process: (photo) ->
     # console.log '%cPROCESSING FILE: %c'+ photo.path, 'color: gray', 'color: green'
@@ -97,6 +109,7 @@ class ProcessService
       (callback) => @md5(photo).then (data) ->
         photo.hash = data
         defer.notify 'md5 done'
+        console.log 'md5 done'
         callback null, data
 
       (callback) =>
@@ -104,6 +117,7 @@ class ProcessService
           @processVideo photo, callback
         else
           @processPhoto photo, callback
+        console.log 'ph/vid this one done'
 
       (callback) => @save(photo).then (data) ->
         defer.notify 'save done'
@@ -117,8 +131,6 @@ class ProcessService
       # console.error 'series callback', err if err?
       # console.log 'all done: '+photo.path
       defer.resolve('all done: '+photo.path)
-    , (event) ->
-      console.log 'some progress', event
 
     defer.promise
 
@@ -133,22 +145,7 @@ class ProcessService
         defer.reject 'error, already in DB'
     defer.promise
 
-  md5: (photo) ->
-    crypto = require 'crypto'
-
-    fd = fs.createReadStream photo.path
-    hash = crypto.createHash 'md5'
-    hash.setEncoding 'hex'
-    defer = $q.defer()
-
-    fd.on 'end', ->
-      hash.end()
-      hashString = hash.read()
-      # console.log hashString
-      defer.resolve hashString
-
-    fd.pipe(hash)
-    defer.promise
+  md5: (photo) -> Utils.md5File(photo)
 
   exif: (photo) ->
     defer = $q.defer()
