@@ -46,16 +46,13 @@ class ProcessService
 
   processPhoto: (photo, callback) ->
     async.series [
-      (callback) => @exif(photo).then (data) ->
+      (callback) => @exif photo, (err, data) ->
         photo.exif = data
         callback null, data
 
-      (callback) => @preview(photo).then (data) ->
+      (callback) => @preview photo, (err, data) ->
+        photo.preview = false if err?
         callback null, data
-      , (err) ->
-        console.error 'rejected preview somehow ',err
-        photo.preview = false
-        callback null, photo
 
       (callback) => @thumb(photo).then (data) ->
         callback null, data
@@ -150,31 +147,23 @@ class ProcessService
       result = if se > 0 then {} else JSON.parse(so)[0]
       callback null, result
 
-  preview: (photo) ->
-    defer = $q.defer()
-    if not photo.hash
-      defer.reject()
-      return defer.promise
-
+  preview: (photo, callback) ->
+    return callback('error') if not photo.hash
     previewPath = getPrevPath photo
 
     if Utils.getExt(photo.path) is 'cr2'
       cmd = "exiftool -b -PreviewImage \"#{photo.path}\" > #{previewPath}"
       exec cmd, (e, so, se) ->
         orient = photo.exif.Orientation ? 1
-        if orient is 1
-          defer.resolve ''
-          return
+        return callback(null) if orient is 1
+
         exec "gm mogrify #{getOrientCommand orient} #{previewPath}", ->
-          # previewResizeQueue.push task
-          defer.resolve ''
+          return callback(null)
     else
       cmd = "cp \"#{photo.path}\" #{previewPath}"
       exec cmd, (e, so, se) ->
         # console.error 'e', e, 'so', so, 'se', se if se
-        defer.resolve ''
-
-    defer.promise
+        callback null
 
   thumb: (photo) ->
     defer = $q.defer()
