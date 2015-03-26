@@ -128,8 +128,6 @@ class ProcessService
         console.error 'queue error', err
         defer.reject err
 
-      # console.error 'series callback', err if err?
-      # console.log 'all done: '+photo.path
       defer.resolve('all done: '+photo.path)
 
     defer.promise
