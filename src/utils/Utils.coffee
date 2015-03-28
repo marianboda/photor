@@ -34,4 +34,11 @@ class Utils
     fd.pipe(hash)
     defer.promise
 
+  @exif: (path, callback) ->
+    exec "exiftool -n -j \"#{path}\"", (e,so,se) ->
+      result = if se > 0 then {} else JSON.parse(so)[0]
+      callback null, result
+
+  @isVideo: (path, callback) -> @getExt(path) in ['mp4', 'avi', 'mov', '3gp']
+
 module.exports = Utils

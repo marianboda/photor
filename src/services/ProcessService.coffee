@@ -27,22 +27,17 @@ class ProcessService
   constructor: ->
     @_queue =
       async.queue (task, callback) =>
-        @_process(task).then ->
-          # console.log 'task done: '+task.path
-          callback()
-        , (err) -> callback err
-        , (notify) -> console.info notify
+        @_process task, -> callback(err)
       ,@CONCURENCY
 
   queue: (photo) ->
     defer = $q.defer()
     @_queue.push photo, (err) ->
-      defer.reject(err) if err?
+      return defer.reject(err) if err?
       defer.resolve(photo)
     defer.promise
 
-  killQueue: ->
-    @_queue.kill()
+  killQueue: -> @_queue.kill()
 
   processPhoto: (photo, callback) ->
     async.series [
@@ -96,38 +91,30 @@ class ProcessService
         return callback(e)
       callback(null, photo)
 
-  _process: (photo) ->
+  _process: (photo, callback) ->
     # console.log '%cPROCESSING FILE: %c'+ photo.path, 'color: gray', 'color: green'
-    defer = $q.defer()
     async.series [
       # (callback) => @dbFind(photo).then (data) ->
       #   callback(null, data)
       # ,(err) -> console.log 'chyba'; defer.reject("#{photo.path} already in DB"); callback "#{photo.path} in DB";
       (callback) => @md5(photo).then (data) ->
         photo.hash = data
-        defer.notify 'md5 done'
         console.log 'md5 done'
         callback null, data
 
       (callback) =>
-        if Utils.getExt(photo.path) in ['mp4', 'avi', 'mov', '3gp']
+        if Utils.isVideo(photo.path)
           @processVideo photo, callback
         else
           @processPhoto photo, callback
         console.log 'ph/vid this one done'
 
       (callback) => @save(photo).then (data) ->
-        defer.notify 'save done'
-        console.log 'here???? '
         callback null, data
     ], (err) ->
       if err?
         console.error 'queue error', err
-        defer.reject err
-
-      defer.resolve('all done: '+photo.path)
-
-    defer.promise
+      callback err
 
   dbFind: (photo) ->
     defer = $q.defer()
@@ -142,10 +129,7 @@ class ProcessService
 
   md5: (photo) -> Utils.md5File(photo)
 
-  exif: (photo, callback) ->
-    exec "exiftool -n -j \"#{photo.path}\"", (e,so,se) ->
-      result = if se > 0 then {} else JSON.parse(so)[0]
-      callback null, result
+  exif: (photo, callback) -> @Utils.exif photo.path, callback
 
   preview: (photo, callback) ->
     return callback('error') if not photo.hash
@@ -184,8 +168,6 @@ class ProcessService
         defer.resolve(photo)
     defer.promise
 
-  save: (photo) ->
-    # console.log 'saving '+photo.path
-    DbService.updatePhoto(photo)
+  save: (photo) -> DbService.updatePhoto(photo)
 
 module.exports = new ProcessService()
