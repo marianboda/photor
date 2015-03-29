@@ -8,7 +8,8 @@
     "url": "https://github.com/marianboda/atom-shell-tryout.git"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "clean": "(cd ~/Documents/PhotorData && rm -f preview/* thumb/* dirs.nedb photos.nedb)"
   },
   "jest": {
     "scriptPreprocessor": "preprocessor.js",
@@ -30,10 +31,10 @@
     "async": "^0.9.0",
     "browserify": "^9.0.3",
     "coffee-script": "^1.9.1",
-    "coffeelint": "^1.9.2",
+    "coffeelint": "^1.9.3",
     "exec": "^0.2.0",
     "file": "^0.2.2",
-    "fixed-data-table": "^0.1.1",
+    "fixed-data-table": "^0.1.2",
     "flux": "^2.0.1",
     "gm": "^1.17.0",
     "gulp": "^3.8.11",
@@ -41,18 +42,18 @@
     "gulp-coffee": "^2.3.1",
     "gulp-coffeelint": "^0.4.0",
     "gulp-download-atom-shell": "0.0.4",
-    "gulp-ruby-sass": "^1.0.0-alpha.3",
-    "gulp-shell": "^0.3.0",
-    "immutable": "^3.6.2",
-    "lodash": "^3.3.0",
+    "gulp-ruby-sass": "^1.0.1",
+    "gulp-shell": "^0.4.0",
+    "immutable": "^3.7.0",
+    "lodash": "^3.6.0",
     "mkdirp": "^0.5.0",
     "nedb": "^1.1.1",
     "object-assign": "^2.0.0",
     "q": "^1.2.0",
-    "react": "^0.12.2",
-    "react-router": "^0.12.0",
+    "react": "^0.13.1",
+    "react-router": "^0.13.2",
     "react-svg": "^1.0.0",
-    "reflux": "^0.2.5"
+    "reflux": "^0.2.7"
   },
   "devDependencies": {}
 }
