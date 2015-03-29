@@ -17,10 +17,10 @@ class Utils
       '-rotate 270'
     ][num]
 
-  @md5File: (photo) ->
+  @md5File: (path) ->
     crypto = require 'crypto'
 
-    fd = fs.createReadStream photo.path
+    fd = fs.createReadStream path
     hash = crypto.createHash 'md5'
     hash.setEncoding 'hex'
     defer = $q.defer()
