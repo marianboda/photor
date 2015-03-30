@@ -14,9 +14,9 @@ Icon = React.createClass
     classes = ['svg-icon']
     classes = classes.concat @props.classes if @props.classes?
 
-    R.div {onClick: @props.onClick},
-      SVG
-        path: "assets/entypo/#{@props.icon}.svg"
-        className: classes.join ' '
+    R.div {onClick: @props.onClick}, '-icon-'
+      # SVG
+      #   path: "assets/entypo/#{@props.icon}.svg"
+      #   className: classes.join ' '
 
 module.exports = Icon

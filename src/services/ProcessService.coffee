@@ -26,10 +26,10 @@ class ProcessService
       (cb) -> cb(null, task)
       (task, cb) -> cb(null, console.log 'task f 1')
       (task, cb) -> cb(null, console.log 'task f 2')
-    ], (task, err) ->
+    ], done
+
+    done = (task, err) ->
       console.log 'waterfall done', err
       cb()
-
-
 
 module.exports = new ProcessService()
