@@ -2,6 +2,7 @@
 
 async = require 'async'
 Q = require 'q'
+MediaProcess = require './MediaProcessService'
 
 class ProcessService
   _queue: null
@@ -22,14 +23,16 @@ class ProcessService
 
   _process: (task, cb) ->
     console.log 'task ', task
-    async.waterfall [
-      (cb) -> cb(null, task)
-      (task, cb) -> cb(null, console.log 'task f 1')
-      (task, cb) -> cb(null, console.log 'task f 2')
-    ], done
 
-    done = (task, err) ->
+    onDone = (err) ->
       console.log 'waterfall done', err
       cb()
+
+    async.waterfall [
+      (cb) -> cb(null, task)
+      MediaProcess.hash
+      (task, cb) -> cb(null, console.log 'task f 1')
+      (task, cb) -> console.log 'task f +2'; cb(null, {path: '~/temp/shit'})
+    ], onDone
 
 module.exports = new ProcessService()
