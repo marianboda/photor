@@ -1,9 +1,11 @@
 'use strict'
 
-Utils = require '../utils/Utils'
-# I = require 'immutable'
-config = require '../config'
 exec = require('child_process').exec
+_ = require 'lodash'
+# I = require 'immutable'
+
+Utils = require '../utils/Utils'
+config = require '../config'
 
 getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.hash[0...16]}.jpg"
 getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.hash[0...16]}.jpg"
@@ -36,6 +38,23 @@ class MediaProcessService
       exec cmd, (e, so, se) ->
         # console.error 'e', e, 'so', so, 'se', se if se
         cb(null, record)
+
+  thumb: (record, cb) ->
+    previewPath = getPrevPath record
+    thumbPath = getThumbPath record
+    previewSize = config.PREVIEW_SIZE
+    thumbSize = config.THUMB_SIZE
+    exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\"", (e,so,se) ->
+      if (se? and se isnt '' and se isnt 0) or (e? and e isnt '' and e isnt 0)
+        console.error "mogrify (s)error #{e} #{se} #{so} #{record.path}"
+        _.assign(record, {status: 'unrecognized'})
+      exec "gm convert -resize #{thumbSize}x#{thumbSize}\\> \"#{previewPath}\" \"#{thumbPath}\"", (e,so,se) ->
+        if (e? and e isnt 0 and e isnt '') or (se? and se isnt '' and se isnt 0)
+          console.error "convert (s)error #{e} #{se} #{so}"
+          _.assign(record, {status: 'unrecognized'})
+        cb null, record
+
+
 
   exif: (record, cb) ->
     Utils.exif record.path, (err, result) ->

@@ -24,15 +24,17 @@ class ProcessService
   _process: (task, cb) ->
     console.log 'task ', task
 
+    initWaterfall = (cb) -> cb(null, task)
     onDone = (err) ->
       console.log 'waterfall done', err
       cb()
 
     async.waterfall [
-      (cb) -> cb(null, task)
+      initWaterfall
       MediaProcess.hash
       MediaProcess.exif
       MediaProcess.photoPreview
+      MediaProcess.thumb
     ], onDone
 
 module.exports = new ProcessService()
