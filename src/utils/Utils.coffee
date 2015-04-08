@@ -1,5 +1,6 @@
 Path = require 'path'
-$q = require 'q'
+Q = require 'q'
+exec = require('child_process').exec
 
 class Utils
   @getExt: (path) ->
@@ -23,7 +24,7 @@ class Utils
     fd = fs.createReadStream path
     hash = crypto.createHash 'md5'
     hash.setEncoding 'hex'
-    defer = $q.defer()
+    defer = Q.defer()
 
     fd.on 'end', ->
       hash.end()
