@@ -31,8 +31,8 @@ class ProcessService
     async.waterfall [
       (cb) -> cb(null, task)
       MediaProcess.hash
-      (task, cb) -> cb(null, console.log 'task f 1')
-      (task, cb) -> console.log 'task f +2'; cb(null, {path: '~/temp/shit'})
+      MediaProcess.exif
+      MediaProcess.photoPreview
     ], onDone
 
 module.exports = new ProcessService()
