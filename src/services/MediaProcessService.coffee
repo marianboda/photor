@@ -10,7 +10,6 @@ config = require '../config'
 getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.hash[0...16]}.jpg"
 getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.hash[0...16]}.jpg"
 
-
 class MediaProcessService
   init: () ->
 
@@ -54,12 +53,9 @@ class MediaProcessService
           _.assign(record, {status: 'unrecognized'})
         cb null, record
 
-
-
   exif: (record, cb) ->
     Utils.exif record.path, (err, result) ->
       record.exif = result
       cb(null, record)
-
 
 module.exports = new MediaProcessService()

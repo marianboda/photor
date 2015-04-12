@@ -1,7 +1,6 @@
 jest.dontMock '../../src/services/ProcessService.coffee'
 
-describe 'init', ->
-  it 'should have init defined', ->
+describe 'queue', ->
+  it 'should have queue defined', ->
     ProcessService = require '../../src/services/ProcessService.coffee'
-    expect(ProcessService.init).toBeDefined()
-    expect(false).toEqual(false)
+    expect(ProcessService.queue).toBeDefined()
