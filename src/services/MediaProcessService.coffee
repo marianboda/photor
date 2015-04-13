@@ -21,6 +21,13 @@ class MediaProcessService
       console.log 'md5', record.hash
       cb null, record
 
+  preview: (record, cb) =>
+    if Utils.isVideo(record.path)
+      @videoPreview(record,cb)
+    else
+      @photoPreview(record,cb)
+
+
   photoPreview: (record, cb) ->
     return cb 'error: no hash' unless record.hash
     previewPath = getPrevPath record
@@ -59,7 +66,9 @@ class MediaProcessService
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
     cmd = "ffmpeg -an -i #{record.path} -vframes 1 -s 320x240 #{previewPath}"
+    console.info cmd
     exec cmd, (e,so,se) ->
+      console.log so
       if (e? and e isnt '' and e isnt 0)
         _.assign(record, {status: 'unrecognized'})
         console.error e

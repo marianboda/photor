@@ -8,8 +8,7 @@ class ProcessService
   _queue: null
 
   constructor: ->
-    qF = (task, callback) =>
-      @_process(task, -> callback null)
+    qF = (task, callback) => @_process(task, -> callback null)
     @_queue = async.queue qF, 2
 
   queue: (record) ->
@@ -23,7 +22,6 @@ class ProcessService
 
   _process: (task, cb) ->
     console.log 'task ', task
-
     initWaterfall = (cb) -> cb(null, task)
     onDone = (err) ->
       console.log 'waterfall done', err
@@ -33,7 +31,7 @@ class ProcessService
       initWaterfall
       MediaProcess.hash
       MediaProcess.exif
-      MediaProcess.photoPreview
+      MediaProcess.preview
       MediaProcess.thumb
     ], onDone
 
