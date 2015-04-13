@@ -53,6 +53,19 @@ class MediaProcessService
           _.assign(record, {status: 'unrecognized'})
         cb null, record
 
+  videoPreview: (record, cb) ->
+    previewPath = getPrevPath record
+    thumbPath = getThumbPath record
+    previewSize = config.PREVIEW_SIZE
+    thumbSize = config.THUMB_SIZE
+    cmd = "ffmpeg -an -i #{record.path} -vframes 1 -s 320x240 #{previewPath}"
+    exec cmd, (e,so,se) ->
+      if (e? and e isnt '' and e isnt 0)
+        _.assign(record, {status: 'unrecognized'})
+        console.error e
+        return cb(e)
+      cb(null, record)
+
   exif: (record, cb) ->
     Utils.exif record.path, (err, result) ->
       record.exif = result
