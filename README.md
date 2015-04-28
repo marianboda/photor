@@ -1,3 +1,3 @@
 # Photor
 
-Photo organizer made with atom-shell, coffescript, React, and lot other good stuff..
+Photo organizer made with Electron, CoffeScript, React, and lot other good stuff..

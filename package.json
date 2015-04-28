@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "jest",
-    "clean": "(cd ~/Documents/PhotorData && rm -f preview/* thumb/* dirs.nedb photos.nedb)"
+    "clean": "(cd ~/Documents/PhotorData && rm -f preview/* thumb/* dirs.nedb photos.nedb)",
+    "electron": "rm -rf binaries/Electron.app && unzip node_modules/electron-prebuilt/electron-v0.25.1-darwin-x64.zip \"Electron.app/*\" -d binaries &> /dev/null"
   },
   "jest": {
     "scriptPreprocessor": "preprocessor.js",
@@ -32,6 +33,7 @@
     "browserify": "^9.0.8",
     "coffee-script": "^1.9.2",
     "coffeelint": "^1.9.4",
+    "electron-prebuilt": "^0.25.1",
     "exec": "^0.2.0",
     "file": "^0.2.2",
     "fixed-data-table": "^0.1.2",

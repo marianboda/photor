@@ -1,6 +1,7 @@
 gulp = require 'gulp'
 shell = require 'gulp-shell'
 downloadatomshell = require 'gulp-download-atom-shell'
+
 coffee = require 'gulp-coffee'
 coffeelint = require 'gulp-coffeelint'
 sass = require 'gulp-ruby-sass'
@@ -27,7 +28,8 @@ gulp.task 'downloadatomshell', (cb) ->
     outputDir: destDirs.binaries
   , cb
 
-gulp.task 'demo', shell.task(["#{destDirs.binaries}/Atom.app/Contents/MacOS/Atom ."])
+# gulp.task 'demo', shell.task(["#{destDirs.binaries}/Atom.app/Contents/MacOS/Atom ."])
+gulp.task 'run', shell.task(["#{destDirs.binaries}/Electron.app/Contents/MacOS/Electron ."])
 gulp.task 'linux', shell.task(["#{destDirs.binaries}/atom ."])
 
 gulp.task 'lint', ->
