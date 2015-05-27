@@ -53,9 +53,10 @@
     "object-assign": "^2.0.0",
     "q": "^1.4.1",
     "react": "^0.13.3",
-    "react-router": "^0.13.2",
+    "react-router": "^0.13.3",
     "react-svg": "^1.0.0",
-    "reflux": "^0.2.7"
+    "reflux": "^0.2.7",
+    "sqlite3": "^3.0.8"
   },
   "devDependencies": {}
 }
