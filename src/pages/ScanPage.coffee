@@ -1,6 +1,5 @@
 DirStore = require '../stores/DirStore'
 TreeNode = require '../components/Tree'
-ProcessService = require '../services/ProcessService'
 Reflux = require 'reflux'
 React = require 'react'
 R = React.DOM
@@ -21,17 +20,11 @@ Page = React.createClass
   scanButtonHandler: ->
     Actions.scan()
 
-  processButtonClickHandler: ->
-    # Actions.processDirTree()
-
   addDirectoryHandler: ->
     Dialog.showOpenDialog {properties: ['openDirectory', 'multiSelections']}, (files) ->
       Actions.addDirectoryToLibrary files
 
-  removeDirectoryHandler: (e) ->
-    path = e.dispatchMarker.split('.')
-    path.pop()
-    Actions.removeDirectoryFromLibrary path.pop()[1..]
+  removeDirectoryHandler: (item) -> Actions.removeDirectoryFromLibrary item
 
   addIgnorePathHandler: ->
     Dialog.showOpenDialog {properties: ['openDirectory', 'multiSelections']}, (paths) ->
@@ -54,9 +47,8 @@ Page = React.createClass
               R.td {},
                 React.createElement Icon,
                   icon: 'squared-minus'
-                  key: item
                   classes: ['delete']
-                  onClick: @removeDirectoryHandler
+                  onClick: => @removeDirectoryHandler(item)
           R.tr {},
             R.td {colSpan: 2},
               React.createElement Icon,
