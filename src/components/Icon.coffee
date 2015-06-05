@@ -14,7 +14,7 @@ Icon = React.createClass
     classes = ['svg-icon']
     classes = classes.concat @props.classes if @props.classes?
 
-    R.div {onClick: @props.onClick}, '-icon-'
+    R.div {onClick: @props.onClick}, "-#{@props.icon}-"
       # R.svg
       #   width: 24
       #   height: 24
