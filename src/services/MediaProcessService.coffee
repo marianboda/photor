@@ -38,7 +38,8 @@ class MediaProcessService
         orient = record.exif.Orientation ? 1
         return cb(null, record) if orient is 1
 
-        exec "gm mogrify #{getOrientCommand orient} #{previewPath}", -> cb null, record
+        exec "gm mogrify #{Utils.getOrientCommand orient} #{previewPath}", ->
+          cb null, record
     else
       cmd = "cp \"#{record.path}\" #{previewPath}"
       exec cmd, (e, so, se) ->

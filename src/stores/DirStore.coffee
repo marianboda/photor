@@ -124,16 +124,21 @@ dataStore =
       @trigger()
 
     ignorePaths = @ignorePaths
-    walkQueue = async.queue (dirPath, callback) ->
-      fs.readdir dirPath, (err, files) ->
-        thisDir = {path: dirPath, name: Path.basename(dirPath), files: [], items: [], unrecognizedCount: 0}
+    walkQueue = async.queue (dirPath, callback) =>
+      fs.readdir dirPath, (err, files) =>
+        thisDir =
+          path: dirPath
+          name: Path.basename(dirPath)
+          files: []
+          items: []
+          unrecognizedCount: 0
+
         async.each files,
           (f, eachCallback) ->
             filePath = dirPath + Path.sep + f
             fs.lstat filePath, (err, stat) ->
-              if stat.isDirectory()
-                if filePath not in ignorePaths
-                  processDir {path: filePath}
+              if stat.isDirectory() and filePath not in ignorePaths
+                processDir {path: filePath}
               if stat.isFile()
                 if isRecognized(f)
                   thisDir.files.push f
@@ -141,7 +146,9 @@ dataStore =
                 else
                   thisDir.unrecognizedCount += 1
               eachCallback()
-        , (err) -> callback(err, thisDir)
+        , (err) =>
+          callback(err, thisDir)
+          @loadPhotos()
     ,2
 
     isRecognized = (item) ->

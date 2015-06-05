@@ -8,8 +8,13 @@ class ProcessService
   _queue: null
 
   constructor: ->
-    qF = (task, callback) => @_process(task, -> callback null)
+    qF = (task, callback) =>
+      @_process task, ->
+        console.log '%cprocessing done', 'color: #F60; font-weight: bold;'
+        callback null
+
     @_queue = async.queue qF, 2
+    @_queue.drain = -> console.log '%cALL DONE', 'color: #F60; font-weight: bold;'
 
   queue: (record) ->
     defer = Q.defer()
@@ -21,7 +26,6 @@ class ProcessService
   killQueue: -> @_queue.kill()
 
   _process: (task, cb) ->
-    console.log 'task ', task
     initWaterfall = (cb) -> cb(null, task)
     onDone = (err) ->
       console.log 'waterfall done', err
