@@ -54,7 +54,7 @@ Page = React.createClass
     R.div {ref: 'processPage'},
       React.createElement Table, tableProps,
         React.createElement Column,
-          {label: '#', cellRenderer: ((a,b,c,index) -> R.span {}, index+1), width: 50, align: 'right'}
+          {label: '#', cellRenderer: ((a,b,c,index) -> R.span {}, index+1), align: 'right'}
         React.createElement Column, {label: 'PATH', dataKey: 'path', width: 600}
         # React.createElement Column, {label: 'DIR', dataKey: 'dir', width: 200}
         React.createElement Column, {label: 'HASH', dataKey: 'hash', width: 50}

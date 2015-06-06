@@ -3,6 +3,7 @@
 async = require 'async'
 Q = require 'q'
 MediaProcess = require './MediaProcessService'
+DB = require './NeDbService'
 
 class ProcessService
   _queue: null
@@ -25,6 +26,10 @@ class ProcessService
 
   killQueue: -> @_queue.kill()
 
+  updateRecord: (record, cb) ->
+    DB.updatePhoto(record).then (res) ->
+      cb res
+
   _process: (task, cb) ->
     initWaterfall = (cb) -> cb(null, task)
     onDone = (err) ->
@@ -37,6 +42,7 @@ class ProcessService
       MediaProcess.exif
       MediaProcess.preview
       MediaProcess.thumb
+      @updateRecord
     ], onDone
 
 module.exports = new ProcessService()
