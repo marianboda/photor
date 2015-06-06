@@ -66,7 +66,7 @@ class MediaProcessService
     thumbPath = getThumbPath record
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
-    cmd = "ffmpeg -an -i #{record.path} -vframes 1 -s 320x240 #{previewPath}"
+    cmd = "ffmpeg -an -i -y #{record.path} -vframes 1 -s 320x240 #{previewPath}"
     console.info cmd
     exec cmd, (e,so,se) ->
       console.log so
