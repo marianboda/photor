@@ -5,3 +5,4 @@
 /node_modules/
 /.sass-cache/
 /__tests__/DirStore-test.coffee
+npm-debug.log

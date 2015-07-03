@@ -4,6 +4,8 @@ async = require 'async'
 Q = require 'q'
 MediaProcess = require './MediaProcessService'
 DB = require './NeDbService'
+Level = require './LevelService'
+SQL = require './SQLiteService'
 
 class ProcessService
   _queue: null

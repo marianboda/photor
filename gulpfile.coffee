@@ -21,8 +21,12 @@ paths =
   jadeFiles: ["#{srcDirs.jade}/**/*.jade"]
   sassFiles: ["#{srcDirs.sass}/**/*.sass"]
 
-gulp.task 'run', shell.task(["#{destDirs.binaries}/Electron.app/Contents/MacOS/Electron ."])
-gulp.task 'linux', shell.task(["#{destDirs.binaries}/atom ."])
+gulp.task 'run', ->
+  console.log process.platform
+  # if process.platform is 'darwin'
+  shell.task(["#{destDirs.binaries}/Electron.app/Contents/MacOS/Electron ."])
+  # else
+    # shell.task(["#{destDirs.binaries}/atom ."])
 
 gulp.task 'lint', ->
   gulp.src(paths.csFiles).pipe(coffeelint()).pipe(coffeelint.reporter())
