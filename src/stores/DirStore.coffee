@@ -8,6 +8,7 @@ Path = require 'path'
 
 Actions = require '../actions'
 DB = require '../services/NeDbService'
+DBS = require '../services/SQLiteService'
 config = require '../config'
 TreeUtils = require '../utils/TreeUtils'
 ProcessService = require '../services/ProcessService'
@@ -25,6 +26,7 @@ dataStore =
   processedFiles: 0
 
   DB: DB
+  DBS: DBS
   init: ->
     @loadScanningPaths()
     @loadIgnorePaths()
@@ -58,23 +60,23 @@ dataStore =
     @listenTo Actions.addDirectoryToLibrary, (paths) ->
       newPaths = _.without(paths, @scanningPaths)
       @scanningPaths = _.uniq(@scanningPaths.concat(newPaths).sort())
-      @DB.addScanningPath s for s in newPaths
+      @DBS.addScanningPath s for s in newPaths
       @trigger()
 
     @listenTo Actions.removeDirectoryFromLibrary, (path) ->
       @scanningPaths = _.without @scanningPaths, path
-      @DB.removeScanningPath path
+      @DBS.removeScanningPath path
       @trigger()
 
     @listenTo Actions.addIgnorePath, (paths) ->
       newPaths = _.without(paths, @ignorePaths)
       @ignorePaths = @ignorePaths.concat(newPaths).sort()
-      @DB.addIgnorePath s for s in newPaths
+      @DBS.addIgnorePath s for s in newPaths
       @trigger()
 
     @listenTo Actions.removeIgnorePath, (path) ->
       @ignorePaths = _.without @ignorePaths, path
-      @DB.removeIgnorePath path
+      @DBS.removeIgnorePath path
       @trigger()
 
   loadPhotos: ->
@@ -88,12 +90,13 @@ dataStore =
       console.error "some error in loadPhotos", e
 
   loadScanningPaths: ->
-    @DB.getScanningPaths().then (data) =>
+    @DBS.getScanningPaths (err, data) =>
       @scanningPaths = data.map (item) -> item.path
       @trigger()
 
+
   loadIgnorePaths: ->
-    @DB.getIgnorePaths().then (data) =>
+    @DBS.getIgnorePaths (err, data) =>
       @ignorePaths = data.map (item) -> item.path
       @trigger()
 
@@ -170,7 +173,7 @@ dataStore =
         item.deepFilesCount = sumField item, 'deepFilesCount', 'filesCount'
         item.deepUnrecognizedCount = sumField item, 'deepUnrecognizedCount', 'unrecognizedCount'
 
-      TreeUtils.traverse newTree, @DB.addDir
+      TreeUtils.traverse newTree, @DBS.addDir
 
       @dirTree = newTree
       @trigger {}
