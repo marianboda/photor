@@ -1,5 +1,6 @@
 gulp = require 'gulp'
 shell = require 'gulp-shell'
+exec = require('child_process').exec
 
 coffee = require 'gulp-coffee'
 coffeelint = require 'gulp-coffeelint'
@@ -23,10 +24,10 @@ paths =
 
 gulp.task 'run', ->
   console.log process.platform
-  # if process.platform is 'darwin'
-  shell.task(["#{destDirs.binaries}/Electron.app/Contents/MacOS/Electron ."])
-  # else
-    # shell.task(["#{destDirs.binaries}/atom ."])
+  if process.platform is 'darwin'
+    exec "#{destDirs.binaries}/Electron.app/Contents/MacOS/Electron ."
+  else
+    exec "#{destDirs.binaries}/atom ."
 
 gulp.task 'lint', ->
   gulp.src(paths.csFiles).pipe(coffeelint()).pipe(coffeelint.reporter())
