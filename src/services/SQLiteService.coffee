@@ -1,6 +1,5 @@
 SQL = require 'sqlite3'
 config = require '../config'
-humps = require 'humps'
 db = new SQL.Database "#{config.DB_PATH}/db.sqlite"
 isjs = require 'is-js'
 
@@ -24,8 +23,8 @@ class SQLiteService
     db.all 'SELECT * FROM ignore_path', cb
 
   addDir: (dir) ->
-    keys = ['path', 'name', 'files_count', 'deep_files_count', 'deep_unrecognized_count']
-    vals = keys.map (i) -> "\"#{dir[humps.camelize(i)]}\""
+    keys = ['path', 'name', 'filesCount', 'deepFilesCount', 'deepUnrecognizedCount']
+    vals = keys.map (i) -> "\"#{dir[i]}\""
     db.run "INSERT OR IGNORE INTO dir (#{keys.join(',')}) VALUES (#{vals.join(',')})"
 
   getDirs: (cb) ->
@@ -37,7 +36,7 @@ class SQLiteService
   addFile: (file, cb) ->
     keys = Object.keys(file)
     vals = keys.map (i) ->
-      val = file[humps.camelize(i)]
+      val = file[i]
       val = JSON.stringify(val) if isjs.object(val)
       val
     q = "INSERT OR IGNORE INTO file (#{keys.join(',')}) VALUES (#{keys.map( -> '?').join(',')})"
@@ -48,7 +47,7 @@ class SQLiteService
     # return cb()
     keys = Object.keys(file).filter (i) -> i isnt 'id'
     vals = keys.map (i) ->
-      val = file[humps.camelize(i)]
+      val = file[i]
       val = JSON.stringify(val) if isjs.object(val)
       val
     keyValues = keys.map (i) -> "#{i}=?"

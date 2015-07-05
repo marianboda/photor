@@ -100,12 +100,6 @@ dataStore =
       @dirTree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
       @trigger()
 
-  # dirToDB: (dir) ->
-  #   dbRec = {}
-  #   for field of dir
-  #     dbRec[field] = dir[field] unless field in ['items']
-  #   @DB.addDir dbRec # {path: dir.path, added: new Date()}
-
   photoToDB: (photo) ->
     @DBS.addFile photo
 

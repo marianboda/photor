@@ -29,6 +29,6 @@ Page = React.createClass
           nodeRenderer: DirNodeRenderer
       R.div {id: 'right_content'},
         for item,i in DirStore.currentPhotos when item.hash?
-          Element Thumb, {src: "file://#{config.THUMB_PATH}/#{item.hash[0...16]}.jpg"}
+          Element Thumb, {src: "file://#{config.THUMB_PATH}/#{item.hash[0..1]}/#{item.hash[0..19]}.jpg"}
 
 module.exports = Page
