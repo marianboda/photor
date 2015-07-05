@@ -7,7 +7,6 @@ async = require 'async'
 Path = require 'path'
 
 Actions = require '../actions'
-DB = require '../services/NeDbService'
 DBS = require '../services/SQLiteService'
 config = require '../config'
 TreeUtils = require '../utils/TreeUtils'
@@ -25,7 +24,6 @@ dataStore =
   processingState: false
   processedFiles: 0
 
-  DB: DB
   DBS: DBS
   init: ->
     @loadScanningPaths()
@@ -127,6 +125,8 @@ dataStore =
     ignorePaths = @ignorePaths
     walkQueue = async.queue (dirPath, callback) =>
       fs.readdir dirPath, (err, files) =>
+        console.log 'starting: ', dirPath
+
         thisDir =
           path: dirPath
           name: Path.basename(dirPath)
