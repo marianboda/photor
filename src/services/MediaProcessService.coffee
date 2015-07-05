@@ -3,12 +3,16 @@
 exec = require('child_process').exec
 _ = require 'lodash'
 # I = require 'immutable'
+mkdirp = require 'mkdirp'
+path = require 'path'
 
 Utils = require '../utils/Utils'
 config = require '../config'
 
-getPrevPath = (photo) -> "#{config.PREVIEW_PATH}/#{photo.hash[0...16]}.jpg"
-getThumbPath = (photo) -> "#{config.THUMB_PATH}/#{photo.hash[0...16]}.jpg"
+getPrevPath = (photo) ->
+  "#{config.PREVIEW_PATH}/#{photo.hash[0..1]}/#{photo.hash[0..19]}.jpg"
+getThumbPath = (photo) ->
+  "#{config.THUMB_PATH}/#{photo.hash[0..1]}/#{photo.hash[0..19]}.jpg"
 
 class MediaProcessService
   init: () ->
@@ -31,6 +35,7 @@ class MediaProcessService
   photoPreview: (record, cb) ->
     return cb 'error: no hash' unless record.hash
     previewPath = getPrevPath record
+    mkdirp path.dirname(previewPath)
 
     if Utils.getExt(record.path) is 'cr2'
       cmd = "exiftool -b -PreviewImage \"#{record.path}\" > #{previewPath}"
@@ -48,7 +53,10 @@ class MediaProcessService
 
   thumb: (record, cb) ->
     previewPath = getPrevPath record
+    mkdirp path.dirname(previewPath)
     thumbPath = getThumbPath record
+    mkdirp path.dirname(thumbPath)
+    
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
     exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\"", (e,so,se) ->
