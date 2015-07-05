@@ -51,13 +51,24 @@ Page = React.createClass
       rowsCount: DirStore.photos.length
       rowHeight: 28
 
+    rows = Math.min DirStore.photos.length, 50
+    items = []
+    if rows > 0
+      for i in [0..rows]
+        item = R.div {},
+          R.span {}, DirStore.photos[i].name + ' ' + DirStore.photos[i].path
+        items.push item
+
     R.div {ref: 'processPage'},
-      React.createElement Table, tableProps,
-        React.createElement Column,
-          {label: '#', cellRenderer: ((a,b,c,index) -> R.span {}, index+1), align: 'right'}
-        React.createElement Column, {label: 'PATH', dataKey: 'path', width: 600}
-        # React.createElement Column, {label: 'DIR', dataKey: 'dir', width: 200}
-        React.createElement Column, {label: 'HASH', dataKey: 'hash', width: 50}
+      # React.createElement Table, tableProps,
+      #   React.createElement Column,
+      #     {label: '#', cellRenderer: ((a,b,c,index) -> R.span {}, index+1), align: 'right'}
+      #   React.createElement Column, {label: 'PATH', dataKey: 'path', width: 600}
+      #   # React.createElement Column, {label: 'DIR', dataKey: 'dir', width: 200}
+      #   React.createElement Column, {label: 'HASH', dataKey: 'hash', width: 50}
+
+      R.h2 {}, "TOTAL FILES: #{DirStore.photos.length}"
+      R.div {}, items
 
       React.createElement Button, {icon: 'eye', onClick: @processButtonHandler}
       React.createElement Button, {icon: 'cross', onClick: -> Actions.stopProcess()}

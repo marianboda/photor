@@ -2,8 +2,7 @@ SQL = require 'sqlite3'
 config = require '../config'
 humps = require 'humps'
 db = new SQL.Database "#{config.DB_PATH}/db.sqlite"
-
-# db.serialize ->
+isjs = require 'is-js'
 
 class SQLiteService
   addScanningPath: (path) ->
@@ -29,4 +28,30 @@ class SQLiteService
     vals = keys.map (i) -> "\"#{dir[humps.camelize(i)]}\""
     db.run "INSERT OR IGNORE INTO dir (#{keys.join(',')}) VALUES (#{vals.join(',')})"
 
+  getDirs: (cb) ->
+    db.all 'SELECT * FROM dir ORDER BY path', cb
+
+  getFiles: (cb) ->
+    db.all 'SELECT * FROM file ORDER BY path', cb
+
+  addFile: (file, cb) ->
+    keys = Object.keys(file)
+    vals = keys.map (i) ->
+      val = file[humps.camelize(i)]
+      val = JSON.stringify(val) if isjs.object(val)
+      val
+    q = "INSERT OR IGNORE INTO file (#{keys.join(',')}) VALUES (#{keys.map( -> '?').join(',')})"
+    db.run q, vals, cb
+
+  updateFile: (file, cb) ->
+    console.log 'file.id', file.id
+    # return cb()
+    keys = Object.keys(file).filter (i) -> i isnt 'id'
+    vals = keys.map (i) ->
+      val = file[humps.camelize(i)]
+      val = JSON.stringify(val) if isjs.object(val)
+      val
+    keyValues = keys.map (i) -> "#{i}=?"
+    q = "UPDATE file SET #{keyValues.join(', ')} WHERE id=" + file.id
+    db.run q, vals, cb
 module.exports = new SQLiteService()

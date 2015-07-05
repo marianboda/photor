@@ -80,20 +80,17 @@ dataStore =
       @trigger()
 
   loadPhotos: ->
-    @DB.getPhotos().then (data) =>
+    @DBS.getFiles (err, data) =>
       @photos = _.sortBy(data, 'path')
       @processedFiles = @photos
         .filter (i) -> return i.hash?
         .length
       @trigger()
-    .catch (e) ->
-      console.error "some error in loadPhotos", e
 
   loadScanningPaths: ->
     @DBS.getScanningPaths (err, data) =>
       @scanningPaths = data.map (item) -> item.path
       @trigger()
-
 
   loadIgnorePaths: ->
     @DBS.getIgnorePaths (err, data) =>
@@ -101,17 +98,18 @@ dataStore =
       @trigger()
 
   loadDirs: ->
-    @DB.getDirs().then (data) =>
+    @DBS.getDirs (err, data) =>
       @dirTree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
       @trigger()
 
-  dirToDB: (dir) ->
-    dbRec = {}
-    for field of dir
-      dbRec[field] = dir[field] unless field in ['items']
-    @DB.addDir dbRec # {path: dir.path, added: new Date()}
+  # dirToDB: (dir) ->
+  #   dbRec = {}
+  #   for field of dir
+  #     dbRec[field] = dir[field] unless field in ['items']
+  #   @DB.addDir dbRec # {path: dir.path, added: new Date()}
 
-  photoToDB: (photo) -> @DB.addPhoto photo
+  photoToDB: (photo) ->
+    @DBS.addFile photo
 
   scan: ->
     @scannedFiles = 0
@@ -162,7 +160,6 @@ dataStore =
       dirTree = TreeUtils.buildTree dirs, null, null, 'name'
 
       newTree = TreeUtils.transformPost dirTree, (item) ->
-        # console.log item.path
         subCountReducer = (field) ->
           (prev, current) -> prev + (current[field] ? 0)
         sumField = (node, field, initField) ->

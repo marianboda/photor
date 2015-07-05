@@ -4,8 +4,7 @@ async = require 'async'
 Q = require 'q'
 MediaProcess = require './MediaProcessService'
 DB = require './NeDbService'
-Level = require './LevelService'
-SQL = require './SQLiteService'
+DBS = require './SQLiteService'
 
 class ProcessService
   _queue: null
@@ -29,7 +28,7 @@ class ProcessService
   killQueue: -> @_queue.kill()
 
   updateRecord: (record, cb) ->
-    DB.updatePhoto(record).then (res) ->
+    DBS.updateFile record, (res) ->
       cb res
 
   _process: (task, cb) ->
