@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "jest",
-    "clean": "(cd ~/Documents/PhotorData && rm -f preview/* thumb/* dirs.nedb photos.nedb)",
+    "run": "./binaries/Electron.app/Contents/MacOS/Electron .",
+    "clean": "(cd ~/Documents/PhotorData && rm -rf preview thumb && sqlite3 db.sqlite \"DELETE FROM file; DELETE FROM dir\")",
     "electron": "rm -rf binaries/Electron.app && cp -R node_modules/electron-prebuilt/dist/Electron.app binaries/"
   },
   "jest": {
