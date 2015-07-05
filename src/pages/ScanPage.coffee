@@ -30,11 +30,8 @@ Page = React.createClass
     Dialog.showOpenDialog {properties: ['openDirectory', 'multiSelections']}, (paths) ->
       Actions.addIgnorePath paths
 
-  removeIgnorePathsHandler: (e) ->
-    path = e.dispatchMarker.split('.')
-    path.pop()
-    console.log path
-    Actions.removeIgnorePath path.pop()[1..]
+  removeIgnorePathsHandler: (path) ->
+    Actions.removeIgnorePath path
 
   render: ->
     R.div {},
@@ -67,7 +64,7 @@ Page = React.createClass
                   icon: 'squared-minus'
                   key: item
                   classes: ['delete']
-                  onClick: @removeIgnorePathsHandler
+                  onClick: => @removeIgnorePathsHandler(item)
           R.tr {},
             R.td {colSpan: 2},
               React.createElement Icon,
@@ -78,6 +75,6 @@ Page = React.createClass
       R.br {}
       React.createElement Button, {icon: 'cycle', onClick: @scanButtonHandler}
       R.hr {}
-      R.p {}, DirStore['scannedFiles']
+      R.p {}, 'Currently scanned: ' + DirStore['scannedFiles']
 
 module.exports = Page
