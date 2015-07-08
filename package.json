@@ -61,6 +61,7 @@
     "sqlite3": "^3.0.8"
   },
   "devDependencies": {
-    "electron-rebuild": "^0.2.2"
+    "electron-rebuild": "^0.2.2",
+    "xml2js": "^0.4.9"
   }
 }

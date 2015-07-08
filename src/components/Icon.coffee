@@ -2,6 +2,7 @@ React = require 'react'
 R = React.DOM
 Types = React.PropTypes
 SVG = React.createFactory require('react-svg')
+iconShapes = require '../../app/assets/icons.js'
 
 Icon = React.createClass
   displayName: 'Icon'
@@ -13,8 +14,13 @@ Icon = React.createClass
   render: ->
     classes = ['svg-icon']
     classes = classes.concat @props.classes if @props.classes?
+    paths = iconShapes[@props.icon] ? iconShapes.aircraft
+    icon = '<svg version="1.1" id="Rocket" x="0px" y="0px" viewBox="0 0 20 20"
+      enable-background="new 0 0 20 20" width="20" height="20"
+      xml:space="preserve"><path fill="#224433" d="' + paths + '"/></svg>'
 
-    R.div {onClick: @props.onClick}, "-#{@props.icon}-"
+
+    R.div {onClick: @props.onClick, dangerouslySetInnerHTML: {__html:icon}}  #"-#{@props.icon}-"
       # R.svg
       #   width: 24
       #   height: 24
