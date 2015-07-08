@@ -37,7 +37,6 @@
     "electron-prebuilt": "^0.28.2",
     "exec": "^0.2.0",
     "file": "^0.2.2",
-    "fixed-data-table": "^0.3.0",
     "flux": "^2.0.3",
     "gm": "^1.18.1",
     "gulp": "^3.9.0",

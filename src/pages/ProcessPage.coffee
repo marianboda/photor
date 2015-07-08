@@ -5,9 +5,6 @@ DirStore = require '../stores/DirStore'
 React = require 'react'
 R = React.DOM
 Reflux = require 'reflux'
-FixedDataTable = require 'fixed-data-table'
-Table = FixedDataTable.Table
-Column = FixedDataTable.Column
 Button = require '../components/IconButton'
 
 Page = React.createClass
