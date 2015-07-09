@@ -40,15 +40,7 @@ Page = React.createClass
   render: ->
     rowGetter = (index) -> _.extend {index: index}, DirStore.photos[index]
 
-    tableProps =
-      rowGetter: rowGetter
-      headerHeight: 50
-      height: @state.tableHeight
-      width: @state.tableWidth
-      rowsCount: DirStore.photos.length
-      rowHeight: 28
-
-    rows = Math.min DirStore.photos.length, 50
+    rows = Math.min DirStore.photos.length, 20
     items = []
     if rows > 0
       for i in [0..rows]
