@@ -21,7 +21,8 @@ Icon = React.createClass
       viewBox: "0 0 20 20"
       className: classes.join(' ')
 
-    svgContent = paths.map (i) -> R.path({fill: '#bada55', d: i})
-    R.svg svgProps, svgContent
+    svgContent = paths.map (i) -> R.path({fill: "#bada55", d: i})
+    R.div {onClick: @props.onClick},
+      R.svg svgProps, svgContent
 
 module.exports = Icon
