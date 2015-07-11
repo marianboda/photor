@@ -19,15 +19,15 @@ Page = React.createClass
     Actions.selectDirectory(event)
 
   render: ->
-    R.div {},
-      R.div {id: 'left_panel'},
+    R.div {className: 'datapage-content'},
+      R.div {id: 'left-panel'},
         React.createElement Tree,
           selectedItem: DirStore.selectedDir
           onClick: @treeItemClickHandler
           data: DirStore.dirTree
           persistKey: 'dirTree'
           nodeRenderer: DirNodeRenderer
-      R.div {id: 'right_content', className: 'photo-container'},
+      R.div {id: 'right-content', className: 'photo-container'},
         for item,i in DirStore.currentPhotos when item.hash?
           Element Thumb, {src: "file://#{config.THUMB_PATH}/#{item.hash[0..1]}/#{item.hash[0..19]}.jpg"}
 

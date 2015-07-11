@@ -24,12 +24,11 @@ App = React.createClass
     @listenTo PageStore, -> @forceUpdate()
   render: ->
     console.log 'rendering App: ', location.hash
-    R.div {},
-      R.div {className: 'main_nav'},
+    R.div {className: 'app-container'},
+      R.div {className: 'main-nav'},
         for slug, p of PageStore.pages
           R.a {href: '#/'+slug, key: slug, className: if slug is location.hash[2..] then 'active' else ''}, p.name
-      R.div {className: 'main_content'},
-        React.createElement Router.RouteHandler, React.__spread({},  this.props)
+      React.createElement Router.RouteHandler, React.__spread({},  this.props)
 
 PageStore.listen (status) ->
   routes =
