@@ -19,7 +19,7 @@ Page = React.createClass
     if this.refs.processPage
       console.log 'width', this.refs.processPage.getDOMNode().offsetWidth
     @_update()
-    @listenTo DirStore, -> @forceUpdate()
+    @listenTo DirStore, @forceUpdate
     window.addEventListener 'resize', @_onResize
 
   componentWillUnmount: ->
@@ -34,8 +34,7 @@ Page = React.createClass
       tableWidth: this.refs.processPage.getDOMNode().offsetWidth
       tableHeight: 400 #this.refs.processPage.getDOMNode().offsetHeight
 
-  processButtonHandler: (e) ->
-    Actions.process()
+  processButtonHandler: (e) -> Actions.process()
 
   render: ->
     rowGetter = (index) -> _.extend {index: index}, DirStore.photos[index]
@@ -48,11 +47,12 @@ Page = React.createClass
           R.span {}, DirStore.photos[i].name + ' ' + DirStore.photos[i].path
         items.push item
 
-    R.div {ref: 'processPage'},
-      R.h2 {}, "TOTAL FILES: #{DirStore.photos.length}"
-      R.div {}, items
-      React.createElement Button, {icon: 'eye', onClick: @processButtonHandler}
-      React.createElement Button, {icon: 'cross', onClick: -> Actions.stopProcess()}
-      R.progress {value: DirStore.processedFiles, max: DirStore.photos.length, style: {width: '100%'}}
+    R.div {ref: 'processPage', className: 'process-page'},
+      R.div {className: 'content'}, items
+      R.div {className: 'bottom-bar'},
+        React.createElement Button, {icon: 'eye', onClick: @processButtonHandler}
+        React.createElement Button, {icon: 'cross', onClick: -> Actions.stopProcess()}
+        R.span {}, "TOTAL FILES: #{DirStore.photos.length}"
+        R.progress {value: DirStore.processedFiles, max: DirStore.photos.length, style: {width: '100%'}}
 
 module.exports = Page
