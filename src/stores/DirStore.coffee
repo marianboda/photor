@@ -115,7 +115,7 @@ dataStore =
 
     processFile = (fileObject) =>
       @photoToDB fileObject
-      @scannedFiles++
+      @scannedFiles += 1
       @trigger()
 
     ignorePaths = @ignorePaths
@@ -130,7 +130,7 @@ dataStore =
           items: []
           unrecognizedCount: 0
 
-        async.each files,
+        async.eachLimit files, 10,
           (f, eachCallback) ->
             filePath = dirPath + Path.sep + f
             fs.lstat filePath, (err, stat) ->

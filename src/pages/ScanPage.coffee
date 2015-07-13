@@ -15,10 +15,9 @@ Page = React.createClass
   displayName: 'SubPage'
   mixins: [Reflux.ListenerMixin]
   componentDidMount: ->
-    @listenTo DirStore, -> @forceUpdate()
+    @listenTo DirStore, @forceUpdate
 
-  scanButtonHandler: ->
-    Actions.scan()
+  scanButtonHandler: -> Actions.scan()
 
   addDirectoryHandler: ->
     Dialog.showOpenDialog {properties: ['openDirectory', 'multiSelections']}, (files) ->
@@ -75,6 +74,6 @@ Page = React.createClass
       R.br {}
       React.createElement Button, {icon: 'cycle', onClick: @scanButtonHandler}
       R.hr {}
-      R.p {}, 'Currently scanned: ' + DirStore['scannedFiles'] + ' ' + DirStore.scanStatus
+      R.p {}, 'Currently scanned: ' + DirStore.scannedFiles + ' ' + DirStore.scanStatus
 
 module.exports = Page
