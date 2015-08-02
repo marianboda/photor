@@ -52,7 +52,9 @@ Page = React.createClass
       R.div {className: 'bottom-bar'},
         React.createElement Button, {icon: 'eye', onClick: @processButtonHandler}
         React.createElement Button, {icon: 'cross', onClick: -> Actions.stopProcess()}
-        R.span {}, "TOTAL FILES: #{DirStore.photos.length}"
+        R.span {},
+          R.span {style: {color: '#094'}}, "#{DirStore.processedFiles}"
+          R.span {}, " | #{DirStore.photos.length}"
         R.progress {value: DirStore.processedFiles, max: DirStore.photos.length, style: {width: '100%'}}
 
 module.exports = Page
