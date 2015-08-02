@@ -2,6 +2,7 @@ SQL = require 'sqlite3'
 config = require '../config'
 db = new SQL.Database "#{config.DB_PATH}/db.sqlite"
 isjs = require 'is-js'
+moment = require 'moment'
 
 class SQLiteService
   addScanningPath: (path) ->
@@ -23,9 +24,10 @@ class SQLiteService
     db.all 'SELECT * FROM ignore_path', cb
 
   addDir: (dir) ->
-    keys = ['path', 'name', 'filesCount', 'deepFilesCount', 'deepUnrecognizedCount']
+    dir.scanDate = moment().format('YYYY-MM-DD HH:mm:ss')
+    keys = ['path', 'name', 'filesCount', 'deepFilesCount', 'deepUnrecognizedCount', 'scanDate']
     vals = keys.map (i) -> "\"#{dir[i]}\""
-    db.run "INSERT OR IGNORE INTO dir (#{keys.join(',')}) VALUES (#{vals.join(',')})"
+    db.run "INSERT OR REPLACE INTO dir (#{keys.join(',')}) VALUES (#{vals.join(',')})"
 
   getDirs: (cb) ->
     db.all 'SELECT * FROM dir ORDER BY path', cb
@@ -34,6 +36,7 @@ class SQLiteService
     db.all 'SELECT * FROM file ORDER BY path', cb
 
   addFile: (file, cb) ->
+    file.scanDate = moment().format('YYYY-MM-DD HH:mm:ss')
     keys = Object.keys(file)
     vals = keys.map (i) ->
       val = file[i]
@@ -45,6 +48,7 @@ class SQLiteService
   updateFile: (file, cb) ->
     console.log 'file.id', file.id
     # return cb()
+    file.processDate = moment().format('YYYY-MM-DD HH:mm:ss')
     keys = Object.keys(file).filter (i) -> i isnt 'id'
     vals = keys.map (i) ->
       val = file[i]
