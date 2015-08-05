@@ -56,7 +56,7 @@ class MediaProcessService
     mkdirp path.dirname(previewPath)
     thumbPath = getThumbPath record
     mkdirp path.dirname(thumbPath)
-    
+
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
     exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\"", (e,so,se) ->
@@ -71,10 +71,12 @@ class MediaProcessService
 
   videoPreview: (record, cb) ->
     previewPath = getPrevPath record
+    mkdirp path.dirname(previewPath)
     thumbPath = getThumbPath record
+    mkdirp path.dirname(thumbPath)
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
-    cmd = "ffmpeg -an -i -y #{record.path} -vframes 1 -s 320x240 #{previewPath}"
+    cmd = "ffmpeg -an -y -i \"#{record.path}\" -vframes 1 -filter:v scale=\"320:-1\" \"#{previewPath}\""
     console.info cmd
     exec cmd, (e,so,se) ->
       console.log so
