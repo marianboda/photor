@@ -15,7 +15,7 @@ Page = React.createClass
   displayName: 'SubPage'
   mixins: [Reflux.ListenerMixin]
   componentDidMount: ->
-    @listenTo DirStore, @forceUpdate
+    @listenTo DirStore, -> @setState({})
 
   scanButtonHandler: -> Actions.scan()
 

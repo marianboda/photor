@@ -167,7 +167,6 @@ dataStore =
         item.deepUnrecognizedCount = sumField item, 'deepUnrecognizedCount', 'unrecognizedCount'
 
       TreeUtils.traverse newTree, @DBS.addDir
-
       @dirTree = newTree
       @trigger {}
 

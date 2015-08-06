@@ -31,7 +31,6 @@ class MediaProcessService
     else
       @photoPreview(record,cb)
 
-
   photoPreview: (record, cb) ->
     return cb 'error: no hash' unless record.hash
     previewPath = getPrevPath record
