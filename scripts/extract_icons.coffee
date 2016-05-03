@@ -5,11 +5,8 @@ _ = require 'lodash'
 async = require 'async'
 parser = x2j.Parser()
 
-
-dir = '../app/assets/entypo/'
-output = '../app/assets/icons.js'
-
-# path = dir + file
+dir = Path.resolve __dirname, '../app/assets/entypo/'
+output = Path.resolve __dirname, '../app/assets/icons.js'
 
 getShape = (path, cb) ->
   fs.readFile path, (err, data) ->
@@ -20,20 +17,18 @@ getShape = (path, cb) ->
       paths = res.svg.path.map (i) -> i.$.d
       cb null, {id: Path.basename(path, '.svg'), paths: paths}
 
-
 collectIcons = (dir, cb) ->
   fs.readdir dir, (err, files) ->
     return cb(err) if err?
     async.map files, (i, icb) ->
-      getShape dir + i, icb
+      getShape Path.join(dir, i), icb
     , cb
 
-
 collectIcons dir, (err, res) ->
+  console.error err if err
   return err if err?
   reduced = res.reduce (a,b) ->
     return a if b is null
-    # console.log 'a, b: ', a, b
     n = {}
     n[b.id] = b.paths
     _.extend a, n
