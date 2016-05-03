@@ -1,7 +1,6 @@
 React = require 'react'
 R = React.DOM
 Types = React.PropTypes
-# SVG = React.createFactory require('react-svg')
 iconShapes = require '../../app/assets/icons.js'
 
 Icon = React.createClass
