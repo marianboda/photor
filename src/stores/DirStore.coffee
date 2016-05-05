@@ -23,6 +23,7 @@ dataStore =
   currentPhotos: []
   processingState: false
   processedFiles: 0
+  scannedCount: 0
   scanStatus: null
 
   DBS: DBS
@@ -40,12 +41,14 @@ dataStore =
       console.log "ALL: #{@photos.length}, TO PROCESS: #{ph.length}"
       @processingState = true if ph.length > 0
 
-      ph.forEach (i) =>
+      async.eachLimit(ph, 10, (i, cb) =>
         ProcessService.queue(i).then (photo) =>
           @processedFiles++
           if @processedFiles is @photos.length
             @processingState = false
           @trigger()
+          cb()
+        )
 
     @listenTo Actions.stopProcess, ->
       ProcessService.killQueue()
@@ -105,6 +108,7 @@ dataStore =
     @DBS.addFile photo
 
   scan: ->
+    console.time('scan')
     @scannedFiles = 0
     @scanStatus = 'started'
     dirs = []
@@ -131,7 +135,7 @@ dataStore =
           unrecognizedCount: 0
 
         async.eachLimit files, 10,
-          (f, eachCallback) ->
+          (f, eachCallback) =>
             filePath = dirPath + Path.sep + f
             fs.lstat filePath, (err, stat) ->
               if stat.isDirectory() and filePath not in ignorePaths
@@ -143,16 +147,18 @@ dataStore =
                 else
                   thisDir.unrecognizedCount += 1
               eachCallback()
+            @scannedCount++
+
         , (err) =>
           callback(err, thisDir)
-          @loadPhotos()
+          # @loadPhotos()
     ,2
 
     isRecognized = (item) ->
       Path.extname(item).substring(1).toLowerCase() in config.ACCEPTED_FORMATS
 
     walkQueue.drain = =>
-      @scanStatus = 'All done'
+      @scanStatus = 'All done, going to build tree'
       dirTree = TreeUtils.buildTree dirs, null, null, 'name'
 
       newTree = TreeUtils.transformPost dirTree, (item) ->
@@ -168,6 +174,8 @@ dataStore =
 
       TreeUtils.traverse newTree, @DBS.addDir
       @dirTree = newTree
+      console.timeEnd('scan')
+      @scanStatus = 'All done'
       @trigger {}
 
     @scanningPaths.map (item) ->

@@ -74,6 +74,6 @@ Page = React.createClass
       R.br {}
       React.createElement Button, {icon: 'cycle', onClick: @scanButtonHandler}
       R.hr {}
-      R.p {}, 'Currently scanned: ' + DirStore.scannedFiles + ' ' + DirStore.scanStatus
+      R.p {}, 'Currently scanned: ' + DirStore.scannedFiles + ' (' + DirStore.scannedCount + ') ' + DirStore.scanStatus
 
 module.exports = Page
