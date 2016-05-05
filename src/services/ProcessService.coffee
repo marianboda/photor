@@ -25,7 +25,13 @@ class ProcessService
       defer.resolve(record)
     defer.promise
 
-  killQueue: -> @_queue.kill()
+  pause: ->
+    console.log "Pause"
+    @_queue.pause()
+
+  resume: ->
+    console.log "Resume"
+    @_queue.resume()
 
   updateRecord: (record, cb) ->
     DBS.updateFile record, (res) ->

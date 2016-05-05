@@ -25,6 +25,7 @@ dataStore =
   processedFiles: 0
   scannedCount: 0
   scanStatus: null
+  processState: 'empty'
 
   DBS: DBS
   init: ->
@@ -36,6 +37,8 @@ dataStore =
     @listenTo Actions.scan, @scan
 
     @listenTo Actions.process, ->
+      if @processState is 'paused'
+        return ProcessService.resume()
       ph = @photos
         .filter (i) -> return (not i.hash?) or i.hash? is ''
       console.log "ALL: #{@photos.length}, TO PROCESS: #{ph.length}"
@@ -49,9 +52,11 @@ dataStore =
           @trigger()
           cb()
         )
+      @processState = 'running'
 
     @listenTo Actions.stopProcess, ->
-      ProcessService.killQueue()
+      @processState = 'paused'
+      ProcessService.pause()
 
     @listenTo Actions.selectDirectory, (dir) ->
       @currentPhotos = @photos.filter (item) -> item.dir is dir
