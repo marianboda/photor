@@ -38,7 +38,9 @@ TreeNode = React.createClass
 
     selected = @props.selectedItem is @props.path
 
-    nodes = if collapsed then null else @props.items.map (item) =>
+    items = _.orderBy(@props.items, ['deepFilesCount'], ['desc'])
+
+    nodes = if collapsed then null else items.map (item) =>
       React.createElement TreeNode,
         key: item.path
         data: item

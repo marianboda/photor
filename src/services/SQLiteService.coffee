@@ -30,7 +30,7 @@ class SQLiteService
     db.run "INSERT OR REPLACE INTO dir (#{keys.join(',')}) VALUES (#{vals.join(',')})"
 
   getDirs: (cb) ->
-    db.all 'SELECT * FROM dir ORDER BY path', cb
+    db.all 'SELECT * FROM dir WHERE deepFilesCount > 0 ORDER BY path', cb
 
   getFiles: (cb) ->
     db.all 'SELECT * FROM file ORDER BY path', cb
