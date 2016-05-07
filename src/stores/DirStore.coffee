@@ -46,6 +46,8 @@ dataStore =
 
       async.eachLimit(ph, 10, (i, cb) =>
         ProcessService.queue(i).then (photo) =>
+          console.log('make', photo.exif.Make + ' ' + photo.exif.Model)
+
           @processedFiles++
           if @processedFiles is @photos.length
             @processingState = false
@@ -96,6 +98,7 @@ dataStore =
 
   loadScanningPaths: ->
     @DBS.getScanningPaths (err, data) =>
+      console.log('scanning paths', err, data)
       @scanningPaths = data.map (item) -> item.path
       @trigger()
 
@@ -148,7 +151,12 @@ dataStore =
               if stat.isFile()
                 if isRecognized(f)
                   thisDir.files.push f
-                  processFile {name: f, dir: dirPath, path: filePath, stat: stat}
+                  processFile
+                    name: f
+                    dir: dirPath
+                    path: filePath
+                    stat: stat
+                    status: 0
                 else
                   thisDir.unrecognizedCount += 1
               eachCallback()
@@ -182,6 +190,7 @@ dataStore =
       console.timeEnd('scan')
       @scanStatus = 'All done'
       @trigger {}
+      @loadPhotos()
 
     @scanningPaths.map (item) ->
       processDir {path: item}

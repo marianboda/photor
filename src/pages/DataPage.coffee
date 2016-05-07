@@ -30,5 +30,11 @@ Page = React.createClass
       R.div {id: 'right-content', className: 'photo-container'},
         for item,i in DirStore.currentPhotos when item.hash?
           Element Thumb, {src: "file://#{config.THUMB_PATH}/#{item.hash[0..1]}/#{item.hash[0..19]}.jpg"}
+      # R.div {id: 'right-content'},
+      #   for item,i in DirStore.currentPhotos
+      #     R.div {}, [
+      #       R.span {}, (i+1) + ' ' + item.name
+      #     ]
+
 
 module.exports = Page

@@ -17,6 +17,7 @@ CREATE TABLE "file"(
 	"path" Text NOT NULL,
 	"dir" Text NOT NULL,
 	"stat" Text,
+	"status" Integer DEFAULT 0,
 	"exif" Text,
 	"hash" Text,
 	"scanDate" Text,

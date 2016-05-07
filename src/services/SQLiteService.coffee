@@ -33,7 +33,7 @@ class SQLiteService
     db.all 'SELECT * FROM dir WHERE deepFilesCount > 0 ORDER BY path', cb
 
   getFiles: (cb) ->
-    db.all 'SELECT * FROM file ORDER BY path', cb
+    db.all 'SELECT * FROM file WHERE status > -1 ORDER BY path', cb
 
   addFile: (file, cb) ->
     file.scanDate = moment().format('YYYY-MM-DD HH:mm:ss')

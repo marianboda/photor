@@ -34,7 +34,10 @@ class ProcessService
     @_queue.resume()
 
   updateRecord: (record, cb) ->
-    DBS.updateFile record, (res) ->
+    r = record
+    if (r.status > -1)
+      r.status = 1
+    DBS.updateFile r, (res) ->
       cb res
 
   _process: (task, cb) ->

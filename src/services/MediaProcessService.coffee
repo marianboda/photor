@@ -37,12 +37,12 @@ class MediaProcessService
     mkdirp path.dirname(previewPath)
 
     if Utils.getExt(record.path) is 'cr2'
-      cmd = "exiftool -b -PreviewImage \"#{record.path}\" > #{previewPath}"
+      cmd = "exiftool -b -PreviewImage \"#{record.path}\" > #{previewPath} || rm -f #{previewPath}"
       exec cmd, (e, so, se) ->
         orient = record.exif.Orientation ? 1
         return cb(null, record) if orient is 1
 
-        exec "gm mogrify #{Utils.getOrientCommand orient} #{previewPath}", ->
+        exec "gm mogrify #{Utils.getOrientCommand orient} #{previewPath} || rm -f #{previewPath}", ->
           cb null, record
     else
       cmd = "cp \"#{record.path}\" #{previewPath}"
@@ -58,14 +58,15 @@ class MediaProcessService
 
     previewSize = config.PREVIEW_SIZE
     thumbSize = config.THUMB_SIZE
-    exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\"", (e,so,se) ->
+    exec "gm mogrify -resize #{previewSize}x#{previewSize}\\> \"#{previewPath}\" || rm -f #{previewPath}", (e,so,se) ->
       if (se? and se isnt '' and se isnt 0) or (e? and e isnt '' and e isnt 0)
         console.error "mogrify (s)error #{e} #{se} #{so} #{record.path}"
-        _.assign(record, {status: 'unrecognized'})
+
+        _.assign(record, {status: -1})
       exec "gm convert -resize #{thumbSize}x#{thumbSize}\\> \"#{previewPath}\" \"#{thumbPath}\"", (e,so,se) ->
         if (e? and e isnt 0 and e isnt '') or (se? and se isnt '' and se isnt 0)
           console.error "convert (s)error #{e} #{se} #{so}"
-          _.assign(record, {status: 'unrecognized'})
+          _.assign(record, {status: -1})
         cb null, record
 
   videoPreview: (record, cb) ->
@@ -80,7 +81,7 @@ class MediaProcessService
     exec cmd, (e,so,se) ->
       console.log so
       if (e? and e isnt '' and e isnt 0)
-        _.assign(record, {status: 'unrecognized'})
+        _.assign(record, {status: -1})
         console.error e
         return cb(e)
       cb(null, record)
