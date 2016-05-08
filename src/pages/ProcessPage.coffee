@@ -42,7 +42,7 @@ Page = React.createClass
     rows = Math.min DirStore.photos.length, 20
     items = []
     if rows > 0
-      for i in [0..rows]
+      for i in [0..rows-1]
         item = R.div {},
           R.span {}, DirStore.photos[i].name + ' ' + DirStore.photos[i].path
         items.push item
