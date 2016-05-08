@@ -16,7 +16,7 @@ CREATE TABLE "file"(
 	"name" Text NOT NULL,
 	"path" Text NOT NULL,
 	"dir" Text NOT NULL,
-	"stat" Text,
+	"size" Integer,
 	"status" Integer DEFAULT 0,
 	"exif" Text,
 	"hash" Text,

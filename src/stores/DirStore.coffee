@@ -155,7 +155,7 @@ dataStore =
                     name: f
                     dir: dirPath
                     path: filePath
-                    stat: stat
+                    size: stat.size
                     status: 0
                 else
                   thisDir.unrecognizedCount += 1
