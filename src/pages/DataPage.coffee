@@ -9,6 +9,8 @@ config = require '../config'
 Element = React.createElement
 Thumb = require '../components/Thumb'
 
+
+
 Page = React.createClass
   displayName: 'DataPage'
   mixins: [Reflux.ListenerMixin]
@@ -28,13 +30,10 @@ Page = React.createClass
           persistKey: 'dirTree'
           nodeRenderer: DirNodeRenderer
       R.div {id: 'right-content', className: 'photo-container'},
-        for item,i in DirStore.currentPhotos when item.hash?
-          Element Thumb, {src: "file://#{config.THUMB_PATH}/#{item.hash[0..1]}/#{item.hash[0..19]}.jpg"}
-      # R.div {id: 'right-content'},
-      #   for item,i in DirStore.currentPhotos
-      #     R.div {}, [
-      #       R.span {}, (i+1) + ' ' + item.name
-      #     ]
+        for item,i in DirStore.currentPhotos
+          if item.hash?
+            thumbSrc = "file://#{config.THUMB_PATH}/#{item.hash[0..1]}/#{item.hash[0..19]}.jpg"
+          Element Thumb, {src: thumbSrc, name: item.name}
 
 
 module.exports = Page
