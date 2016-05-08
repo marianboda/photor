@@ -12,7 +12,7 @@
     "run": "./binaries/Electron.app/Contents/MacOS/Electron .",
     "clean": "(cd ~/Documents/PhotorData && rm -rf preview thumb && sqlite3 db.sqlite \"DELETE FROM file; DELETE FROM dir\")",
     "electron": "rm -rf binaries/Electron.app && cp -R node_modules/electron-prebuilt/dist/Electron.app binaries",
-    "initdb": "mkdir -p ~/Documents/PhotorData && sqlite3 ~/Documents/PhotorData/db.sqlite < ./scripts/dbschema.sql"
+    "initdb": "mkdir -p ~/Documents/PhotorData ; rm -f ~/Documents/PhotorData/db.sqlite; sqlite3 ~/Documents/PhotorData/db.sqlite < ./scripts/dbschema.sql"
   },
   "jest": {
     "scriptPreprocessor": "preprocessor.js",
