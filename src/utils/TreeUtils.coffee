@@ -40,12 +40,12 @@ class TreeUtils
     getSubtree(tree,pathParts)
 
   @buildTree = (objects, pathField, sep, keyField, valueField, itemsField) ->
-    objects = _.sortBy(objects, 'path')
     sep ?= Path.sep
     keyField ?= 'key'
     valueField ?= 'value'
     itemsField ?= 'items'
     pathField ?= 'path'
+    objects = _.sortBy(objects, pathField)
     tree = {}
     tree[keyField] = 'root'
     tree[itemsField] = []

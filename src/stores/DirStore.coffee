@@ -94,7 +94,21 @@ dataStore =
       @processedFiles = @photos
         .filter (i) -> return i.hash?
         .length
-      @trigger()
+      dirPathCounts = @photos
+        .map((i) => i.dir)
+        .reduce((acc, el) =>
+          acc[el] = if (acc[el]?) then acc[el]+1 else 1
+          acc
+        , {})
+      dirPaths = Object.keys(dirPathCounts).map((i) =>
+        path: i
+        filesCount: dirPathCounts[i]
+      )
+      @updateDirTree(dirPaths)
+
+  updateDirTree: (data) ->
+    @dirTree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
+    @trigger()
 
   loadScanningPaths: ->
     @DBS.getScanningPaths (err, data) =>
@@ -108,6 +122,7 @@ dataStore =
       @trigger()
 
   loadDirs: ->
+    return null
     @DBS.getDirs (err, data) =>
       @dirTree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
       @trigger()
