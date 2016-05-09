@@ -12,6 +12,18 @@ config = require '../config'
 TreeUtils = require '../utils/TreeUtils'
 ProcessService = require '../services/ProcessService'
 
+createFilesCounts = (tree) ->
+  newTree = TreeUtils.transformPost tree, (item) ->
+    subCountReducer = (field) ->
+      (prev, current) -> prev + (current[field] ? 0)
+    sumField = (node, field, initField) ->
+      reducer = subCountReducer(field)
+      node.items.reduce reducer, (node[initField] ? 0)
+    item.filesCount ?= 0
+    item.deepFilesCount = sumField item, 'deepFilesCount', 'filesCount'
+    item.deepUnrecognizedCount = sumField item, 'deepUnrecognizedCount', 'unrecognizedCount'
+  newTree
+
 dataStore =
   scanningPaths: []
   ignorePaths: []
@@ -107,7 +119,8 @@ dataStore =
       @updateDirTree(dirPaths)
 
   updateDirTree: (data) ->
-    @dirTree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
+    tree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'
+    @dirTree = createFilesCounts tree
     @trigger()
 
   loadScanningPaths: ->
@@ -188,17 +201,7 @@ dataStore =
     walkQueue.drain = =>
       @scanStatus = 'All done, going to build tree'
       dirTree = TreeUtils.buildTree dirs, null, null, 'name'
-
-      newTree = TreeUtils.transformPost dirTree, (item) ->
-        subCountReducer = (field) ->
-          (prev, current) -> prev + (current[field] ? 0)
-        sumField = (node, field, initField) ->
-          reducer = subCountReducer(field)
-          node.items.reduce reducer, (node[initField] ? 0)
-
-        item.filesCount = if item.files?.length? then item.files.length else 0
-        item.deepFilesCount = sumField item, 'deepFilesCount', 'filesCount'
-        item.deepUnrecognizedCount = sumField item, 'deepUnrecognizedCount', 'unrecognizedCount'
+      newTree = createFilesCounts dirTree
 
       TreeUtils.traverse newTree, @DBS.addDir
       @dirTree = newTree
