@@ -38,6 +38,7 @@ dataStore =
   scannedCount: 0
   scanStatus: null
   processState: 'empty'
+  cameras: [{id: 0, name: 'all'}]
 
   DBS: DBS
   init: ->
@@ -73,7 +74,8 @@ dataStore =
       ProcessService.pause()
 
     @listenTo Actions.selectDirectory, (dir) ->
-      @currentPhotos = @photos.filter (item) -> item.dir is dir
+      @currentPhotos = (@photos.filter (item) -> item.dir.indexOf(dir) is 0)[0..100]
+
       console.log 'dir sel: ' + dir, @currentPhotos.length
       @selectedDir = dir
       @trigger()
@@ -103,6 +105,18 @@ dataStore =
   loadPhotos: ->
     @DBS.getFiles (err, data) =>
       @photos = _.sortBy(data, 'path')
+
+      cameras = @photos.reduce((acc, el) =>
+        exif = JSON.parse(el.exif)
+        return acc unless exif.Make? || exif.Model?
+
+        cam = "#{exif.Make} #{exif.Model}"
+        if (acc.filter (i) => i.name is cam).length is 0
+          acc.push({id: acc.length, name: cam})
+        acc
+      , [{id: 0, name: '-- ALL --'}])
+
+      @cameras = _.sortBy cameras, 'name'
       @processedFiles = @photos
         .filter (i) -> return i.hash?
         .length
