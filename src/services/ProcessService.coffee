@@ -20,9 +20,10 @@ class ProcessService
 
   queue: (record) ->
     defer = Q.defer()
-    @_queue.push record, (err) ->
+    newRec = Object.assign({},record)
+    @_queue.push newRec, (err) ->
       return defer.reject(err) if err?
-      defer.resolve(record)
+      defer.resolve(newRec)
     defer.promise
 
   pause: ->

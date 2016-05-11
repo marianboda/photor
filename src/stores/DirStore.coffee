@@ -49,20 +49,21 @@ dataStore =
 
     @listenTo Actions.scan, @scan
 
-    @listenTo Actions.process, ->
+    @listenTo Actions.process, (current = false) ->
       if @processState is 'paused'
         return ProcessService.resume()
-      ph = @photos
+
+      photos = if current then @currentPhotos else @photos
+      ph = photos
         .filter (i) -> return (not i.hash?) or i.hash? is ''
-      console.log "ALL: #{@photos.length}, TO PROCESS: #{ph.length}"
+      console.log "ALL: #{photos.length}, TO PROCESS: #{ph.length}"
       @processingState = true if ph.length > 0
 
-      async.eachLimit(ph, 10, (i, cb) =>
+      async.forEachOfLimit(ph, 10, (i, idx, cb) =>
         ProcessService.queue(i).then (photo) =>
-          console.log('make', photo.exif.Make + ' ' + photo.exif.Model)
-
+          @updatePhoto photo
           @processedFiles++
-          if @processedFiles is @photos.length
+          if @processedFiles is photos.length
             @processingState = false
           @trigger()
           cb()
@@ -74,7 +75,9 @@ dataStore =
       ProcessService.pause()
 
     @listenTo Actions.selectDirectory, (dir) ->
-      @currentPhotos = (@photos.filter (item) -> item.dir.indexOf(dir) is 0)[0..100]
+      # # deep:
+      # @currentPhotos = (@photos.filter (item) -> item.dir.indexOf(dir) is 0)[0..100]
+      @currentPhotos = (@photos.filter (item) -> item.dir is dir)[0..100]
 
       console.log 'dir sel: ' + dir, @currentPhotos.length
       @selectedDir = dir
@@ -102,13 +105,20 @@ dataStore =
       @DBS.removeIgnorePath path
       @trigger()
 
+  updatePhoto: (ph) ->
+    idx = _.findIndex(@photos, (i) => i.id is ph.id)
+    @photos[idx] = ph
+    currIdx = _.findIndex(@currentPhotos, (i) => i.id is ph.id)
+    if currIdx >= 0
+      @currentPhotos[currIdx] = ph
+
   loadPhotos: ->
     @DBS.getFiles (err, data) =>
       @photos = _.sortBy(data, 'path')
 
       cameras = @photos.reduce((acc, el) =>
         exif = JSON.parse(el.exif)
-        return acc unless exif.Make? || exif.Model?
+        return acc unless exif? && (exif.Make? || exif.Model?)
 
         cam = "#{exif.Make} #{exif.Model}"
         if (acc.filter (i) => i.name is cam).length is 0
