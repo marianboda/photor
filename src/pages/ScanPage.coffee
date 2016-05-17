@@ -6,8 +6,8 @@ R = React.DOM
 Button = require '../components/IconButton'
 Icon = require '../components/Icon'
 
-remote = require 'remote'
-Dialog = remote.require 'dialog'
+remote = require('electron').remote
+Dialog = remote.dialog
 
 Actions = require '../actions'
 
