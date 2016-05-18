@@ -3,7 +3,6 @@
 async = require 'async'
 Q = require 'q'
 MediaProcess = require './MediaProcessService'
-DB = require './NeDbService'
 DBS = require './SQLiteService'
 
 class ProcessService

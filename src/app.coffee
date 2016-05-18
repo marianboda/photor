@@ -1,4 +1,5 @@
 React = require 'react'
+ReactDOM = require 'react-dom'
 fs = require 'fs'
 Flux = require 'flux'
 Reflux = require 'reflux'
@@ -36,4 +37,4 @@ PageStore.listen (status) ->
       for key, p of PageStore.pages
         React.createElement(Route, {name: p.slug, path: '/'+p.slug, handler: p.page, key: p.slug})
   Router.run routes, (Handler, state) ->
-    React.render React.createElement(Handler, {params: state.params}), document.body
+    ReactDOM.render React.createElement(Handler, {params: state.params}), document.querySelector('#container')
