@@ -4,6 +4,7 @@ x2j = require 'xml2js'
 _ = require 'lodash'
 async = require 'async'
 parser = x2j.Parser()
+mkdirp = require 'mkdirp'
 
 dir = Path.resolve __dirname, '../app/assets/entypo/'
 output = Path.resolve __dirname, '../app/assets/icons.js'
@@ -24,14 +25,15 @@ collectIcons = (dir, cb) ->
       getShape Path.join(dir, i), icb
     , cb
 
-collectIcons dir, (err, res) ->
-  console.error err if err
-  return err if err?
-  reduced = res.reduce (a,b) ->
-    return a if b is null
-    n = {}
-    n[b.id] = b.paths
-    _.extend a, n
-  , {}
-  fs.writeFile output, 'module.exports = '+JSON.stringify(reduced), (err) ->
-    console.log 'done'
+mkdirp dir, (err) ->
+  collectIcons dir, (err, res) ->
+    console.error err if err
+    return err if err?
+    reduced = res.reduce (a,b) ->
+      return a if b is null
+      n = {}
+      n[b.id] = b.paths
+      _.extend a, n
+    , {}
+    fs.writeFile output, 'module.exports = '+JSON.stringify(reduced), (err) ->
+      console.log 'done'
