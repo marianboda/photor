@@ -18,6 +18,10 @@ Page = React.createClass
   treeItemClickHandler: (event) ->
     Actions.selectDirectory(event)
 
+  fileClickHandler: (p) ->
+    console.log('fileClickHandler', p)
+    Actions.openFile(p)
+
   render: ->
     R.div {className: 'datapage-container'},
       R.div {className: 'datapage-toolbar'},
@@ -34,7 +38,7 @@ Page = React.createClass
             nodeRenderer: DirNodeRenderer
         R.div {id: 'right-content'},
           R.div {style:{flex: '0 0'}}, [
-            R.button {onClick: -> Actions.process(true)}, 'P'
+            R.button {onClick: -> Actions.process(true)}, 'PROCESS'
             'DirStore.selectedDir'
           ]
           R.div {className: 'photo-container'},
@@ -42,6 +46,7 @@ Page = React.createClass
               thumbSrc = if item.hash? \
                 then "file://#{config.THUMB_PATH}/#{item.hash[0..1]}/#{item.hash[0..19]}.jpg"
                 else undefined
-              Element Thumb, {src: thumbSrc, name: item.name}
+              handler = ((i) => () => @fileClickHandler(i))(item.path)
+              Element Thumb, {src: thumbSrc, name: item.name, clickHandler: handler, path: item.path}
 
 module.exports = Page

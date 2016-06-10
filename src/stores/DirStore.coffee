@@ -5,6 +5,7 @@ Reflux = require 'reflux'
 I = require 'immutable'
 async = require 'async'
 Path = require 'path'
+exec = require('child_process').exec
 
 Actions = require '../actions'
 DBS = require '../services/SQLiteService'
@@ -73,6 +74,10 @@ dataStore =
     @listenTo Actions.stopProcess, ->
       @processState = 'paused'
       ProcessService.pause()
+
+    @listenTo Actions.openFile, (p) ->
+      console.log('opening file', p)
+      exec('open "'+p+'"', ->)
 
     @listenTo Actions.selectDirectory, (dir) ->
       # # deep:

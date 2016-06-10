@@ -22,7 +22,7 @@ Icon = React.createClass
     classes = classes.concat @props.classes if @props.classes?
 
     children = if @props.src?
-        (R.img {src: @props.src})
+        (R.img {src: @props.src, onDoubleClick: @props.clickHandler})
       else
         (R.div {style: defThumbStyle}, @props.name)
 
