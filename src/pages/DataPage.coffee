@@ -27,6 +27,8 @@ Page = React.createClass
     Actions.openFile(p)
 
   render: ->
+    exifStr = DirStore.selectedPhoto?.exif
+    exif = if exifStr? then JSON.parse(exifStr) else null
     R.div {className: 'datapage-container'},
       R.div {className: 'datapage-toolbar'},
         R.select {}, DirStore.cameras.map (i) =>
@@ -61,5 +63,10 @@ Page = React.createClass
                 onClick: selectHandler
                 path: item.path
                 selected: item.id is DirStore.selectedId
+        R.div {id: 'right-panel', style: {width: 200}},
+          'NAME: ' + DirStore.selectedPhoto?.name
+          R.br {}
+          'LENGTH: ' + exif?.Duration?.toFixed(2) + ' s'
+
 
 module.exports = Page

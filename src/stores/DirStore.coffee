@@ -82,6 +82,7 @@ dataStore =
 
     @listenTo Actions.selectFile, (id) ->
       @selectedId = id
+      @selectedPhoto = (@photos.filter (item) -> item.id is id)[0]
       @trigger()
 
     @listenTo Actions.selectDirectory, (dir) ->
