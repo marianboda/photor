@@ -20,12 +20,13 @@ Icon = React.createClass
   render: ->
     classes = ['thumb']
     classes = classes.concat @props.classes if @props.classes?
+    classes.push 'selected' if @props.selected
 
     children = if @props.src?
-        (R.img {src: @props.src, onDoubleClick: @props.clickHandler})
+        (R.img {src: @props.src, onDoubleClick: @props.onDoubleClick, onClick: @props.onClick})
       else
         (R.div {style: defThumbStyle}, @props.name)
 
-    R.div {className: classes}, children
+    R.div {className: classes.join(' ')}, children
 
 module.exports = Icon

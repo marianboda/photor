@@ -33,6 +33,7 @@ dataStore =
   dirTree: {name: 'root', items: []}
   files: 0
   selectedDir: null
+  selectedId: 0
   currentPhotos: []
   processingState: false
   processedFiles: 0
@@ -78,6 +79,10 @@ dataStore =
     @listenTo Actions.openFile, (p) ->
       console.log('opening file', p)
       exec('open "'+p+'"', ->)
+
+    @listenTo Actions.selectFile, (id) ->
+      @selectedId = id
+      @trigger()
 
     @listenTo Actions.selectDirectory, (dir) ->
       # # deep:

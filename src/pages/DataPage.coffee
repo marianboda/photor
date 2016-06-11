@@ -18,7 +18,11 @@ Page = React.createClass
   treeItemClickHandler: (event) ->
     Actions.selectDirectory(event)
 
-  fileClickHandler: (p) ->
+  fileSelectHandler: (id) ->
+    console.log('file select', id)
+    Actions.selectFile(id)
+
+  fileDoubleClickHandler: (p) ->
     console.log('fileClickHandler', p)
     Actions.openFile(p)
 
@@ -39,14 +43,23 @@ Page = React.createClass
         R.div {id: 'right-content'},
           R.div {style:{flex: '0 0'}}, [
             R.button {onClick: -> Actions.process(true)}, 'PROCESS'
-            'DirStore.selectedDir'
+            DirStore.selectedDir
           ]
           R.div {className: 'photo-container'},
             for item,i in DirStore.currentPhotos
               thumbSrc = if item.hash? \
                 then "file://#{config.THUMB_PATH}/#{item.hash[0..1]}/#{item.hash[0..19]}.jpg"
                 else undefined
-              handler = ((i) => () => @fileClickHandler(i))(item.path)
-              Element Thumb, {src: thumbSrc, name: item.name, clickHandler: handler, path: item.path}
+              console.log('item', item)
+              handler = ((i) => () => @fileDoubleClickHandler(i))(item.path)
+              selectHandler = ((i) => () => @fileSelectHandler(i))(item.id)
+
+              Element Thumb,
+                src: thumbSrc
+                name: item.name
+                onDoubleClick: handler
+                onClick: selectHandler
+                path: item.path
+                selected: item.id is DirStore.selectedId
 
 module.exports = Page

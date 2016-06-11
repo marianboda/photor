@@ -6,6 +6,7 @@ module.exports =
   stopProcess: Reflux.createAction()
   selectDirectory: Reflux.createAction()
   openFile: Reflux.createAction()
+  selectFile: Reflux.createAction()
   addDirectoryToLibrary: Reflux.createAction()
   removeDirectoryFromLibrary: Reflux.createAction()
   addIgnorePath: Reflux.createAction()
