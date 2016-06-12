@@ -52,7 +52,6 @@ Page = React.createClass
               thumbSrc = if item.hash? \
                 then "file://#{config.THUMB_PATH}/#{item.hash[0..1]}/#{item.hash[0..19]}.jpg"
                 else undefined
-              console.log('item', item)
               handler = ((i) => () => @fileDoubleClickHandler(i))(item.path)
               selectHandler = ((i) => () => @fileSelectHandler(i))(item.id)
 
@@ -67,6 +66,8 @@ Page = React.createClass
           'NAME: ' + DirStore.selectedPhoto?.name
           R.br {}
           'LENGTH: ' + exif?.Duration?.toFixed(2) + ' s'
+          R.br {}
+          R.pre {}, DirStore.selectedPhoto?.copies?.map((i) => i.path).join("\n")
 
 
 module.exports = Page

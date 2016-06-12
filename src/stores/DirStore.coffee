@@ -83,6 +83,7 @@ dataStore =
     @listenTo Actions.selectFile, (id) ->
       @selectedId = id
       @selectedPhoto = (@photos.filter (item) -> item.id is id)[0]
+      @loadPhotoDetails id
       @trigger()
 
     @listenTo Actions.selectDirectory, (dir) ->
@@ -152,6 +153,12 @@ dataStore =
         filesCount: dirPathCounts[i]
       )
       @updateDirTree(dirPaths)
+
+  loadPhotoDetails: (id) ->
+    return if @selectedPhoto.id isnt id
+    @DBS.getFilesByHash @selectedPhoto.hash, (err, res) =>
+      @selectedPhoto.copies = res
+      @trigger()
 
   updateDirTree: (data) ->
     tree = TreeUtils.buildTree _.sortBy(data,'path'), null, null, 'name'

@@ -35,6 +35,9 @@ class SQLiteService
   getFiles: (cb) ->
     db.all 'SELECT * FROM file WHERE status > -1 ORDER BY path', cb
 
+  getFilesByHash: (hash, cb) ->
+    db.all 'SELECT * FROM file WHERE hash = "'+hash+'"', cb
+
   addFile: (file, cb) ->
     file.scanDate = moment().format('YYYY-MM-DD HH:mm:ss')
     keys = Object.keys(file)
